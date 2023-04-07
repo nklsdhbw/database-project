@@ -7,6 +7,7 @@ import CreateRecordModal from './createRecord';
 function App() {
   const api = "http://localhost:5000/run-query"
   const [results, setResults] = useState([]);
+  const [columns, setColumns] = useState([]);
   const query = 'SELECT * FROM public."Librarians"';
   let table = "Librarians"
   let tableID = table.toLowerCase().slice(0, table.length - 1) + "ID"
@@ -30,6 +31,16 @@ function App() {
       .then((response) => {
         setResults(response.data);
         console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+      axios
+      .post('http://localhost:5000/run-query', { query:`SELECT column_name FROM information_schema.columns  WHERE table_name = '${table}' AND table_schema = 'public'`})
+      .then((columns) => {
+        setColumns(columns.data);
+        console.log(columns.data);
       })
       .catch((error) => {
         console.log(error);
@@ -64,23 +75,21 @@ function App() {
     <div>
     <Table striped bordered hover className="table mx-auto">
       <thead>
-        <tr>
-          <th className="col">ID</th>
-          <th className="col">Fullname</th>
-          <th className="col">Email</th>
-          <th className="col">Phone</th>
+          {columns.map((column)=> (
+            <th>{column[0]}</th>
+          ))}
+
           <th className="col"></th>
-        </tr>
+
       </thead>
       <tbody>
-        {results.map((entry) => (
+        {results.map((librarianData) => (
           <tr >
-            <td>{entry[0]}</td>
-            <td>{entry[1]}</td>
-            <td>{entry[2]}</td>
-            <td>{entry[3]}</td>
+            {librarianData.map((entry)=>(
+              <td>{entry}</td>
+            ))}
             <td>
-              <button className="w-100 btn btn-lg btn-primary" onClick={() => deleteEntry(entry[0])}>Delete</button>
+              <button className="w-100 btn btn-lg btn-primary" onClick={() => deleteEntry(librarianData[0])}>Delete</button>
             </td>
           </tr>
         ))}
