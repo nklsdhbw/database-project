@@ -2,11 +2,27 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import BootstrapTable from 'react-bootstrap-table-next';
 import Table from 'react-bootstrap/Table';
+import CreateRecordModal from './createRecord';
 
 function App() {
   const api = "http://localhost:5000/run-query"
   const [results, setResults] = useState([]);
   const query = 'SELECT * FROM public."Librarians"';
+  let table = "Librarians"
+  let tableID = table.toLowerCase().slice(0, table.length - 1) + "ID"
+
+  
+  const [showModal, setShowModal] = useState(false);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleCreateRecord = (formData) => {
+    console.log(formData);
+    // Call API to create record
+    handleCloseModal();
+  };
 
   useEffect(() => {
     axios
@@ -20,6 +36,10 @@ function App() {
       });
   }, []);
 
+
+  
+
+
   if (!results.length) {
     // If there is no data available yet, show a loading indicator or an empty state.
     return <p>Loading...</p>;
@@ -28,7 +48,7 @@ function App() {
   function deleteEntry(librarianID) {
     axios
       .post(api, {
-        query: `DELETE FROM public."Librarians" WHERE "librarianID" = ${librarianID}`
+        query: `DELETE FROM public."${table}" WHERE "${tableID}" = ${librarianID}`
       })
       .then((response) => {
         setResults(response.data);
@@ -41,6 +61,7 @@ function App() {
   
 
   return (
+    <div>
     <Table striped bordered hover className="table mx-auto">
       <thead>
         <tr>
@@ -65,6 +86,24 @@ function App() {
         ))}
       </tbody>
     </Table>
+    <div>
+    <button onClick={() => setShowModal(true)}>Create New Record</button>
+      <CreateRecordModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        handleCreate={handleCreateRecord}
+      ></CreateRecordModal>
+    </div>
+      </div>
+     
+
+
+
+   
+
+    
+   
+    
   );
 }
 
