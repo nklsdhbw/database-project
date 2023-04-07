@@ -10,26 +10,18 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 
-conn = psycopg2.connect(
-    host="localhost",
-    port=5432,
-    database="postgres",
-    user="postgres",
-    password="0609"
-)
-
-
 @app.route('/run-query', methods=['POST'])
 def run_query():
     # Get the SQL query from the request body
     query = request.json['query']
 
-    # conn = psycopg2.connect(
-    #    host="your_host",
-    #    database="your_database",
-    #   user="your_user",
-    #  password="your_password"
-    # )
+    conn = psycopg2.connect(
+        host="localhost",
+        port=5432,
+        database="postgres",
+        user="postgres",
+        password="0609"
+    )
 
     # Create a cursor object
     cur = conn.cursor()
