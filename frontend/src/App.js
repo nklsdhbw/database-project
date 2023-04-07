@@ -1,43 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 
 function App() {
-  const [data, setData] = useState([]);
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
 
-  useEffect(() => {
-    axios.get('http://localhost:5000/users')
+  const handleRunQuery = () => {
+    console.log(query)
+    axios.post('http://localhost:5000/run-query', { query })
       .then(response => {
-        setData(response.data);
+        setResults(response.data);
+        console.log(response.data)
       })
       .catch(error => {
         console.log(error);
       });
-  }, []);
+  };
 
   return (
     <div>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map(user => (
-            <tr key={user.id}>
-              <td>{user.id}</td>
-              <td>{user.name}</td>
-              <td>{user.email}</td>
-              <td>{user.phone}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <textarea value={query} onChange={(e) => setQuery(e.target.value)} />
+      <button onClick={handleRunQuery}>Run Query</button>
     </div>
   );
 }
-
-export default App;
+export default App
