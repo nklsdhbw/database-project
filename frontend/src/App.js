@@ -91,6 +91,17 @@ useEffect(() => {
     librarianPhone: { type: "text", required: false, placeholder: ""},
   });
   
+  useEffect(() => {
+    const newFormData = {};
+    columns.map(column => (
+      newFormData[column] = {
+        type: "text",
+        required: true,
+        placeholder: ""
+      }
+    ));
+    setFormData(newFormData);
+  }, [columns]);
     
     const handleInputChange = (event) => {
       const { name, value } = event.target;
@@ -101,7 +112,6 @@ useEffect(() => {
     function addEntry(librarianData) {
         let valuesString = "VALUES("
         let columnsString = ''
-        let table = '"Librarians"'
         let values = Object.entries(librarianData).map(([key, value])=> (
           valuesString = valuesString + `'${value.placeholder}',`
         ))
@@ -110,7 +120,7 @@ useEffect(() => {
         ))
         axios
           .post(api, {
-            query: `INSERT INTO public.${table} (${columnsString.slice(0, columnsString.length-1)})`+ 
+            query: `INSERT INTO public."${selectedTable}" (${columnsString.slice(0, columnsString.length-1)})`+ 
             `${valuesString.slice(0, valuesString.length-1)}) `
           })
           .then((response) => {
@@ -126,7 +136,15 @@ useEffect(() => {
 
       const handleSubmit = (event) => {
         event.preventDefault();
-        setFormData({ librarianID:"", librarianName: "", librarianEmail: "", librarianPhone: "" });
+        /*
+        setFormData({
+          librarianID: { type: "number", required: true, placeholder: "" },
+          librarianName: { type: "text", required: true, placeholder: "" },
+          librarianEmail: { type: "email", required: true, placeholder: "" },
+          librarianPhone: { type: "text", required: false, placeholder: ""},
+        });
+        */
+        //setFormData({ librarianID:"", librarianName: "", librarianEmail: "", librarianPhone: "" });
         addEntry(formData)
         setUpdateData(!updateData)
       };
