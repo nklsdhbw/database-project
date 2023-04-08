@@ -8,9 +8,12 @@ function App() {
   const api = "http://localhost:5000/run-query"
   const [results, setResults] = useState([]);
   const [columns, setColumns] = useState([]);
-  const query = 'SELECT * FROM public."Librarians"';
+  const [query, setQuery] = useState('');
   let table = "Librarians"
   let tableID = table.toLowerCase().slice(0, table.length - 1) + "ID"
+  const [options, setOptions] = useState(["Librarians", "Authors"]);
+  const [selectedTable, setSelectedTable] = useState(sessionStorage.getItem('table') || "Librarians");
+  //const query = `SELECT * FROM public."${selectedTable}"`;
 
   
   const [showModal, setShowModal] = useState(false);
@@ -24,30 +27,45 @@ function App() {
     // Call API to create record
     handleCloseModal();
   };
+  
 
-  useEffect(() => {
+useEffect(() => {
+  if (selectedTable) {
+    const newQuery = `SELECT * FROM "${selectedTable}"`;
+    setQuery(newQuery);
+  }
+}, [selectedTable]);
+
+
+useEffect(() => {
+  if (query) {
     axios
       .post('http://localhost:5000/run-query', { query })
       .then((response) => {
         setResults(response.data);
-        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
       });
 
-      axios
-      .post('http://localhost:5000/run-query', { query:`SELECT column_name FROM information_schema.columns  WHERE table_name = '${table}' AND table_schema = 'public'`})
+    axios
+      .post('http://localhost:5000/run-query', { query: `SELECT column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'` })
       .then((columns) => {
         setColumns(columns.data);
-        console.log(columns.data);
       })
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }
+}, [query]);
 
 
+  function changeTable(){
+    const selectElement = document.getElementById("mySelect");
+    const selectedValue = selectElement.options[selectElement.selectedIndex].value;
+    sessionStorage.setItem("table",selectedValue);
+    setSelectedTable(selectedValue);
+  }
   
 
 
@@ -69,7 +87,8 @@ function App() {
         console.log(error);
       });
   }
-  
+
+
 
   return (
     <div>
@@ -103,6 +122,15 @@ function App() {
         handleCreate={handleCreateRecord}
       ></CreateRecordModal>
     </div>
+    <div>
+      <select id="mySelect" value={selectedTable} onChange={changeTable}>
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+      </div>
       </div>
      
 
