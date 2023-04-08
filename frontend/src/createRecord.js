@@ -2,6 +2,8 @@ import { Modal, Form, Button } from "react-bootstrap";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 function CreateRecordModal({ show, handleClose, handleCreate }) {
+
+  
   const [formData, setFormData] = useState({
     librarianID: { type: "number", required: true, placeholder: "123" },
     librarianName: { type: "text", required: true, placeholder: "" },
@@ -35,6 +37,8 @@ function CreateRecordModal({ show, handleClose, handleCreate }) {
           .then((response) => {
             //setResults(response.data);
             console.log(response.data);
+            sessionStorage.setItem('updateData', !Boolean(JSON.parse(sessionStorage.getItem('updateData'))))
+            console.log(sessionStorage.getItem('updateData'))
           })
           .catch((error) => {
             console.log(error);
@@ -68,48 +72,6 @@ function CreateRecordModal({ show, handleClose, handleCreate }) {
     />
   </Form.Group>
             ))}
-            {/*
-          <Form.Group controlId="librarianID">
-              <Form.Label>ID</Form.Label>
-              <Form.Control
-                type="text"
-                name="librarianID"
-                value={formData.librarianID}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-            <Form.Group controlId="librarianName">
-              <Form.Label>Full Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="librarianName"
-                value={formData.librarianName}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-            <Form.Group controlId="librarianEmail">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="librarianEmail"
-                value={formData.librarianEmail}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-            <Form.Group controlId="librarianPhone">
-              <Form.Label>Phone</Form.Label>
-              <Form.Control
-                type="text"
-                name="librarianPhone"
-                value={formData.librarianPhone}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-            */}
             <Button type="submit">Create</Button>
           </Form>
         </Modal.Body>
