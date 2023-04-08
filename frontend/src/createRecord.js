@@ -2,25 +2,35 @@ import { Modal, Form, Button } from "react-bootstrap";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 function CreateRecordModal({ show, handleClose, handleCreate }) {
-    const [formData, setFormData] = useState({
-      librarianID: "",
-      librarianName: "",
-      librarianEmail: "",
-      librarianPhone: "",
-    });
+  const [formData, setFormData] = useState({
+    librarianID: { type: "number", required: true, placeholder: "123" },
+    librarianName: { type: "text", required: true, placeholder: "" },
+    librarianEmail: { type: "email", required: true, placeholder: "" },
+    librarianPhone: { type: "text", required: false, placeholder: ""},
+  });
+  
     const api = "http://localhost:5000/run-query"
   
     const handleInputChange = (event) => {
       const { name, value } = event.target;
-      setFormData({ ...formData, [name]: value });
+      setFormData({ ...formData, [name]: { ...formData[name], placeholder: value } });
     };
+    
   
     function addEntry(librarianData) {
-        
+        let valuesString = "VALUES("
+        let columnsString = ''
+        let table = '"Librarians"'
+        let values = Object.entries(librarianData).map(([key, value])=> (
+          valuesString = valuesString + `'${value.placeholder}',`
+        ))
+        let columns = Object.entries(librarianData).map(([key, value])=> (
+          columnsString = columnsString + `"${key}",`
+        ))
         axios
           .post(api, {
-            query: `INSERT INTO public."${"Librarians"}" ("librarianID", "librarianName", "librarianEmail", "librarianPhone") 
-            VALUES(${librarianData.librarianID},'${librarianData.librarianName}','${librarianData.librarianEmail}','${librarianData.librarianPhone}') `
+            query: `INSERT INTO public.${table} (${columnsString.slice(0, columnsString.length-1)})`+ 
+            `${valuesString.slice(0, valuesString.length-1)}) `
           })
           .then((response) => {
             //setResults(response.data);
@@ -46,6 +56,19 @@ function CreateRecordModal({ show, handleClose, handleCreate }) {
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
+          {Object.entries(formData).map(([key, value])=> (
+  <Form.Group controlId={`${String(key)}`}>
+    <Form.Label>{`${String(key)}`}</Form.Label>
+    <Form.Control
+      type={`${String(value.type)}`}
+      name={`${String(key)}`}
+      value={`${value.placeholder}`}
+      onChange={handleInputChange}
+      required
+    />
+  </Form.Group>
+            ))}
+            {/*
           <Form.Group controlId="librarianID">
               <Form.Label>ID</Form.Label>
               <Form.Control
@@ -86,6 +109,7 @@ function CreateRecordModal({ show, handleClose, handleCreate }) {
                 required
               />
             </Form.Group>
+            */}
             <Button type="submit">Create</Button>
           </Form>
         </Modal.Body>
