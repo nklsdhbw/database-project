@@ -13,6 +13,11 @@ function App() {
   let tableID = table.toLowerCase().slice(0, table.length - 1) + "ID"
   const [options, setOptions] = useState(["Librarians", "Authors"]);
   const [selectedTable, setSelectedTable] = useState(sessionStorage.getItem('table') || "Librarians");
+  let temp = selectedTable.slice(0, selectedTable.length-1)
+  temp = temp.toLowerCase()
+  temp = temp + "ID"
+  
+  const [uniqueColumn, setUniqueColumn] = useState(temp);
   //const query = `SELECT * FROM public."${selectedTable}"`;
 
   
@@ -32,6 +37,10 @@ function App() {
 useEffect(() => {
   if (selectedTable) {
     const newQuery = `SELECT * FROM "${selectedTable}"`;
+    temp = selectedTable.slice(0, selectedTable.length-1)
+    temp = temp.toLowerCase()
+    temp = temp + "ID"
+    setUniqueColumn(temp)
     setQuery(newQuery);
   }
 }, [selectedTable]);
@@ -74,10 +83,10 @@ useEffect(() => {
     return <p>Loading...</p>;
   }
 
-  function deleteEntry(librarianID) {
+  function deleteEntry(rowID) {
     axios
       .post(api, {
-        query: `DELETE FROM public."${table}" WHERE "${tableID}" = ${librarianID}`
+        query: `DELETE FROM public."${selectedTable}" WHERE "${uniqueColumn}" = ${rowID}`
       })
       .then((response) => {
         setResults(response.data);
