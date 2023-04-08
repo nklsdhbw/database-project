@@ -19,6 +19,8 @@ function App() {
   
   const [uniqueColumn, setUniqueColumn] = useState(temp);
   //const query = `SELECT * FROM public."${selectedTable}"`;
+  const [shouldRender, setShouldRender] = useState(false);
+  const [updateData, setUpdateData] = useState(false);
 
   
   const [showModal, setShowModal] = useState(false);
@@ -36,18 +38,21 @@ function App() {
 
 useEffect(() => {
   if (selectedTable) {
+    console.log("HAALLO")
     const newQuery = `SELECT * FROM "${selectedTable}"`;
     temp = selectedTable.slice(0, selectedTable.length-1)
     temp = temp.toLowerCase()
     temp = temp + "ID"
     setUniqueColumn(temp)
     setQuery(newQuery);
+    setShouldRender(!shouldRender);
   }
-}, [selectedTable]);
+}, [selectedTable, updateData]);
 
 
 useEffect(() => {
   if (query) {
+    console.log("B")
     axios
       .post('http://localhost:5000/run-query', { query })
       .then((response) => {
@@ -66,7 +71,7 @@ useEffect(() => {
         console.log(error);
       });
   }
-}, [query]);
+}, [query,shouldRender]);
 
 
   function changeTable(){
@@ -84,12 +89,17 @@ useEffect(() => {
   }
 
   function deleteEntry(rowID) {
+    const tempTable = selectedTable;
     axios
       .post(api, {
         query: `DELETE FROM public."${selectedTable}" WHERE "${uniqueColumn}" = ${rowID}`
       })
       .then((response) => {
-        setResults(response.data);
+        //setResults(response.data);
+        //setShouldRender(!shouldRender);
+        //setSelectedTable(tempTable)
+        setUpdateData(!updateData)
+        console.log("test")
         console.log(response.data);
       })
       .catch((error) => {

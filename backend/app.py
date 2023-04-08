@@ -7,7 +7,7 @@ app = Flask(__name__)
 # "http://localhost:3000/run-query"])
 # db = SQLAlchemy(app)
 # ["SQL_ALCHEMY_DATABSE_URI"] = "postgresql://postgres:0609@localhost/postgres"
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 @app.route('/run-query', methods=['POST'])
@@ -27,12 +27,17 @@ def run_query():
     cur = conn.cursor()
     cur.execute(query)
     conn.commit()  # commit the transaction
-    result = cur.fetchall()
-    cur.close()
-    conn.close()
+    if query.startswith("SELECT"):
+        result = cur.fetchall()
+        cur.close()
+        conn.close()
 
-    # Return the results as JSON
-    return jsonify(result)
+        # Return the results as JSON
+        return jsonify(result)
+    else:
+        cur.close()
+        conn.close()
+        return '', 204
 
 
 if __name__ == "__main__":
