@@ -15,10 +15,11 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route index element={<Register />} />
-        <Route path="*" element={<Register />} />
+        <Route index element={<Login />} />
+        <Route path="*" element={<Login />} />
         <Route path="/Overview" element={<Overview />} />
         <Route path="/Login" element={<Login />} />
+        <Route path="/Register" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
