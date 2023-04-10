@@ -149,7 +149,7 @@ function Overview() {
               datatypesData[index] = "password";
             }
           }
-
+          datatypes.data = datatypes.data; //.shift();
           console.log(datatypes.data);
           setDatatypes(datatypes.data);
         })
@@ -162,9 +162,9 @@ function Overview() {
   useEffect(() => {
     const newFormData = {};
     columns.map(
-      (column) =>
+      (column, index) =>
         (newFormData[column] = {
-          type: "text",
+          type: datatypes[index],
           required: true,
           placeholder: "",
         })
@@ -285,6 +285,7 @@ function Overview() {
     event.preventDefault();
     addEntry(formData);
     setUpdateData(!updateData);
+    setShowModal(!showModal);
   };
 
   const handleEditSubmit = (event) => {
@@ -292,21 +293,36 @@ function Overview() {
     editEntry(editData);
     console.log(editData);
     setUpdateData(!updateData);
+    setShowEditModal(!showEditModal);
   };
 
   function handleEdit(data) {
     //setEditData(...data);
     let keys = Object.keys(editData);
-    console.log(data);
+    console.log("EDIT DATA", data);
 
     data.map(
       (element, index) => (editData[keys[index]]["placeholder"] = element)
     );
 
     setShowEditModal(!showEditModal);
-    console.log("EditData", editData[1]);
+    console.log("EditData", editData);
 
-    editEntry(data);
+    //editEntry(data);
+  }
+
+  function handleCreate() {
+    const newFormData = {};
+    columns.map(
+      (column, index) =>
+        (newFormData[column] = {
+          type: datatypes[index],
+          required: true,
+          placeholder: "",
+        })
+    );
+    setFormData(newFormData);
+    setShowModal(!showModal);
   }
 
   //if (!results.length) {
@@ -351,7 +367,7 @@ function Overview() {
         </tbody>
       </Table>
       <div>
-        <button onClick={() => setShowModal(!showModal)}>
+        <button onClick={() => handleCreate() /*setShowModal(!showModal)}>*/}>
           Create New Record
         </button>
         <Modal show={showModal} onHide={!showModal}>
@@ -360,7 +376,7 @@ function Overview() {
             <Button
               variant="secondary"
               aria-label="Close"
-              onClick={() => setShowModal(!showModal)}
+              onClick={() => handleCreate()} //setShowModal(!showModal)}
             >
               Close
             </Button>
@@ -398,20 +414,26 @@ function Overview() {
           </Modal.Header>
           <Modal.Body>
             <Form onSubmit={handleEditSubmit}>
-              {Object.entries(editData)
-                .slice(1)
-                .map(([key, value]) => (
-                  <Form.Group controlId={`${String(key)}`}>
-                    <Form.Label>{`${String(key)}`}</Form.Label>
-                    <Form.Control
-                      type={`${String(value.type)}`}
-                      name={`${String(key)}`}
-                      value={`${value.placeholder}`}
-                      onChange={handleEditInputChange}
-                      required
-                    />
-                  </Form.Group>
-                ))}
+              {Object.entries(editData).map(([key, value], index) => (
+                <Form.Group controlId={`${String(key)}`}>
+                  <Form.Label>{`${String(key)}`}</Form.Label>
+                  <Form.Control
+                    type={datatypes[index]} //`${String(value.type)}`}
+                    name={`${String(key)}`}
+                    value={
+                      value.type == "date" &&
+                      !isNaN(new Date(value.placeholder))
+                        ? `${new Date(value.placeholder)
+                            .toISOString()
+                            .slice(0, 10)}`
+                        : `${value.placeholder}`
+                      //*/
+                    } //{`${value.placeholder}`}
+                    onChange={handleEditInputChange}
+                    required
+                  />
+                </Form.Group>
+              ))}
               <Button type="submit">Submit Edit</Button>
             </Form>
           </Modal.Body>
