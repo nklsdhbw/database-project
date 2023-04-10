@@ -431,6 +431,7 @@ function Overview() {
                     } //{`${value.placeholder}`}
                     onChange={handleEditInputChange}
                     required
+                    readOnly={key == columns[0] ? true : false}
                   />
                 </Form.Group>
               ))}
