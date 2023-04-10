@@ -18,6 +18,21 @@ const Register = () => {
   const { register, handleSubmit, formState } = useForm();
   const navigate = useNavigate();
   const [results, setResults] = useState([]);
+  const [existingUsers, setExistingUsers] = useState([]);
+  const [userExists, setUserExists] = useState(false);
+  // check if user already exists
+  useEffect(() => {
+    let query = 'SELECT * FROM public."Readers"';
+    axios
+      .post("http://localhost:5000/run-query", { query })
+      .then((response) => {
+        setExistingUsers(response.data);
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   // continue when data is fully loaded
 
@@ -26,19 +41,33 @@ const Register = () => {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const fullName = registerData.firstname + " " + registerData.lastname;
-    let query = `INSERT INTO public."Readers" ("readerName", "readerEmail", "readerPassword") Values('${fullName}', '${registerData.eMail}', '${hashedPassword}')`;
-    // after registration, user is logged in so change loggedIn variable to true
-    // and navigate then to the "overview" page
-    sessionStorage.setItem("loggedIn", JSON.stringify(true));
-    axios
-      .post("http://localhost:5000/run-query", { query })
-      .then((response) => {
-        setResults(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    navigate("/overview");
+    const email = registerData.eMail;
+    console.log(existingUsers);
+    for (let i = 0; i < existingUsers.length; i++) {
+      if (existingUsers[i][2] === email) {
+        console.log("hallo?");
+        setUserExists(true);
+        window.alert("User already exists. Please login");
+        navigate("/Login");
+        break;
+      }
+    }
+
+    if (!setUserExists) {
+      let query = `INSERT INTO public."Readers" ("readerName", "readerEmail", "readerPassword") Values('${fullName}', '${registerData.eMail}', '${hashedPassword}')`;
+      // after registration, user is logged in so change loggedIn variable to true
+      // and navigate then to the "overview" page
+      sessionStorage.setItem("loggedIn", JSON.stringify(true));
+      axios
+        .post("http://localhost:5000/run-query", { query })
+        .then((response) => {
+          setResults(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      navigate("/overview");
+    }
   };
 
   // return form with input fields for registrating a new user

@@ -129,7 +129,7 @@ const Login = () => {
 
       <div>
         <span>
-          oder registriere dich <NavLink to="/register">hier</NavLink>
+          oder registriere dich <NavLink to="/Register">hier</NavLink>
         </span>
       </div>
     </form>
