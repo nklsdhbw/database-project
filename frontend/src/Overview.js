@@ -18,6 +18,7 @@ function Overview() {
   // state variables
   const [results, setResults] = useState([]);
   const [columns, setColumns] = useState([]);
+  const [datatypes, setDatatypes] = useState([]);
   const [query, setQuery] = useState("");
 
   const [options, setOptions] = useState(["Librarians", "Authors"]);
@@ -91,6 +92,66 @@ function Overview() {
         })
         .then((columns) => {
           setColumns(columns.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [query, shouldRender]);
+
+  useEffect(() => {
+    if (query) {
+      console.log("B");
+      axios
+        .post("http://localhost:5000/run-query", { query })
+        .then((response) => {
+          setResults(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      axios
+        .post("http://localhost:5000/run-query", {
+          query: `SELECT data_type, column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
+        })
+        .then((datatypes) => {
+          let datatypesData = datatypes.data;
+          //setDatatypes(datatypes.data);
+
+          for (let index = 0; index < datatypesData.length; index++) {
+            let element = datatypesData[index];
+            if (
+              element[0].startsWith("character") ||
+              element[0].startsWith("char")
+            ) {
+              datatypesData[index] = "text";
+            }
+            if (
+              element[0].startsWith("big") ||
+              element[0].startsWith("int") ||
+              element[0].startsWith("small") ||
+              element[0].startsWith("numeric")
+            ) {
+              datatypesData[index] = "number";
+            }
+
+            if (element[0].startsWith("date")) {
+              datatypesData[index] = "date";
+            }
+            if (element[0].startsWith("bool")) {
+              datatypesData[index] = "checked";
+            }
+            if (element[1].includes("mail")) {
+              datatypesData[index] = "email";
+            }
+            if (element[1].includes("assword")) {
+              datatypesData[index] = "password";
+            }
+          }
+
+          console.log(datatypes.data);
+          setDatatypes(datatypes.data);
         })
         .catch((error) => {
           console.log(error);
@@ -248,10 +309,10 @@ function Overview() {
     editEntry(data);
   }
 
-  if (!results.length) {
-    // If there is no data available yet, show a loading indicator or an empty state.
-    return <p>Loading...</p>;
-  }
+  //if (!results.length) {
+  // If there is no data available yet, show a loading indicator or an empty state.
+  //  return <p>Loading...</p>;
+  //}
 
   return (
     <div>
@@ -306,11 +367,11 @@ function Overview() {
           </Modal.Header>
           <Modal.Body>
             <Form onSubmit={handleSubmit}>
-              {Object.entries(formData).map(([key, value]) => (
+              {Object.entries(formData).map(([key, value], index) => (
                 <Form.Group controlId={`${String(key)}`}>
                   <Form.Label>{`${String(key)}`}</Form.Label>
                   <Form.Control
-                    type={`${String(value.type)}`}
+                    type={datatypes[index]} //`${String(value.type)}`}
                     name={`${String(key)}`}
                     value={`${value.placeholder}`}
                     onChange={handleInputChange}
