@@ -97,7 +97,7 @@ function Overview() {
           console.log(error);
         });
     }
-  }, [query, shouldRender]);
+  }, [query, shouldRender, selectedTable]);
 
   useEffect(() => {
     if (query) {
@@ -157,7 +157,7 @@ function Overview() {
           console.log(error);
         });
     }
-  }, [query, shouldRender]);
+  }, [query, shouldRender, selectedTable]);
 
   useEffect(() => {
     const newFormData = {};
@@ -423,12 +423,10 @@ function Overview() {
                     value={
                       value.type == "date" &&
                       !isNaN(new Date(value.placeholder))
-                        ? `${new Date(value.placeholder)
-                            .toISOString()
-                            .slice(0, 10)}`
+                        ? new Date(value.placeholder).toISOString().slice(0, 10)
                         : `${value.placeholder}`
-                      //*/
-                    } //{`${value.placeholder}`}
+                    }
+                    //{`${value.placeholder}`}
                     onChange={handleEditInputChange}
                     required
                     readOnly={key == columns[0] ? true : false}
