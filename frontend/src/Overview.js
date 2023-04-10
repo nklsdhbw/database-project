@@ -4,9 +4,15 @@ import axios from "axios";
 import BootstrapTable from "react-bootstrap-table-next";
 import Table from "react-bootstrap/Table";
 import CreateRecordModal from "./createRecord";
+import { useNavigate } from "react-router-dom";
 
 function Overview() {
+  const navigate = useNavigate();
   // general variables
+  let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
+  if (loginStatus != "true") {
+    navigate("/Login");
+  }
   const api = "http://localhost:5000/run-query";
   const [selectedTable, setSelectedTable] = useState(
     sessionStorage.getItem("table") || "Librarians"
