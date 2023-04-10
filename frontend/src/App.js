@@ -25,7 +25,14 @@ function App() {
   const [shouldRender, setShouldRender] = useState(false);
   const [updateData, setUpdateData] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [formData, setFormData] = useState({
+    librarianID: { type: "number", required: true, placeholder: "123" },
+    librarianName: { type: "text", required: true, placeholder: "" },
+    librarianEmail: { type: "email", required: true, placeholder: "" },
+    librarianPhone: { type: "text", required: false, placeholder: "" },
+  });
+  const [editData, setEditData] = useState({
     librarianID: { type: "number", required: true, placeholder: "123" },
     librarianName: { type: "text", required: true, placeholder: "" },
     librarianEmail: { type: "email", required: true, placeholder: "" },
@@ -82,6 +89,7 @@ function App() {
         })
     );
     setFormData(newFormData);
+    setEditData(newFormData);
   }, [columns]);
 
   // functions
@@ -93,7 +101,7 @@ function App() {
     setSelectedTable(selectedValue);
   }
 
-  function addEntry(data) {
+  function addEntry(data, rowID) {
     let valuesString = "VALUES(";
     let columnsString = "";
     let values = Object.entries(data).map(
@@ -139,6 +147,42 @@ function App() {
         console.log(error);
       });
   }
+  function editEntry(data) {
+    let valuesString = "SET ";
+    let columnsString = "";
+    let query = "SET ";
+    let rowID = selectedTable.slice(0, selectedTable.length - 1);
+    rowID = rowID.toLowerCase();
+    rowID = rowID + "ID";
+
+    let values = Object.entries(data).map(
+      ([key, value]) => (query = query + `"${key}" = '${value.placeholder}',`)
+    );
+    //let columns = Object.entries(data).map(
+    //  ([key, value]) => (columnsString = columnsString + `"${key}",`)
+    //);
+    console.log(Object.values(data)[0]["placeholder"]);
+    axios
+      .post(api, {
+        query:
+          `UPDATE public."${selectedTable}" ${query.slice(
+            0,
+            columnsString.length - 1
+          )} ` + `WHERE "${rowID}" = ${Object.values(data)[0]["placeholder"]}`,
+      })
+      .then((response) => {
+        //setResults(response.data);
+        console.log(response.data);
+        sessionStorage.setItem(
+          "updateData",
+          !Boolean(JSON.parse(sessionStorage.getItem("updateData")))
+        );
+        console.log(sessionStorage.getItem("updateData"));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   // event handler
   const handleInputChange = (event) => {
@@ -148,12 +192,41 @@ function App() {
       [name]: { ...formData[name], placeholder: value },
     });
   };
+  const handleEditInputChange = (event) => {
+    const { name, value } = event.target;
+    setEditData({
+      ...editData,
+      [name]: { ...editData[name], placeholder: value },
+    });
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     addEntry(formData);
     setUpdateData(!updateData);
   };
+
+  const handleEditSubmit = (event) => {
+    event.preventDefault();
+    editEntry(editData);
+    console.log(editData);
+    setUpdateData(!updateData);
+  };
+
+  function handleEdit(data) {
+    //setEditData(...data);
+    let keys = Object.keys(editData);
+    console.log(data);
+
+    data.map(
+      (element, index) => (editData[keys[index]]["placeholder"] = element)
+    );
+
+    setShowEditModal(!showEditModal);
+    console.log("EditData", editData[1]);
+
+    editEntry(data);
+  }
 
   if (!results.length) {
     // If there is no data available yet, show a loading indicator or an empty state.
@@ -184,6 +257,14 @@ function App() {
                   Delete
                 </button>
               </td>
+              <td>
+                <button
+                  className="w-100 btn btn-lg btn-primary"
+                  onClick={() => handleEdit(data)}
+                >
+                  Edit
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -193,8 +274,15 @@ function App() {
           Create New Record
         </button>
         <Modal show={showModal} onHide={!showModal}>
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>Create New Record</Modal.Title>
+            <Button
+              variant="secondary"
+              aria-label="Close"
+              onClick={() => setShowModal(!showModal)}
+            >
+              Close
+            </Button>
           </Modal.Header>
           <Modal.Body>
             <Form onSubmit={handleSubmit}>
@@ -211,6 +299,39 @@ function App() {
                 </Form.Group>
               ))}
               <Button type="submit">Create</Button>
+            </Form>
+          </Modal.Body>
+        </Modal>
+      </div>
+      <div>
+        <Modal show={showEditModal} onHide={!showEditModal}>
+          <Modal.Header>
+            <Modal.Title>Edit Record</Modal.Title>
+            <Button
+              variant="secondary"
+              aria-label="Close"
+              onClick={() => setShowModal(!showModal)}
+            >
+              Close
+            </Button>
+          </Modal.Header>
+          <Modal.Body>
+            <Form onSubmit={handleEditSubmit}>
+              {Object.entries(editData)
+                .slice(1)
+                .map(([key, value]) => (
+                  <Form.Group controlId={`${String(key)}`}>
+                    <Form.Label>{`${String(key)}`}</Form.Label>
+                    <Form.Control
+                      type={`${String(value.type)}`}
+                      name={`${String(key)}`}
+                      value={`${value.placeholder}`}
+                      onChange={handleEditInputChange}
+                      required
+                    />
+                  </Form.Group>
+                ))}
+              <Button type="submit">Submit Edit</Button>
             </Form>
           </Modal.Body>
         </Modal>
