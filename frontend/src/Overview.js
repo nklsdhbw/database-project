@@ -40,6 +40,26 @@ function Overview() {
   });
 
   // react hooks
+
+  useEffect(() => {
+    let query = `SELECT tablename
+      FROM pg_tables
+      WHERE schemaname = 'public'
+      ORDER BY tablename;
+      `;
+
+    axios
+      .post("http://localhost:5000/run-query", {
+        query,
+      })
+      .then((tables) => {
+        setOptions(tables.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
   useEffect(() => {
     if (selectedTable) {
       console.log("HAALLO");

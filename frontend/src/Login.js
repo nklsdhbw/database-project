@@ -1,21 +1,56 @@
 // import libraries
 import * as React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useFetch from "react-fetch-hook";
 import "bootstrap/dist/css/bootstrap.min.css";
+import bcrypt from "bcryptjs";
+import axios from "axios";
+import Overview from "./Overview";
+
 // import required css
 //import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Login = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, formState } = useForm();
+  const [results, setResults] = useState([]);
   //let { isLoading, data } = useFetch("/api/login");
+  useEffect(() => {
+    let query = 'SELECT * FROM public."Readers"';
+    axios
+      .post("http://localhost:5000/run-query", { query })
+      .then((response) => {
+        setResults(response.data);
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
-  const onSubmit = (formData) => {
+  const onSubmit = async (formData) => {
     // declare login status
+    const password = formData.password;
     sessionStorage.setItem("loggedIn", JSON.stringify(false));
-    navigate("overview");
+    let hashedPassword;
+
+    results.forEach((element) => {
+      console.log(element[2], formData.username);
+      if (element[2] == formData.username) {
+        hashedPassword = element[3];
+      }
+    });
+    const passwordsMatch = await bcrypt.compare(password, hashedPassword);
+    console.log(hashedPassword, password);
+    if (passwordsMatch) {
+      navigate("/overview");
+      sessionStorage.setItem("loggedIn", JSON.stringify(true));
+    } else {
+      window.alert("Pech");
+    }
+
     // iterate over the data from /api/login and check if the inputs are in the array(=database)
     // lowercase input email, so that the case of the input email doesn't matter
     /*
