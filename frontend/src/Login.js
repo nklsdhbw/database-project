@@ -16,6 +16,15 @@ const Login = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, formState } = useForm();
   const [results, setResults] = useState([]);
+
+  let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
+  console.log("LoginStatus", loginStatus);
+  if (!loginStatus) {
+    navigate("/Login");
+  } else {
+    navigate("/Overview");
+  }
+
   //let { isLoading, data } = useFetch("/api/login");
   useEffect(() => {
     let query = 'SELECT * FROM public."Readers"';
@@ -44,9 +53,10 @@ const Login = () => {
     });
     const passwordsMatch = await bcrypt.compare(password, hashedPassword);
     console.log(hashedPassword, password);
+    console.log(passwordsMatch);
     if (passwordsMatch) {
-      navigate("/overview");
       sessionStorage.setItem("loggedIn", JSON.stringify(true));
+      navigate("/Overview");
     } else {
       window.alert("Pech");
     }

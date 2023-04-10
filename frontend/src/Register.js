@@ -20,6 +20,14 @@ const Register = () => {
   const [results, setResults] = useState([]);
   const [existingUsers, setExistingUsers] = useState([]);
   const [userExists, setUserExists] = useState(false);
+
+  let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
+  console.log("LoginStatus", loginStatus);
+  if (!loginStatus) {
+    navigate("/Login");
+  } else {
+    navigate("/Overview");
+  }
   // check if user already exists
   useEffect(() => {
     let query = 'SELECT * FROM public."Readers"';

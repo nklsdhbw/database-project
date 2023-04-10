@@ -10,7 +10,8 @@ function Overview() {
   const navigate = useNavigate();
   // general variables
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
-  if (loginStatus != "true") {
+  console.log("LoginStatus", loginStatus);
+  if (!loginStatus) {
     navigate("/Login");
   }
   const api = "http://localhost:5000/run-query";
