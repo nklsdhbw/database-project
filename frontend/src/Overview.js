@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Modal, Form, Button } from "react-bootstrap";
+import { Modal, Form, Button, ModalBody } from "react-bootstrap";
 import axios from "axios";
 import BootstrapTable from "react-bootstrap-table-next";
 import Table from "react-bootstrap/Table";
@@ -35,6 +35,7 @@ function Overview() {
   const [shouldRender, setShouldRender] = useState(false);
   const [updateData, setUpdateData] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showSearchBook, setShowSearchBook] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [updateBookIDs, setUpdateBookIDs] = useState(false);
   const [formData, setFormData] = useState({
@@ -70,6 +71,7 @@ function Overview() {
     });
     console.log(updatedFormData);
     setFormData(updatedFormData);
+    setShowSearchBook(!showSearchBook);
 
     console.log(formData);
   };
@@ -213,14 +215,20 @@ function Overview() {
 
   useEffect(() => {
     const newFormData = {};
-    columns.map(
-      (column, index) =>
-        (newFormData[column] = {
-          type: datatypes[index],
-          required: true,
-          placeholder: "",
-        })
-    );
+    columns.map((column, index) => {
+      let placeholder = "";
+      if (column == "loanReaderEmail") {
+        placeholder = sessionStorage.getItem("loginMail");
+      }
+      if (column == "loanLoanDate") {
+        placeholder = new Date().toISOString().slice(0, 10);
+      }
+      newFormData[column] = {
+        type: datatypes[index],
+        required: true,
+        placeholder: placeholder,
+      };
+    });
     setFormData(newFormData);
     setEditData(newFormData);
   }, [columns]);
@@ -487,6 +495,9 @@ function Overview() {
                 </Form.Group>
               ))}
               <Button type="submit">Create</Button>
+              <Button onClick={() => setShowSearchBook(!showSearchBook)}>
+                Search Book
+              </Button>
             </Form>
           </Modal.Body>
         </Modal>
@@ -539,12 +550,20 @@ function Overview() {
         </select>
       </div>
       <div>
-        {
-          <TableSearch
-            id="Search"
-            callback={callThisFromChildComponent}
-          ></TableSearch>
-        }
+        {showSearchBook && (
+          <Modal
+            show={showSearchBook}
+            onHide={!showSearchBook}
+            fullscreen={true}
+          >
+            <ModalBody>
+              <TableSearch
+                id="Search"
+                callback={callThisFromChildComponent}
+              ></TableSearch>
+            </ModalBody>
+          </Modal>
+        )}
       </div>
     </div>
   );
