@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./Login.js";
 import Overview from "./Overview.js";
 import Register from "./Register.js";
+import Views from "./Views.js";
 
 // import required css
 //import "./App.css";
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="/Overview" element={<Overview />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
+        <Route path="/Views" element={<Views />} />
       </Routes>
     </BrowserRouter>
   );
