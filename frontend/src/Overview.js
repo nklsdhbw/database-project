@@ -5,6 +5,7 @@ import BootstrapTable from "react-bootstrap-table-next";
 import Table from "react-bootstrap/Table";
 import CreateRecordModal from "./createRecord";
 import { useNavigate } from "react-router-dom";
+import TableSearch from "./TableSearch";
 
 function Overview() {
   const navigate = useNavigate();
@@ -356,6 +357,7 @@ function Overview() {
     );
     setFormData(newFormData);
     setShowModal(!showModal);
+    //navigate("/Search");
   }
 
   //if (!results.length) {
@@ -403,7 +405,8 @@ function Overview() {
         <button onClick={() => handleCreate() /*setShowModal(!showModal)}>*/}>
           Create New Record
         </button>
-        <Modal show={showModal} onHide={!showModal}>
+
+        <Modal show={false} onHide={!false}>
           <Modal.Header>
             <Modal.Title>Create New Record</Modal.Title>
             <Button
@@ -498,6 +501,7 @@ function Overview() {
           ))}
         </select>
       </div>
+      <div>{showModal && <TableSearch></TableSearch>}</div>
     </div>
   );
 }

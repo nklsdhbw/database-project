@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Table, Input } from "antd";
+import { Input } from "antd";
+import Table from "react-bootstrap/Table";
 import axios from "axios";
 import { userColumns } from "./columns";
 import { useTableSearch } from "./useTableSearch";
@@ -64,13 +65,49 @@ export default function TableSearch() {
         style={{ position: "sticky", top: "0", left: "0" }}
       />
       <br /> <br />
-      <Table
+      {
+        /*<Table
         rowKey="name"
         dataSource={filteredData}
         columns={userColumns}
         loading={loading}
         pagination={false}
       />
+      */
+        <div>
+          <Table striped bordered hover className="table mx-auto">
+            <thead>
+              {filteredData
+                .slice(0, 1)
+                .map((column) =>
+                  Object.keys(column).map((col) => <th key={col}>{col}</th>)
+                )}
+              <th className="col"></th>
+            </thead>
+            <tbody>
+              {filteredData.map((row, index) => (
+                <tr key={index}>
+                  {Object.entries(row).map(([key, value]) => (
+                    <td key={key}>
+                      <div>
+                        <div>{value}</div>
+                      </div>
+                    </td>
+                  ))}
+                  <td>
+                    <button
+                      className="w-100 btn btn-lg btn-primary"
+                      onClick={console.log("hi")}
+                    >
+                      Choose
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
+      }
     </>
   );
 }
