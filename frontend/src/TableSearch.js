@@ -8,8 +8,21 @@ import { useTableSearch } from "./useTableSearch";
 const { Search } = Input;
 
 const fetchUsers = async () => {
+  let inputColumns;
   let data;
-  let table = "Authors";
+  let table = "Books";
+  console.log("FETCH USERS");
+  await axios
+    .post("http://localhost:5000/run-query", {
+      query: `SELECT column_name FROM information_schema.columns  WHERE table_name = '${table}' AND table_schema = 'public'`,
+    })
+    .then((columns) => {
+      inputColumns = columns.data.flat();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
   await axios
     .post("http://localhost:5000/run-query", {
       query: `SELECT * FROM public."${table}"`,
@@ -21,12 +34,16 @@ const fetchUsers = async () => {
       console.log(typeof data2);
       let entries = Object.values(data2);
       console.log("Entries", entries, typeof entries);
-      const result = data2.map(([a, b, c, d]) => ({
-        authorID: a,
-        authorName: b,
-        authorEmail: c,
-        authorPhone: d,
-      }));
+      console.log("Keys", Object.keys(data2));
+      console.log(typeof inputColumns, inputColumns.length);
+      let array = inputColumns;
+      const result = data2.map((data) => {
+        let obj = {};
+        array.forEach((key, index) => {
+          obj[key] = data[index];
+        });
+        return obj;
+      });
 
       data = result;
       return { result };
@@ -48,7 +65,7 @@ const fetchUsers = async () => {
 };
 */
 
-export default function TableSearch() {
+export default function TableSearch({ callback }) {
   const [searchVal, setSearchVal] = useState(null);
 
   const { filteredData, loading } = useTableSearch({
@@ -97,7 +114,7 @@ export default function TableSearch() {
                   <td>
                     <button
                       className="w-100 btn btn-lg btn-primary"
-                      onClick={console.log("hi")}
+                      onClick={() => callback(row)}
                     >
                       Choose
                     </button>

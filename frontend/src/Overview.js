@@ -50,6 +50,30 @@ function Overview() {
     librarianPhone: { type: "text", required: false, placeholder: "" },
   });
 
+  // callback
+  const callThisFromChildComponent = (data) => {
+    console.log("Child passed this", data);
+    let input = data;
+    const updatedFormData = { ...formData };
+    Object.keys(input).forEach((key) => {
+      let formDataKey = key;
+      if (key == "bookID") {
+        formDataKey = "loanBookID";
+      }
+      console.log(key, formDataKey);
+      if (
+        updatedFormData[formDataKey] &&
+        updatedFormData[formDataKey].hasOwnProperty("placeholder")
+      ) {
+        updatedFormData[formDataKey].placeholder = input[key].toString();
+      }
+    });
+    console.log(updatedFormData);
+    setFormData(updatedFormData);
+
+    console.log(formData);
+  };
+
   // react hooks
 
   useEffect(() => {
@@ -103,6 +127,17 @@ function Overview() {
         })
         .then((columns) => {
           setColumns(columns.data);
+          const newFormData = {};
+          let newColumns = columns.data;
+          newColumns.map(
+            (column, index) =>
+              (newFormData[column] = {
+                type: datatypes[index],
+                required: true,
+                placeholder: "",
+              })
+          );
+          setFormData(newFormData);
         })
         .catch((error) => {
           console.log(error);
@@ -347,6 +382,7 @@ function Overview() {
 
   function handleCreate() {
     const newFormData = {};
+    /*
     columns.map(
       (column, index) =>
         (newFormData[column] = {
@@ -356,6 +392,7 @@ function Overview() {
         })
     );
     setFormData(newFormData);
+    */
     setShowModal(!showModal);
     //navigate("/Search");
   }
@@ -406,7 +443,7 @@ function Overview() {
           Create New Record
         </button>
 
-        <Modal show={false} onHide={!false}>
+        <Modal show={showModal} onHide={!showModal}>
           <Modal.Header>
             <Modal.Title>Create New Record</Modal.Title>
             <Button
@@ -501,7 +538,14 @@ function Overview() {
           ))}
         </select>
       </div>
-      <div>{showModal && <TableSearch></TableSearch>}</div>
+      <div>
+        {
+          <TableSearch
+            id="Search"
+            callback={callThisFromChildComponent}
+          ></TableSearch>
+        }
+      </div>
     </div>
   );
 }

@@ -1,23 +1,23 @@
 export const userColumns = [
   {
-    title: "authorID",
-    dataIndex: "authorID",
-    key: "authorID",
+    title: "bookID",
+    dataIndex: "bookID",
+    key: "bookID",
   },
   {
-    title: "authorName",
-    dataIndex: "authorName",
-    key: "authorName",
+    title: "bookTitle",
+    dataIndex: "bookTitle",
+    key: "bookTitle",
   },
   {
-    title: "authorEmail",
-    dataIndex: "authorEmail",
-    key: "authorEmail",
+    title: "bookAuthor",
+    dataIndex: "bookAuthor",
+    key: "bookAuthor",
   },
   {
-    title: "authorPhone",
-    dataIndex: "authorPhone",
-    key: "authorPhone",
+    title: "bookPublisherName",
+    dataIndex: "bookPublisherName",
+    key: "bookPublisherName",
   },
 ];
 
