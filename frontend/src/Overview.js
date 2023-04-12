@@ -26,6 +26,7 @@ function Overview() {
   const [results, setResults] = useState([]);
   const [columns, setColumns] = useState([]);
   const [datatypes, setDatatypes] = useState([]);
+  const [bookIDs, setBookIDs] = useState([]);
   const [query, setQuery] = useState("");
 
   const [options, setOptions] = useState(["Librarians", "Authors"]);
@@ -34,6 +35,7 @@ function Overview() {
   const [updateData, setUpdateData] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [updateBookIDs, setUpdateBookIDs] = useState(false);
   const [formData, setFormData] = useState({
     librarianID: { type: "number", required: true, placeholder: "123" },
     librarianName: { type: "text", required: true, placeholder: "" },
@@ -68,9 +70,9 @@ function Overview() {
       });
   }, []);
 
+  // get data from table
   useEffect(() => {
     if (selectedTable) {
-      console.log("HAALLO");
       const newQuery = `SELECT * FROM "${selectedTable}"`;
       temp = selectedTable.slice(0, selectedTable.length - 1);
       temp = temp.toLowerCase();
@@ -81,6 +83,7 @@ function Overview() {
     }
   }, [selectedTable, updateData]);
 
+  // get columns from table
   useEffect(() => {
     if (query) {
       console.log("B");
@@ -106,6 +109,7 @@ function Overview() {
     }
   }, [query, shouldRender, selectedTable]);
 
+  //get datatypes from table
   useEffect(() => {
     if (query) {
       console.log("B");
@@ -155,6 +159,11 @@ function Overview() {
             if (element[1].includes("assword")) {
               datatypesData[index] = "password";
             }
+
+            //bookID
+            if (element[1] == "loanBookID") {
+              datatypesData[index] = "checkbox";
+            }
           }
           datatypes.data = datatypes.data; //.shift();
           console.log(datatypes.data);
@@ -179,6 +188,23 @@ function Overview() {
     setFormData(newFormData);
     setEditData(newFormData);
   }, [columns]);
+
+  //fetch bookIDs
+  useEffect(() => {
+    if (bookIDs) {
+      axios
+        .post("http://localhost:5000/run-query", {
+          query: `SELECT "bookID" FROM public."Books"`,
+        })
+        .then((bookIDs) => {
+          setBookIDs(bookIDs.data);
+          console.log("BookIDS", bookIDs.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [updateBookIDs]);
 
   // functions
   function changeTable() {
@@ -393,13 +419,31 @@ function Overview() {
               {Object.entries(formData).map(([key, value], index) => (
                 <Form.Group controlId={`${String(key)}`}>
                   <Form.Label>{`${String(key)}`}</Form.Label>
-                  <Form.Control
-                    type={datatypes[index]} //`${String(value.type)}`}
-                    name={`${String(key)}`}
-                    value={`${value.placeholder}`}
-                    onChange={handleInputChange}
-                    required
-                  />
+                  {datatypes[index] != "checkbox" ? (
+                    <Form.Control
+                      type={datatypes[index]} //`${String(value.type)}`}
+                      name={`${String(key)}`}
+                      value={`${value.placeholder}`}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  ) : (
+                    <Form.Select
+                      name={key}
+                      value={formData[key]["placeholder"]}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="" disabled selected>
+                        Select an option
+                      </option>
+                      {bookIDs.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  )}
                 </Form.Group>
               ))}
               <Button type="submit">Create</Button>
