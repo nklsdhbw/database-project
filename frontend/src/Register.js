@@ -66,6 +66,7 @@ const Register = () => {
       // after registration, user is logged in so change loggedIn variable to true
       // and navigate then to the "overview" page
       sessionStorage.setItem("loggedIn", JSON.stringify(true));
+      sessionStorage.setItem("loginMail", registerData.eMail);
       axios
         .post("http://localhost:5000/run-query", { query })
         .then((response) => {

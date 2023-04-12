@@ -42,6 +42,7 @@ const Login = () => {
   const onSubmit = async (formData) => {
     // declare login status
     const password = formData.password;
+    let loginMail = formData.username;
     sessionStorage.setItem("loggedIn", JSON.stringify(false));
     let hashedPassword;
 
@@ -56,6 +57,7 @@ const Login = () => {
     console.log(passwordsMatch);
     if (passwordsMatch) {
       sessionStorage.setItem("loggedIn", JSON.stringify(true));
+      sessionStorage.setItem("loginMail", loginMail);
       navigate("/Overview");
     } else {
       window.alert("Pech");
