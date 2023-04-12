@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import TableSearch from "./TableSearch";
 
 function Overview() {
+  const UNIQUE_IDS = ["loanID", "bookID", "authorID", "librarianID"];
   const navigate = useNavigate();
   // general variables
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
@@ -131,14 +132,18 @@ function Overview() {
           setColumns(columns.data);
           const newFormData = {};
           let newColumns = columns.data;
-          newColumns.map(
-            (column, index) =>
-              (newFormData[column] = {
+          newColumns.map((column, index) => {
+            if (UNIQUE_IDS.includes(column[0])) {
+              console.log("loanID is in unique cols");
+            } else {
+              newFormData[column] = {
                 type: datatypes[index],
                 required: true,
                 placeholder: "",
-              })
-          );
+              };
+            }
+          });
+          console.log(newFormData);
           setFormData(newFormData);
         })
         .catch((error) => {
@@ -167,6 +172,7 @@ function Overview() {
         .then((datatypes) => {
           let datatypesData = datatypes.data;
           //setDatatypes(datatypes.data);
+          console.log(datatypesData.length);
 
           for (let index = 0; index < datatypesData.length; index++) {
             let element = datatypesData[index];
@@ -202,10 +208,16 @@ function Overview() {
             if (element[1] == "loanBookID") {
               datatypesData[index] = "checkbox";
             }
+            //drop loanID
+            if (UNIQUE_IDS.includes(element[1])) {
+              datatypesData[index] = null;
+            }
           }
+          console.log("DATATYPES", datatypesData);
           datatypes.data = datatypes.data; //.shift();
-          console.log(datatypes.data);
-          setDatatypes(datatypes.data);
+          const filteredArr = datatypesData.filter((value) => value != null);
+          console.log(filteredArr);
+          setDatatypes(filteredArr);
         })
         .catch((error) => {
           console.log(error);
@@ -216,19 +228,24 @@ function Overview() {
   useEffect(() => {
     const newFormData = {};
     columns.map((column, index) => {
+      console.log(column);
       let placeholder = "";
-      if (column == "loanReaderEmail") {
+      if (column[0] == "loanReaderEmail") {
         placeholder = sessionStorage.getItem("loginMail");
       }
-      if (column == "loanLoanDate") {
+      if (column[0] == "loanLoanDate") {
         placeholder = new Date().toISOString().slice(0, 10);
       }
-      newFormData[column] = {
-        type: datatypes[index],
-        required: true,
-        placeholder: placeholder,
-      };
+      if (UNIQUE_IDS.includes(column[0])) {
+      } else {
+        newFormData[column[0]] = {
+          type: datatypes[index],
+          required: true,
+          placeholder: placeholder,
+        };
+      }
     });
+    console.log(newFormData);
     setFormData(newFormData);
     setEditData(newFormData);
   }, [columns]);
