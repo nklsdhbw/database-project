@@ -8,12 +8,17 @@ import { useNavigate } from "react-router-dom";
 import TableSearch from "./TableSearch";
 
 function Overview() {
-  const UNIQUE_IDS = ["loanID", "bookID", "authorID", "librarianID"];
+  const UNIQUE_IDS = [
+    "loanID",
+    "bookID",
+    "authorID",
+    "librarianID",
+    "publisherID",
+  ];
   const BUTTON_TABLES = ["Loans", "Books"];
   const navigate = useNavigate();
   // general variables
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
-  console.log("LoginStatus", loginStatus);
   if (!loginStatus) {
     navigate("/Login");
   }
@@ -33,6 +38,9 @@ function Overview() {
   const [bookIDs, setBookIDs] = useState([]);
   const [showButton, setShowButton] = useState(
     BUTTON_TABLES.includes(selectedTable) ? true : false
+  );
+  const [showPublisherButton, setShowPublisherButton] = useState(
+    selectedTable == "Books" ? true : false
   );
 
   const [query, setQuery] = useState("");
@@ -60,7 +68,7 @@ function Overview() {
 
   // callback
   const callThisFromChildComponent = (data) => {
-    console.log("Child passed this", data);
+    console.log("Data from Child component:", data);
     let input = data;
     const updatedFormData = { ...formData };
     Object.keys(input).forEach((key) => {
@@ -74,8 +82,13 @@ function Overview() {
       if (key == "authorName") {
         formDataKey = "bookAuthor";
       }
-      //if (key==)
-      console.log(key, formDataKey);
+      if (key == "publisherID") {
+        formDataKey = "bookPublisherID";
+      }
+      if (key == "publisherName") {
+        formDataKey = "bookPublisherName";
+      }
+
       if (
         updatedFormData[formDataKey] &&
         updatedFormData[formDataKey].hasOwnProperty("placeholder")
@@ -83,11 +96,10 @@ function Overview() {
         updatedFormData[formDataKey].placeholder = input[key].toString();
       }
     });
-    console.log(updatedFormData);
+    console.log("Updated FormData : ", updatedFormData);
     setFormData(updatedFormData);
     setShowSearchBook(!showSearchBook);
-
-    console.log(formData);
+    sessionStorage.setItem("showPublisher", "false");
   };
 
   // react hooks
@@ -107,7 +119,7 @@ function Overview() {
         setOptions(tables.data);
       })
       .catch((error) => {
-        console.log(error);
+        console.log("ERROR : ", error);
       });
   }, []);
 
@@ -127,14 +139,13 @@ function Overview() {
   // get columns from table
   useEffect(() => {
     if (query) {
-      console.log("B");
       axios
         .post("http://localhost:5000/run-query", { query })
         .then((response) => {
           setResults(response.data);
         })
         .catch((error) => {
-          console.log(error);
+          console.log("ERROR : ", error);
         });
 
       axios
@@ -147,7 +158,6 @@ function Overview() {
           let newColumns = columns.data;
           newColumns.map((column, index) => {
             if (UNIQUE_IDS.includes(column[0])) {
-              console.log("loanID is in unique cols");
             } else {
               newFormData[column] = {
                 type: datatypes[index],
@@ -156,11 +166,10 @@ function Overview() {
               };
             }
           });
-          console.log(newFormData);
           setFormData(newFormData);
         })
         .catch((error) => {
-          console.log(error);
+          console.log("ERROR : ", error);
         });
     }
   }, [query, shouldRender, selectedTable]);
@@ -168,14 +177,13 @@ function Overview() {
   //get datatypes from table
   useEffect(() => {
     if (query) {
-      console.log("B");
       axios
         .post("http://localhost:5000/run-query", { query })
         .then((response) => {
           setResults(response.data);
         })
         .catch((error) => {
-          console.log(error);
+          console.log("ERROR : ", error);
         });
 
       axios
@@ -184,9 +192,6 @@ function Overview() {
         })
         .then((datatypes) => {
           let datatypesData = datatypes.data;
-          //setDatatypes(datatypes.data);
-          console.log(datatypesData.length);
-
           for (let index = 0; index < datatypesData.length; index++) {
             let element = datatypesData[index];
             if (
@@ -226,14 +231,13 @@ function Overview() {
               datatypesData[index] = null;
             }
           }
-          console.log("DATATYPES", datatypesData);
-          datatypes.data = datatypes.data; //.shift();
+
           const filteredArr = datatypesData.filter((value) => value != null);
-          console.log(filteredArr);
+          console.log("HTML DATATYPES : ", filteredArr);
           setDatatypes(filteredArr);
         })
         .catch((error) => {
-          console.log(error);
+          console.log("ERROR : ", error);
         });
     }
   }, [query, shouldRender, selectedTable]);
@@ -241,7 +245,6 @@ function Overview() {
   useEffect(() => {
     const newFormData = {};
     columns.map((column, index) => {
-      console.log(column);
       let placeholder = "";
       if (column[0] == "loanReaderEmail") {
         placeholder = sessionStorage.getItem("loginMail");
@@ -258,7 +261,7 @@ function Overview() {
         };
       }
     });
-    console.log(newFormData);
+    console.log("New FormData : ", newFormData);
     setFormData(newFormData);
     setEditData(newFormData);
   }, [columns]);
@@ -272,10 +275,9 @@ function Overview() {
         })
         .then((bookIDs) => {
           setBookIDs(bookIDs.data);
-          console.log("BookIDS", bookIDs.data);
         })
         .catch((error) => {
-          console.log(error);
+          console.log("ERROR : ", error);
         });
     }
   }, [updateBookIDs]);
@@ -286,10 +288,8 @@ function Overview() {
     const selectedValue =
       selectElement.options[selectElement.selectedIndex].value;
     sessionStorage.setItem("table", selectedValue);
-    console.log("SELECTED VALUE", selectedValue);
+    console.log("SELECTED TABLE", selectedValue);
     if (BUTTON_TABLES.includes(selectedValue) && showButton === true) {
-      console.log("2833333333333");
-      //setShowButton(!showButton);
     } else {
       setShowButton(!showButton);
     }
@@ -297,8 +297,8 @@ function Overview() {
       sessionStorage.setItem("searchTable", "Books");
     }
     if (selectedValue == "Books") {
-      console.log("Books");
       sessionStorage.setItem("searchTable", "Authors");
+      setShowPublisherButton(!showPublisherButton);
     }
     setSelectedTable(selectedValue);
   }
@@ -322,16 +322,13 @@ function Overview() {
           )})` + `${valuesString.slice(0, valuesString.length - 1)}) `,
       })
       .then((response) => {
-        //setResults(response.data);
-        console.log(response.data);
         sessionStorage.setItem(
           "updateData",
           !Boolean(JSON.parse(sessionStorage.getItem("updateData")))
         );
-        console.log(sessionStorage.getItem("updateData"));
       })
       .catch((error) => {
-        console.log(error);
+        console.log("ERROR : ", error);
       });
   }
 
@@ -343,10 +340,9 @@ function Overview() {
       })
       .then((response) => {
         setUpdateData(!updateData);
-        console.log(response.data);
       })
       .catch((error) => {
-        console.log(error);
+        console.log("ERROR : ", error);
       });
   }
   function editEntry(data) {
@@ -360,10 +356,7 @@ function Overview() {
     let values = Object.entries(data).map(
       ([key, value]) => (query = query + `"${key}" = '${value.placeholder}',`)
     );
-    //let columns = Object.entries(data).map(
-    //  ([key, value]) => (columnsString = columnsString + `"${key}",`)
-    //);
-    console.log(Object.values(data)[0]["placeholder"]);
+
     axios
       .post(api, {
         query:
@@ -373,16 +366,13 @@ function Overview() {
           )} ` + `WHERE "${rowID}" = ${Object.values(data)[0]["placeholder"]}`,
       })
       .then((response) => {
-        //setResults(response.data);
-        console.log(response.data);
         sessionStorage.setItem(
           "updateData",
           !Boolean(JSON.parse(sessionStorage.getItem("updateData")))
         );
-        console.log(sessionStorage.getItem("updateData"));
       })
       .catch((error) => {
-        console.log(error);
+        console.log("ERROR : ", error);
       });
   }
 
@@ -412,15 +402,12 @@ function Overview() {
   const handleEditSubmit = (event) => {
     event.preventDefault();
     editEntry(editData);
-    console.log(editData);
     setUpdateData(!updateData);
     setShowEditModal(!showEditModal);
   };
 
   function handleEdit(data) {
-    //setEditData(...data);
     let keys = Object.keys(editData);
-    console.log("EDIT DATA", data);
 
     data.map(
       (element, index) => (editData[keys[index]]["placeholder"] = element)
@@ -449,6 +436,10 @@ function Overview() {
     //navigate("/Search");
   }
 
+  function handlePublisher() {
+    setShowSearchBook(!showSearchBook);
+    sessionStorage.setItem("showPublisher", "true");
+  }
   //if (!results.length) {
   // If there is no data available yet, show a loading indicator or an empty state.
   //  return <p>Loading...</p>;
@@ -543,7 +534,13 @@ function Overview() {
                 hidden={!showButton}
                 onClick={() => setShowSearchBook(!showSearchBook)}
               >
-                Search Book
+                Search {selectedTable == "Books" ? "Author" : "Book"}
+              </Button>
+              <Button
+                hidden={!showPublisherButton}
+                onClick={() => handlePublisher()}
+              >
+                Search Publisher
               </Button>
             </Form>
           </Modal.Body>
