@@ -11,6 +11,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 @app.route('/run-query', methods=['POST'])
+
 def run_query():
     # Get the SQL query from the request body
     query = request.json['query']
