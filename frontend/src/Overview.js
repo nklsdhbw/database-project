@@ -9,6 +9,7 @@ import TableSearch from "./TableSearch";
 
 function Overview() {
   const UNIQUE_IDS = ["loanID", "bookID", "authorID", "librarianID"];
+  const BUTTON_TABLES = ["Loans", "Books"];
   const navigate = useNavigate();
   // general variables
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
@@ -20,6 +21,7 @@ function Overview() {
   const [selectedTable, setSelectedTable] = useState(
     sessionStorage.getItem("table") || "Librarians"
   );
+  //sessionStorage.setItem("searchTable", "Books");
   let temp = selectedTable.slice(0, selectedTable.length - 1);
   temp = temp.toLowerCase();
   temp = temp + "ID";
@@ -29,6 +31,10 @@ function Overview() {
   const [columns, setColumns] = useState([]);
   const [datatypes, setDatatypes] = useState([]);
   const [bookIDs, setBookIDs] = useState([]);
+  const [showButton, setShowButton] = useState(
+    BUTTON_TABLES.includes(selectedTable) ? true : false
+  );
+
   const [query, setQuery] = useState("");
 
   const [options, setOptions] = useState(["Librarians", "Authors"]);
@@ -62,6 +68,13 @@ function Overview() {
       if (key == "bookID") {
         formDataKey = "loanBookID";
       }
+      if (key == "authorID") {
+        formDataKey = "bookAuthorID";
+      }
+      if (key == "authorName") {
+        formDataKey = "bookAuthor";
+      }
+      //if (key==)
       console.log(key, formDataKey);
       if (
         updatedFormData[formDataKey] &&
@@ -273,6 +286,20 @@ function Overview() {
     const selectedValue =
       selectElement.options[selectElement.selectedIndex].value;
     sessionStorage.setItem("table", selectedValue);
+    console.log("SELECTED VALUE", selectedValue);
+    if (BUTTON_TABLES.includes(selectedValue) && showButton === true) {
+      console.log("2833333333333");
+      //setShowButton(!showButton);
+    } else {
+      setShowButton(!showButton);
+    }
+    if (selectedValue == "Loans") {
+      sessionStorage.setItem("searchTable", "Books");
+    }
+    if (selectedValue == "Books") {
+      console.log("Books");
+      sessionStorage.setItem("searchTable", "Authors");
+    }
     setSelectedTable(selectedValue);
   }
 
@@ -512,7 +539,10 @@ function Overview() {
                 </Form.Group>
               ))}
               <Button type="submit">Create</Button>
-              <Button onClick={() => setShowSearchBook(!showSearchBook)}>
+              <Button
+                hidden={!showButton}
+                onClick={() => setShowSearchBook(!showSearchBook)}
+              >
                 Search Book
               </Button>
             </Form>

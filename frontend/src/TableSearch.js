@@ -10,7 +10,7 @@ const { Search } = Input;
 const fetchUsers = async () => {
   let inputColumns;
   let data;
-  let table = "Books";
+  let table = sessionStorage.getItem("searchTable");
   console.log("FETCH USERS");
   await axios
     .post("http://localhost:5000/run-query", {
