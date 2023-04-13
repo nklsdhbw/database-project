@@ -14,6 +14,7 @@ function Overview() {
     "authorID",
     "librarianID",
     "publisherID",
+    "libraryOrderID",
   ];
   const BUTTON_TABLES = ["Loans", "Books"];
   const navigate = useNavigate();
@@ -128,7 +129,11 @@ function Overview() {
     if (selectedTable) {
       const newQuery = `SELECT * FROM "${selectedTable}"`;
       temp = selectedTable.slice(0, selectedTable.length - 1);
-      temp = temp.toLowerCase();
+      //if (selectedTable=="LibraryOrders"){
+      temp = temp.charAt(0).toLowerCase() + temp.substring(1);
+      console.log("UNIQUE COLUMN", temp);
+
+      //temp = temp.toLowerCase();
       temp = temp + "ID";
       setUniqueColumn(temp);
       setQuery(newQuery);
