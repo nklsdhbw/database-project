@@ -6,6 +6,7 @@ import Table from "react-bootstrap/Table";
 import CreateRecordModal from "./createRecord";
 import { useNavigate } from "react-router-dom";
 import TableSearch from "./TableSearch";
+import bcrypt from "bcryptjs";
 
 function Overview() {
   const UNIQUE_IDS = [
@@ -107,7 +108,75 @@ function Overview() {
 
   // react hooks
 
-  //setDataypes first time
+  // set datatypes for the first time
+  useEffect(() => {
+    if (query) {
+      axios
+        .post("http://localhost:5000/run-query", { query })
+        .then((response) => {
+          setResults(response.data);
+        })
+        .catch((error) => {
+          console.log("ERROR : ", error);
+        });
+
+      axios
+        .post("http://localhost:5000/run-query", {
+          query: `SELECT data_type, column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
+        })
+        .then((datatypes) => {
+          let datatypesData = datatypes.data;
+          for (let index = 0; index < datatypesData.length; index++) {
+            let element = datatypesData[index];
+            if (
+              element[0].startsWith("character") ||
+              element[0].startsWith("char")
+            ) {
+              datatypesData[index] = "text";
+            }
+            if (
+              element[0].startsWith("big") ||
+              element[0].startsWith("int") ||
+              element[0].startsWith("small") ||
+              element[0].startsWith("numeric")
+            ) {
+              datatypesData[index] = "number";
+            }
+
+            if (element[0].startsWith("date")) {
+              datatypesData[index] = "date";
+            }
+            if (element[0].startsWith("bool")) {
+              datatypesData[index] = "checked";
+            }
+            if (element[1].includes("mail")) {
+              datatypesData[index] = "email";
+            }
+            if (element[1].includes("assword")) {
+              datatypesData[index] = "password";
+            }
+
+            //bookID
+            //if (element[1] == "loanBookID") {
+            //  datatypesData[index] = "checkbox";
+            //}
+            //drop loanID
+            if (UNIQUE_IDS.includes(element[1])) {
+              datatypesData[index] = null;
+            }
+          }
+
+          const filteredArr = datatypesData.filter((value) => value != null);
+          console.log("HTML DATATYPES : ", filteredArr);
+          setDatatypes(filteredArr);
+        })
+        .catch((error) => {
+          console.log("ERROR : ", error);
+        });
+    }
+  }, []);
+
+  //set formData/editData for the first time
   useEffect(() => {
     axios
       .post("http://localhost:5000/run-query", { query })
@@ -137,11 +206,14 @@ function Overview() {
           }
         });
         setFormData(newFormData);
+        console.log(newFormData);
+        console.log(datatypes);
+        setEditData(newFormData);
       })
       .catch((error) => {
         console.log("ERROR : ", error);
       });
-  }, []);
+  }, [datatypes]);
 
   useEffect(() => {
     let query = `SELECT tablename
@@ -390,20 +462,38 @@ function Overview() {
         console.log("ERROR : ", error);
       });
   }
-  function editEntry(data) {
+  async function editEntry(data) {
     let valuesString = "SET ";
     let columnsString = "";
     let query = "SET ";
     let rowID = selectedTable.slice(0, selectedTable.length - 1);
     rowID = rowID.toLowerCase();
     rowID = rowID + "ID";
-
+    console.log(data);
     let keyValue = rowUniqueID;
     console.log("KEY VALUE", keyValue);
 
-    let values = Object.entries(data).map(
+    /*let values = Object.entries(data).map(
       ([key, value]) => (query = query + `"${key}" = '${value.placeholder}',`)
     );
+    */
+    let arr = Object.entries(data);
+    for (let index = 0; index < arr.length; index++) {
+      const column = arr[index][0];
+      const values = arr[index][1];
+      const datatype = values.type;
+      console.log(arr[index], column, values, datatype);
+      let placeholder = values.placeholder;
+      if (datatype == "password") {
+        console.log("THIS DATA IS PASSWORD");
+        const password = values.placeholder;
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        placeholder = hashedPassword;
+      }
+      query = query + `"${column}" = '${placeholder}',`;
+    }
+    console.log(query);
 
     axios
       .post(api, {
@@ -457,6 +547,7 @@ function Overview() {
 
   function handleEdit(data) {
     let keys = Object.keys(editData);
+    console.log("handleEdit EDIT DAT", editData);
     setRowUniqueID(data[0]);
     let dataWithoutRowUniqueID = data.slice(1);
 
