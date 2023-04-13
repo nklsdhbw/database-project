@@ -491,7 +491,7 @@ function Overview() {
           Create New Record
         </button>
 
-        <Modal show={showModal} onHide={!showModal}>
+        <Modal show={showModal}>
           <Modal.Header>
             <Modal.Title>Create New Record</Modal.Title>
             <Button
@@ -552,7 +552,7 @@ function Overview() {
         </Modal>
       </div>
       <div>
-        <Modal show={showEditModal} onHide={!showEditModal}>
+        <Modal show={showEditModal}>
           <Modal.Header>
             <Modal.Title>Edit Record</Modal.Title>
             <Button
@@ -600,11 +600,7 @@ function Overview() {
       </div>
       <div>
         {showSearchBook && (
-          <Modal
-            show={showSearchBook}
-            onHide={!showSearchBook}
-            fullscreen={true}
-          >
+          <Modal show={showSearchBook} fullscreen={true}>
             <ModalBody>
               <TableSearch
                 id="Search"
