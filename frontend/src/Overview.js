@@ -6,6 +6,7 @@ import Table from "react-bootstrap/Table";
 import CreateRecordModal from "./createRecord";
 import { useNavigate } from "react-router-dom";
 import TableSearch from "./TableSearch";
+import bcrypt from "bcryptjs";
 
 function Overview() {
   const UNIQUE_IDS = [
@@ -14,6 +15,8 @@ function Overview() {
     "authorID",
     "librarianID",
     "publisherID",
+    "libraryOrderID",
+    "readerID",
   ];
   const BUTTON_TABLES = ["Loans", "Books"];
   const navigate = useNavigate();
@@ -65,6 +68,7 @@ function Overview() {
     librarianEmail: { type: "email", required: true, placeholder: "" },
     librarianPhone: { type: "text", required: false, placeholder: "" },
   });
+  const [rowUniqueID, setRowUniqueID] = useState([]);
 
   // callback
   const callThisFromChildComponent = (data) => {
@@ -104,6 +108,113 @@ function Overview() {
 
   // react hooks
 
+  // set datatypes for the first time
+  useEffect(() => {
+    if (query) {
+      axios
+        .post("http://localhost:5000/run-query", { query })
+        .then((response) => {
+          setResults(response.data);
+        })
+        .catch((error) => {
+          console.log("ERROR : ", error);
+        });
+
+      axios
+        .post("http://localhost:5000/run-query", {
+          query: `SELECT data_type, column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
+        })
+        .then((datatypes) => {
+          let datatypesData = datatypes.data;
+          for (let index = 0; index < datatypesData.length; index++) {
+            let element = datatypesData[index];
+            if (
+              element[0].startsWith("character") ||
+              element[0].startsWith("char")
+            ) {
+              datatypesData[index] = "text";
+            }
+            if (
+              element[0].startsWith("big") ||
+              element[0].startsWith("int") ||
+              element[0].startsWith("small") ||
+              element[0].startsWith("numeric")
+            ) {
+              datatypesData[index] = "number";
+            }
+
+            if (element[0].startsWith("date")) {
+              datatypesData[index] = "date";
+            }
+            if (element[0].startsWith("bool")) {
+              datatypesData[index] = "checked";
+            }
+            if (element[1].includes("mail")) {
+              datatypesData[index] = "email";
+            }
+            if (element[1].includes("assword")) {
+              datatypesData[index] = "password";
+            }
+
+            //bookID
+            //if (element[1] == "loanBookID") {
+            //  datatypesData[index] = "checkbox";
+            //}
+            //drop loanID
+            if (UNIQUE_IDS.includes(element[1])) {
+              datatypesData[index] = null;
+            }
+          }
+
+          const filteredArr = datatypesData.filter((value) => value != null);
+          console.log("HTML DATATYPES : ", filteredArr);
+          setDatatypes(filteredArr);
+        })
+        .catch((error) => {
+          console.log("ERROR : ", error);
+        });
+    }
+  }, []);
+
+  //set formData/editData for the first time
+  useEffect(() => {
+    axios
+      .post("http://localhost:5000/run-query", { query })
+      .then((response) => {
+        setResults(response.data);
+      })
+      .catch((error) => {
+        console.log("ERROR : ", error);
+      });
+
+    axios
+      .post("http://localhost:5000/run-query", {
+        query: `SELECT column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
+      })
+      .then((columns) => {
+        setColumns(columns.data);
+        const newFormData = {};
+        let newColumns = columns.data;
+        newColumns.map((column, index) => {
+          if (UNIQUE_IDS.includes(column[0])) {
+          } else {
+            newFormData[column] = {
+              type: datatypes[index],
+              required: true,
+              placeholder: "",
+            };
+          }
+        });
+        setFormData(newFormData);
+        console.log(newFormData);
+        console.log(datatypes);
+        setEditData(newFormData);
+      })
+      .catch((error) => {
+        console.log("ERROR : ", error);
+      });
+  }, [datatypes]);
+
   useEffect(() => {
     let query = `SELECT tablename
       FROM pg_tables
@@ -128,7 +239,11 @@ function Overview() {
     if (selectedTable) {
       const newQuery = `SELECT * FROM "${selectedTable}"`;
       temp = selectedTable.slice(0, selectedTable.length - 1);
-      temp = temp.toLowerCase();
+      //if (selectedTable=="LibraryOrders"){
+      temp = temp.charAt(0).toLowerCase() + temp.substring(1);
+      console.log("UNIQUE COLUMN", temp);
+
+      //temp = temp.toLowerCase();
       temp = temp + "ID";
       setUniqueColumn(temp);
       setQuery(newQuery);
@@ -223,9 +338,9 @@ function Overview() {
             }
 
             //bookID
-            if (element[1] == "loanBookID") {
-              datatypesData[index] = "checkbox";
-            }
+            //if (element[1] == "loanBookID") {
+            //  datatypesData[index] = "checkbox";
+            //}
             //drop loanID
             if (UNIQUE_IDS.includes(element[1])) {
               datatypesData[index] = null;
@@ -244,7 +359,9 @@ function Overview() {
 
   useEffect(() => {
     const newFormData = {};
-    columns.map((column, index) => {
+    console.log("COLUMNS", columns);
+    let cols = columns.slice(1, columns.length);
+    cols.map((column, index) => {
       let placeholder = "";
       if (column[0] == "loanReaderEmail") {
         placeholder = sessionStorage.getItem("loginMail");
@@ -345,17 +462,38 @@ function Overview() {
         console.log("ERROR : ", error);
       });
   }
-  function editEntry(data) {
+  async function editEntry(data) {
     let valuesString = "SET ";
     let columnsString = "";
     let query = "SET ";
     let rowID = selectedTable.slice(0, selectedTable.length - 1);
     rowID = rowID.toLowerCase();
     rowID = rowID + "ID";
+    console.log(data);
+    let keyValue = rowUniqueID;
+    console.log("KEY VALUE", keyValue);
 
-    let values = Object.entries(data).map(
+    /*let values = Object.entries(data).map(
       ([key, value]) => (query = query + `"${key}" = '${value.placeholder}',`)
     );
+    */
+    let arr = Object.entries(data);
+    for (let index = 0; index < arr.length; index++) {
+      const column = arr[index][0];
+      const values = arr[index][1];
+      const datatype = values.type;
+      console.log(arr[index], column, values, datatype);
+      let placeholder = values.placeholder;
+      if (datatype == "password") {
+        console.log("THIS DATA IS PASSWORD");
+        const password = values.placeholder;
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        placeholder = hashedPassword;
+      }
+      query = query + `"${column}" = '${placeholder}',`;
+    }
+    console.log(query);
 
     axios
       .post(api, {
@@ -363,17 +501,18 @@ function Overview() {
           `UPDATE public."${selectedTable}" ${query.slice(
             0,
             columnsString.length - 1
-          )} ` + `WHERE "${rowID}" = ${Object.values(data)[0]["placeholder"]}`,
+          )} ` + `WHERE "${rowID}" = ${keyValue}`,
       })
       .then((response) => {
+        console.log("SUCCESS");
+
+        setUpdateData(!updateData);
         sessionStorage.setItem(
           "updateData",
           !Boolean(JSON.parse(sessionStorage.getItem("updateData")))
         );
       })
-      .catch((error) => {
-        console.log("ERROR : ", error);
-      });
+      .catch((error) => {});
   }
 
   // event handler
@@ -408,15 +547,24 @@ function Overview() {
 
   function handleEdit(data) {
     let keys = Object.keys(editData);
+    console.log("handleEdit EDIT DAT", editData);
+    setRowUniqueID(data[0]);
+    let dataWithoutRowUniqueID = data.slice(1);
 
-    data.map(
-      (element, index) => (editData[keys[index]]["placeholder"] = element)
-    );
+    dataWithoutRowUniqueID.map((element, index) => {
+      let placeholder = element;
+      console.log("COLUMN", keys[index], "value", element);
+      if (keys[index]["type"] == "date") {
+        placeholder = new Date(element).toISOString().slice(0, 10);
+        console.log("DATE");
+      } else {
+        editData[keys[index]]["placeholder"] = placeholder;
+      }
+    });
 
     setShowEditModal(!showEditModal);
-    console.log("EditData", editData);
-
-    //editEntry(data);
+    setEditData(editData);
+    console.log("EDIT DATA", editData);
   }
 
   function handleCreate() {
@@ -486,7 +634,7 @@ function Overview() {
           Create New Record
         </button>
 
-        <Modal show={showModal} onHide={!showModal}>
+        <Modal show={showModal}>
           <Modal.Header>
             <Modal.Title>Create New Record</Modal.Title>
             <Button
@@ -502,31 +650,22 @@ function Overview() {
               {Object.entries(formData).map(([key, value], index) => (
                 <Form.Group controlId={`${String(key)}`}>
                   <Form.Label>{`${String(key)}`}</Form.Label>
-                  {datatypes[index] != "checkbox" ? (
-                    <Form.Control
-                      type={datatypes[index]} //`${String(value.type)}`}
-                      name={`${String(key)}`}
-                      value={`${value.placeholder}`}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  ) : (
-                    <Form.Select
-                      name={key}
-                      value={formData[key]["placeholder"]}
-                      onChange={handleInputChange}
-                      required
-                    >
-                      <option value="" disabled selected>
-                        Select an option
+
+                  <Form.Select
+                    name={key}
+                    value={formData[key]["placeholder"]}
+                    onChange={handleInputChange}
+                    required
+                  >
+                    <option value="" disabled selected>
+                      Select an option
+                    </option>
+                    {bookIDs.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
                       </option>
-                      {bookIDs.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  )}
+                    ))}
+                  </Form.Select>
                 </Form.Group>
               ))}
               <Button type="submit">Create</Button>
@@ -547,7 +686,7 @@ function Overview() {
         </Modal>
       </div>
       <div>
-        <Modal show={showEditModal} onHide={!showEditModal}>
+        <Modal show={showEditModal}>
           <Modal.Header>
             <Modal.Title>Edit Record</Modal.Title>
             <Button
@@ -595,11 +734,7 @@ function Overview() {
       </div>
       <div>
         {showSearchBook && (
-          <Modal
-            show={showSearchBook}
-            onHide={!showSearchBook}
-            fullscreen={true}
-          >
+          <Modal show={showSearchBook} fullscreen={true}>
             <ModalBody>
               <TableSearch
                 id="Search"
