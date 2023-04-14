@@ -69,7 +69,9 @@ const Register = () => {
       sessionStorage.setItem("loggedIn", JSON.stringify(true));
       sessionStorage.setItem("loginMail", registerData.eMail);
       axios
-        .post("http://localhost:5000/run-query", { query2 })
+        .post("http://localhost:5000/run-query", {
+          query: `INSERT INTO public."Readers" ("readerName", "readerEmail", "readerPassword") Values('${fullName}', '${registerData.eMail}', '${hashedPassword}')`,
+        })
         .then((response) => {
           setResults(response.data);
         })
