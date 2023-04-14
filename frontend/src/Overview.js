@@ -198,7 +198,7 @@ function Overview() {
         newColumns.map((column, index) => {
           if (UNIQUE_IDS.includes(column[0])) {
           } else {
-            newFormData[column] = {
+            newFormData[column[0]] = {
               type: datatypes[index],
               required: true,
               placeholder: "",
@@ -274,7 +274,7 @@ function Overview() {
           newColumns.map((column, index) => {
             if (UNIQUE_IDS.includes(column[0])) {
             } else {
-              newFormData[column] = {
+              newFormData[column[0]] = {
                 type: datatypes[index],
                 required: true,
                 placeholder: "",
@@ -406,16 +406,22 @@ function Overview() {
       selectElement.options[selectElement.selectedIndex].value;
     sessionStorage.setItem("table", selectedValue);
     console.log("SELECTED TABLE", selectedValue);
-    if (BUTTON_TABLES.includes(selectedValue) && showButton === true) {
+    if (BUTTON_TABLES.includes(selectedValue)) {
+      if (showButton === true) {
+      } else {
+        setShowButton(true);
+      }
     } else {
-      setShowButton(!showButton);
+      setShowButton(false);
     }
     if (selectedValue == "Loans") {
       sessionStorage.setItem("searchTable", "Books");
     }
     if (selectedValue == "Books") {
       sessionStorage.setItem("searchTable", "Authors");
-      setShowPublisherButton(!showPublisherButton);
+      setShowPublisherButton(true);
+    } else {
+      setShowPublisherButton(false);
     }
     setSelectedTable(selectedValue);
   }
@@ -568,6 +574,7 @@ function Overview() {
   }
 
   function handleCreate() {
+    console.log("ACTUAL", formData);
     const newFormData = {};
     /*
     columns.map(
@@ -651,21 +658,13 @@ function Overview() {
                 <Form.Group controlId={`${String(key)}`}>
                   <Form.Label>{`${String(key)}`}</Form.Label>
 
-                  <Form.Select
+                  <Form.Control
                     name={key}
                     value={formData[key]["placeholder"]}
                     onChange={handleInputChange}
                     required
-                  >
-                    <option value="" disabled selected>
-                      Select an option
-                    </option>
-                    {bookIDs.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Form.Select>
+                    type={datatypes[index]}
+                  ></Form.Control>
                 </Form.Group>
               ))}
               <Button type="submit">Create</Button>
