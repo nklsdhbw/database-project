@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS "Teams";
+
+CREATE TABLE "Teams" (
+    "teamTeamID" SERIAL PRIMARY KEY
+)

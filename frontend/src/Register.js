@@ -23,8 +23,7 @@ const Register = () => {
 
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
   console.log("LoginStatus", loginStatus);
-  if (!loginStatus) {
-    navigate("/Login");
+  if (loginStatus != "true") {
   } else {
     navigate("/Overview");
   }
@@ -60,15 +59,17 @@ const Register = () => {
         break;
       }
     }
+    console.log("HÄÄ");
 
-    if (!setUserExists) {
-      let query = `INSERT INTO public."Readers" ("readerName", "readerEmail", "readerPassword") Values('${fullName}', '${registerData.eMail}', '${hashedPassword}')`;
+    if (!userExists) {
+      let query2 = `INSERT INTO public."Readers" ("readerName", "readerEmail", "readerPassword") Values('${fullName}', '${registerData.eMail}', '${hashedPassword}')`;
+      console.log("QUERY", query2);
       // after registration, user is logged in so change loggedIn variable to true
       // and navigate then to the "overview" page
       sessionStorage.setItem("loggedIn", JSON.stringify(true));
       sessionStorage.setItem("loginMail", registerData.eMail);
       axios
-        .post("http://localhost:5000/run-query", { query })
+        .post("http://localhost:5000/run-query", { query2 })
         .then((response) => {
           setResults(response.data);
         })
