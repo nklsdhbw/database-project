@@ -406,16 +406,22 @@ function Overview() {
       selectElement.options[selectElement.selectedIndex].value;
     sessionStorage.setItem("table", selectedValue);
     console.log("SELECTED TABLE", selectedValue);
-    if (BUTTON_TABLES.includes(selectedValue) && showButton === true) {
+    if (BUTTON_TABLES.includes(selectedValue)) {
+      if (showButton === true) {
+      } else {
+        setShowButton(true);
+      }
     } else {
-      setShowButton(!showButton);
+      setShowButton(false);
     }
     if (selectedValue == "Loans") {
       sessionStorage.setItem("searchTable", "Books");
     }
     if (selectedValue == "Books") {
       sessionStorage.setItem("searchTable", "Authors");
-      setShowPublisherButton(!showPublisherButton);
+      setShowPublisherButton(true);
+    } else {
+      setShowPublisherButton(false);
     }
     setSelectedTable(selectedValue);
   }
