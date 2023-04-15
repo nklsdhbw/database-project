@@ -43,6 +43,8 @@ function Overview() {
   const [showButton, setShowButton] = useState(
     BUTTON_TABLES.includes(selectedTable) ? true : false
   );
+  const [showSearchAuthorButton, setShowSearchAuthorButton] = useState(false);
+  const [showSearchBookButton, setShowSearchBookButton] = useState(false);
   const [showConvertOrderIntoBookButton, setShowConvertOrderIntoBookButton] =
     useState(selectedTable == "LibraryOrders" ? true : false);
   const [hidePublisherButton, setHidePublisherButton] = useState(
@@ -56,7 +58,7 @@ function Overview() {
   const [shouldRender, setShouldRender] = useState(false);
   const [updateData, setUpdateData] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [showSearchBook, setShowSearchBook] = useState(false);
+  const [showSearch, setshowSearch] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [updateBookIDs, setUpdateBookIDs] = useState(false);
   const [formData, setFormData] = useState({
@@ -112,7 +114,7 @@ function Overview() {
     });
     console.log("Updated FormData : ", updatedFormData);
     setFormData(updatedFormData);
-    setShowSearchBook(!showSearchBook);
+    setshowSearch(!showSearch);
     sessionStorage.setItem("showPublisher", "false");
   };
 
@@ -397,6 +399,27 @@ function Overview() {
     setEditData(newFormData);
   }, [columns]);
 
+  useEffect(() => {
+    console.log("test");
+    setShowSearchAuthorButton(false);
+    setShowSearchBookButton(false);
+    setHidePublisherButton(true);
+    if (selectedTable == "Books") {
+      setShowSearchAuthorButton(true);
+      setHidePublisherButton(false);
+    }
+
+    if (selectedTable == "Loans") {
+      sessionStorage.setItem("searchTable", "Books");
+      setShowSearchBookButton(true);
+    }
+    if (selectedTable == "LibraryOrders") {
+      sessionStorage.setItem("searchTable", "Authors");
+      setHidePublisherButton(false);
+      setShowSearchBookButton(true);
+      setShowSearchAuthorButton(true);
+    }
+  }, [selectedTable]);
   //fetch bookIDs
   useEffect(() => {
     if (bookIDs) {
@@ -420,6 +443,7 @@ function Overview() {
       selectElement.options[selectElement.selectedIndex].value;
     sessionStorage.setItem("table", selectedValue);
     console.log("SELECTED TABLE", selectedValue);
+    /*
     if (BUTTON_TABLES.includes(selectedValue)) {
       if (showButton === true) {
       } else {
@@ -437,6 +461,7 @@ function Overview() {
     } else {
       setHidePublisherButton(true);
     }
+    */
     setSelectedTable(selectedValue);
   }
 
@@ -606,7 +631,7 @@ function Overview() {
   }
 
   function handlePublisher() {
-    setShowSearchBook(!showSearchBook);
+    setshowSearch(!showSearch);
     sessionStorage.setItem("showPublisher", "true");
   }
 
@@ -787,15 +812,26 @@ function Overview() {
                 </Form.Group>
               ))}
               <Button type="submit">Create</Button>
-              <Button
-                hidden={!showButton}
-                onClick={() => setShowSearchBook(!showSearchBook)}
-              >
-                Search{" "}
-                {selectedTable == "Books" || selectedTable == "LibraryOrders"
-                  ? "Author"
-                  : "Book"}
-              </Button>
+              {showSearchBookButton ? (
+                <Button
+                  onClick={() => setShowSearchBookButton(!showSearchBookButton)}
+                >
+                  Search Book
+                </Button>
+              ) : (
+                <></>
+              )}
+              {showSearchAuthorButton ? (
+                <Button
+                  onClick={() =>
+                    setShowSearchAuthorButton(!showSearchAuthorButton)
+                  }
+                >
+                  Search Book
+                </Button>
+              ) : (
+                <></>
+              )}
               <Button
                 hidden={hidePublisherButton}
                 onClick={() => handlePublisher()}
@@ -854,8 +890,8 @@ function Overview() {
         </select>
       </div>
       <div>
-        {showSearchBook && (
-          <Modal show={showSearchBook} fullscreen={true}>
+        {showSearch && (
+          <Modal show={showSearch} fullscreen={true}>
             <ModalBody>
               <TableSearch
                 id="Search"
