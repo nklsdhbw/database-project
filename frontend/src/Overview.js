@@ -18,7 +18,7 @@ function Overview() {
     "libraryOrderID",
     "readerID",
   ];
-  const BUTTON_TABLES = ["Loans", "Books"];
+  const BUTTON_TABLES = ["Loans", "Books", "LibraryOrders"];
   const navigate = useNavigate();
   // general variables
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
@@ -36,14 +36,17 @@ function Overview() {
 
   // state variables
   const [results, setResults] = useState([]);
+  const [results2, setResults2] = useState([]);
   const [columns, setColumns] = useState([]);
   const [datatypes, setDatatypes] = useState([]);
   const [bookIDs, setBookIDs] = useState([]);
   const [showButton, setShowButton] = useState(
     BUTTON_TABLES.includes(selectedTable) ? true : false
   );
-  const [showPublisherButton, setShowPublisherButton] = useState(
-    selectedTable == "Books" ? true : false
+  const [showConvertOrderIntoBookButton, setShowConvertOrderIntoBookButton] =
+    useState(selectedTable == "LibraryOrders" ? true : false);
+  const [hidePublisherButton, setHidePublisherButton] = useState(
+    selectedTable == "Books" || selectedTable == "LibraryOrders" ? false : true
   );
 
   const [query, setQuery] = useState("");
@@ -69,6 +72,13 @@ function Overview() {
     librarianPhone: { type: "text", required: false, placeholder: "" },
   });
   const [rowUniqueID, setRowUniqueID] = useState([]);
+
+  if (selectedTable == "Loans") {
+    selectedTable.setItem("searchTable", "Books");
+  }
+  if (selectedTable == "Books" || selectedTable == "LibraryOrders") {
+    sessionStorage.setItem("searchTable", "Authors");
+  }
 
   // callback
   const callThisFromChildComponent = (data) => {
@@ -115,6 +125,7 @@ function Overview() {
         .post("http://localhost:5000/run-query", { query })
         .then((response) => {
           setResults(response.data);
+          setResults2(response);
         })
         .catch((error) => {
           console.log("ERROR : ", error);
@@ -182,6 +193,7 @@ function Overview() {
       .post("http://localhost:5000/run-query", { query })
       .then((response) => {
         setResults(response.data);
+        setResults2(response);
       })
       .catch((error) => {
         console.log("ERROR : ", error);
@@ -258,6 +270,7 @@ function Overview() {
         .post("http://localhost:5000/run-query", { query })
         .then((response) => {
           setResults(response.data);
+          setResults2(response);
         })
         .catch((error) => {
           console.log("ERROR : ", error);
@@ -296,6 +309,7 @@ function Overview() {
         .post("http://localhost:5000/run-query", { query })
         .then((response) => {
           setResults(response.data);
+          setResults2(response);
         })
         .catch((error) => {
           console.log("ERROR : ", error);
@@ -417,11 +431,11 @@ function Overview() {
     if (selectedValue == "Loans") {
       sessionStorage.setItem("searchTable", "Books");
     }
-    if (selectedValue == "Books") {
+    if (selectedValue == "Books" || selectedValue == "LibraryOrders") {
       sessionStorage.setItem("searchTable", "Authors");
-      setShowPublisherButton(true);
+      setHidePublisherButton(false);
     } else {
-      setShowPublisherButton(false);
+      setHidePublisherButton(true);
     }
     setSelectedTable(selectedValue);
   }
@@ -595,6 +609,102 @@ function Overview() {
     setShowSearchBook(!showSearchBook);
     sessionStorage.setItem("showPublisher", "true");
   }
+
+  function convertIntoBook(header, data) {
+    data = data[0];
+    header = header.flat();
+    let indexID = 0;
+    let insertQuery = 'INSERT INTO public."Books" (';
+    let insertColumns = "";
+    let insertData = "";
+    let oldColumn;
+    let notNeccessaryColumns = [
+      "libraryOrderAuthor",
+      "libraryOrderPublisher",
+      "libraryOrderDateOrdered",
+      "libraryOrderDeliveryDate",
+      "libraryOrderCost",
+      "libraryOrderStatus",
+    ];
+    header.forEach((column) => {
+      if (UNIQUE_IDS.includes(column)) {
+        indexID = header.indexOf(column);
+      } else {
+        if (notNeccessaryColumns.includes(column)) {
+        } else {
+          switch (column) {
+            case "libraryOrderBookTitle":
+              oldColumn = column;
+              column = "bookTitle";
+              break;
+            case "libraryOrderAuthorID":
+              oldColumn = column;
+              column = "bookAuthorID";
+              break;
+            case "libraryOrderAmount":
+              oldColumn = column;
+              column = "bookAmount";
+              break;
+            case "libraryOrderISBN":
+              oldColumn = column;
+              column = "bookISBN";
+              break;
+            case "libraryOrderPublisherID":
+              oldColumn = column;
+              column = "bookPublisherID";
+              break;
+            default:
+              break;
+          }
+          insertColumns = insertColumns + `"${column}", `;
+          insertData = insertData + `'${data[header.indexOf(oldColumn)]}', `;
+        }
+      }
+    });
+    insertQuery =
+      insertQuery +
+      insertColumns.slice(0, insertColumns.length - 2) +
+      ") Values (";
+
+    /*
+    for (let index = 0; index < data.length; index++) {
+      if (index == indexID) {
+        //skip
+      } else {
+        insertData = insertData + `'${data[index]}', `;
+      }
+    }
+    */
+
+    insertQuery =
+      insertQuery + insertData.slice(0, insertData.length - 2) + ")";
+    console.log(insertQuery);
+
+    let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatus" = 'done' WHERE "libraryOrderID" = '${data[indexID]}'`;
+    console.log(updateQuery);
+    axios
+      .post(api, {
+        query: `${updateQuery}`,
+      })
+      .then((response) => {
+        setUpdateData(!updateData);
+      })
+      .catch((error) => {
+        console.log("ERROR : ", error);
+      });
+
+    axios
+      .post(api, {
+        query: `${insertQuery}`,
+      })
+      .then((response) => {
+        setUpdateData(!updateData);
+      })
+      .catch((error) => {
+        console.log("ERROR : ", error);
+      });
+  }
+
   //if (!results.length) {
   // If there is no data available yet, show a loading indicator or an empty state.
   //  return <p>Loading...</p>;
@@ -625,13 +735,22 @@ function Overview() {
                 </button>
               </td>
               <td>
-                <button
+                <Button
                   className="w-100 btn btn-lg btn-primary"
                   onClick={() => handleEdit(data)}
                 >
                   Edit
-                </button>
+                </Button>
               </td>
+              {showConvertOrderIntoBookButton ? (
+                <td>
+                  <Button onClick={() => convertIntoBook(columns, results)}>
+                    Convert into Book
+                  </Button>
+                </td>
+              ) : (
+                <></>
+              )}
             </tr>
           ))}
         </tbody>
@@ -672,10 +791,13 @@ function Overview() {
                 hidden={!showButton}
                 onClick={() => setShowSearchBook(!showSearchBook)}
               >
-                Search {selectedTable == "Books" ? "Author" : "Book"}
+                Search{" "}
+                {selectedTable == "Books" || selectedTable == "LibraryOrders"
+                  ? "Author"
+                  : "Book"}
               </Button>
               <Button
-                hidden={!showPublisherButton}
+                hidden={hidePublisherButton}
                 onClick={() => handlePublisher()}
               >
                 Search Publisher
