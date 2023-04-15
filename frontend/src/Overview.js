@@ -92,17 +92,24 @@ function Overview() {
       if (key == "bookID") {
         formDataKey = "loanBookID";
       }
-      if (key == "authorID") {
+      if (key == "authorID" && selectedTable == "Books") {
         formDataKey = "bookAuthorID";
       }
       if (key == "authorName") {
         formDataKey = "bookAuthor";
       }
-      if (key == "publisherID") {
+      if (key == "publisherID" && selectedTable == "Books") {
         formDataKey = "bookPublisherID";
       }
       if (key == "publisherName") {
         formDataKey = "bookPublisherName";
+      }
+
+      if (key == "publisherID" && selectedTable == "LibraryOrders") {
+        formDataKey = "libraryOrderPublisherID";
+      }
+      if (key == "authorID" && selectedTable == "LibraryOrders") {
+        formDataKey = "libraryOrderAuthorID";
       }
 
       if (
@@ -416,7 +423,7 @@ function Overview() {
     if (selectedTable == "LibraryOrders") {
       sessionStorage.setItem("searchTable", "Authors");
       setHidePublisherButton(false);
-      setShowSearchBookButton(true);
+      setShowSearchBookButton(false);
       setShowSearchAuthorButton(true);
     }
   }, [selectedTable]);
@@ -635,6 +642,13 @@ function Overview() {
     sessionStorage.setItem("showPublisher", "true");
   }
 
+  function handleBook() {
+    setshowSearch(!showSearch);
+  }
+  function handleAuthor() {
+    setshowSearch(!showSearch);
+  }
+
   function convertIntoBook(header, data) {
     data = data[0];
     header = header.flat();
@@ -813,22 +827,12 @@ function Overview() {
               ))}
               <Button type="submit">Create</Button>
               {showSearchBookButton ? (
-                <Button
-                  onClick={() => setShowSearchBookButton(!showSearchBookButton)}
-                >
-                  Search Book
-                </Button>
+                <Button onClick={() => handleBook()}>Search Book</Button>
               ) : (
                 <></>
               )}
               {showSearchAuthorButton ? (
-                <Button
-                  onClick={() =>
-                    setShowSearchAuthorButton(!showSearchAuthorButton)
-                  }
-                >
-                  Search Book
-                </Button>
+                <Button onClick={() => handleAuthor()}>Search Author</Button>
               ) : (
                 <></>
               )}
