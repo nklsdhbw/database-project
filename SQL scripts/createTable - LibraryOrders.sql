@@ -10,7 +10,7 @@ CREATE TABLE "LibraryOrders" (
 "libraryOrderBookTitle" varchar(255),
 "libraryOrderISBN" varchar(255),
 "libraryOrderAuthorID" INTEGER,
-"libraryOrderStatusOrder" varchar(255),
+"libraryOrderStatusOrder" varchar(255) DEFAULT 'order',
 "libraryOrderManagerID" INTEGER, 
 
 	CONSTRAINT fk_libraryOrderPublisherID

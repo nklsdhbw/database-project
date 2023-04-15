@@ -9,7 +9,7 @@ import TableSearch from "./TableSearch";
 import bcrypt from "bcryptjs";
 
 function Overview() {
-  const UNIQUE_IDS = [
+  const notFilledColumns = [
     "loanID",
     "bookID",
     "authorID",
@@ -17,6 +17,7 @@ function Overview() {
     "publisherID",
     "libraryOrderID",
     "readerID",
+    "libraryOrderStatusOrder",
   ];
   const BUTTON_TABLES = ["Loans", "Books", "LibraryOrders"];
   const navigate = useNavigate();
@@ -75,14 +76,6 @@ function Overview() {
     librarianPhone: { type: "text", required: false, placeholder: "" },
   });
   const [rowUniqueID, setRowUniqueID] = useState([]);
-  /*
-  if (selectedTable == "Loans") {
-    selectedTable.setItem("searchTable", "Books");
-  }
-  if (selectedTable == "Books" || selectedTable == "LibraryOrders") {
-    sessionStorage.setItem("searchTable", "Authors");
-  }
-  */
 
   // callback
   const callThisFromChildComponent = (data) => {
@@ -190,7 +183,7 @@ function Overview() {
             //  datatypesData[index] = "checkbox";
             //}
             //drop loanID
-            if (UNIQUE_IDS.includes(element[1])) {
+            if (notFilledColumns.includes(element[1])) {
               datatypesData[index] = null;
             }
           }
@@ -226,7 +219,7 @@ function Overview() {
         const newFormData = {};
         let newColumns = columns.data;
         newColumns.map((column, index) => {
-          if (UNIQUE_IDS.includes(column[0])) {
+          if (notFilledColumns.includes(column[0])) {
           } else {
             newFormData[column[0]] = {
               type: datatypes[index],
@@ -303,7 +296,7 @@ function Overview() {
           const newFormData = {};
           let newColumns = columns.data;
           newColumns.map((column, index) => {
-            if (UNIQUE_IDS.includes(column[0])) {
+            if (notFilledColumns.includes(column[0])) {
             } else {
               newFormData[column[0]] = {
                 type: datatypes[index],
@@ -374,7 +367,7 @@ function Overview() {
             //  datatypesData[index] = "checkbox";
             //}
             //drop loanID
-            if (UNIQUE_IDS.includes(element[1])) {
+            if (notFilledColumns.includes(element[1])) {
               datatypesData[index] = null;
             }
           }
@@ -401,7 +394,7 @@ function Overview() {
       if (column[0] == "loanLoanDate") {
         placeholder = new Date().toISOString().slice(0, 10);
       }
-      if (UNIQUE_IDS.includes(column[0])) {
+      if (notFilledColumns.includes(column[0])) {
       } else {
         newFormData[column[0]] = {
           type: datatypes[index],
@@ -689,7 +682,7 @@ function Overview() {
       "libraryOrderStatus",
     ];
     header.forEach((column) => {
-      if (UNIQUE_IDS.includes(column)) {
+      if (notFilledColumns.includes(column)) {
         indexID = header.indexOf(column);
       } else {
         if (notNeccessaryColumns.includes(column)) {
