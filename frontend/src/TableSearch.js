@@ -4,6 +4,7 @@ import Table from "react-bootstrap/Table";
 import axios from "axios";
 import { userColumns } from "./columns";
 import { useTableSearch } from "./useTableSearch";
+import { Button } from "react-bootstrap";
 
 const { Search } = Input;
 
@@ -11,9 +12,10 @@ const fetchUsers = async () => {
   let inputColumns;
   let data;
   let table = sessionStorage.getItem("searchTable");
-  if (sessionStorage.getItem("showPublisher") == "true") {
-    table = "Publishers";
-  }
+  console.log("SEARCH TABLE", table);
+  //if (sessionStorage.getItem("showPublisher") == "true") {
+  //  table = "Publishers";
+  //}
   console.log("FETCH USERS");
   await axios
     .post("http://localhost:5000/run-query", {
@@ -78,6 +80,8 @@ export default function TableSearch({ callback }) {
 
   return (
     <>
+      <Button onClick={() => callback("closePanel")}>Close</Button>
+      <br /> <br />
       <Search
         onChange={(e) => setSearchVal(e.target.value)}
         placeholder="Search"

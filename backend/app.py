@@ -11,7 +11,6 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 @app.route('/run-query', methods=['POST'])
-
 def run_query():
     # Get the SQL query from the request body
     query = request.json['query']
@@ -24,21 +23,19 @@ def run_query():
         password="0609"
     )
 
-    # Create a cursor object
-    cur = conn.cursor()
-    cur.execute(query)
-    conn.commit()  # commit the transaction
-    if query.startswith("SELECT"):
-        result = cur.fetchall()
+    try:
+        cur = conn.cursor()
+        cur.execute(query)
+        conn.commit()
+        if query.startswith("SELECT"):
+            result = cur.fetchall()
+            # Return the results as JSON
+            return jsonify(result)
+        else:
+            return '', 204
+    finally:
         cur.close()
         conn.close()
-
-        # Return the results as JSON
-        return jsonify(result)
-    else:
-        cur.close()
-        conn.close()
-        return '', 204
 
 
 if __name__ == "__main__":

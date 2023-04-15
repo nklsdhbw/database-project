@@ -9,7 +9,7 @@ import TableSearch from "./TableSearch";
 import bcrypt from "bcryptjs";
 
 function Overview() {
-  const UNIQUE_IDS = [
+  const notFilledColumns = [
     "loanID",
     "bookID",
     "authorID",
@@ -17,8 +17,9 @@ function Overview() {
     "publisherID",
     "libraryOrderID",
     "readerID",
+    "libraryOrderStatusOrder",
   ];
-  const BUTTON_TABLES = ["Loans", "Books"];
+  const BUTTON_TABLES = ["Loans", "Books", "LibraryOrders"];
   const navigate = useNavigate();
   // general variables
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
@@ -36,14 +37,20 @@ function Overview() {
 
   // state variables
   const [results, setResults] = useState([]);
+  const [results2, setResults2] = useState([]);
   const [columns, setColumns] = useState([]);
   const [datatypes, setDatatypes] = useState([]);
   const [bookIDs, setBookIDs] = useState([]);
   const [showButton, setShowButton] = useState(
     BUTTON_TABLES.includes(selectedTable) ? true : false
   );
-  const [showPublisherButton, setShowPublisherButton] = useState(
-    selectedTable == "Books" ? true : false
+  const [showSearchAuthorButton, setShowSearchAuthorButton] = useState(false);
+  const [showSearchBookButton, setShowSearchBookButton] = useState(false);
+  const [showSearchManagerButton, setShowSearchManagerButton] = useState(false);
+  const [showConvertOrderIntoBookButton, setShowConvertOrderIntoBookButton] =
+    useState();
+  const [hidePublisherButton, setHidePublisherButton] = useState(
+    selectedTable == "Books" || selectedTable == "LibraryOrders" ? false : true
   );
 
   const [query, setQuery] = useState("");
@@ -53,7 +60,7 @@ function Overview() {
   const [shouldRender, setShouldRender] = useState(false);
   const [updateData, setUpdateData] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [showSearchBook, setShowSearchBook] = useState(false);
+  const [showSearch, setshowSearch] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [updateBookIDs, setUpdateBookIDs] = useState(false);
   const [formData, setFormData] = useState({
@@ -73,37 +80,51 @@ function Overview() {
   // callback
   const callThisFromChildComponent = (data) => {
     console.log("Data from Child component:", data);
-    let input = data;
-    const updatedFormData = { ...formData };
-    Object.keys(input).forEach((key) => {
-      let formDataKey = key;
-      if (key == "bookID") {
-        formDataKey = "loanBookID";
-      }
-      if (key == "authorID") {
-        formDataKey = "bookAuthorID";
-      }
-      if (key == "authorName") {
-        formDataKey = "bookAuthor";
-      }
-      if (key == "publisherID") {
-        formDataKey = "bookPublisherID";
-      }
-      if (key == "publisherName") {
-        formDataKey = "bookPublisherName";
-      }
+    if (data == "closePanel") {
+      setshowSearch(!showSearch);
+    } else {
+      let input = data;
+      const updatedFormData = { ...formData };
+      Object.keys(input).forEach((key) => {
+        let formDataKey = key;
+        if (key == "bookID") {
+          formDataKey = "loanBookID";
+        }
+        if (key == "authorID" && selectedTable == "Books") {
+          formDataKey = "bookAuthorID";
+        }
+        if (key == "authorName") {
+          formDataKey = "bookAuthor";
+        }
+        if (key == "publisherID" && selectedTable == "Books") {
+          formDataKey = "bookPublisherID";
+        }
+        if (key == "publisherName") {
+          formDataKey = "bookPublisherName";
+        }
 
-      if (
-        updatedFormData[formDataKey] &&
-        updatedFormData[formDataKey].hasOwnProperty("placeholder")
-      ) {
-        updatedFormData[formDataKey].placeholder = input[key].toString();
-      }
-    });
-    console.log("Updated FormData : ", updatedFormData);
-    setFormData(updatedFormData);
-    setShowSearchBook(!showSearchBook);
-    sessionStorage.setItem("showPublisher", "false");
+        if (key == "publisherID" && selectedTable == "LibraryOrders") {
+          formDataKey = "libraryOrderPublisherID";
+        }
+        if (key == "authorID" && selectedTable == "LibraryOrders") {
+          formDataKey = "libraryOrderAuthorID";
+        }
+        if (key == "managerID" && selectedTable == "LibraryOrders") {
+          formDataKey = "libraryOrderManagerID";
+        }
+
+        if (
+          updatedFormData[formDataKey] &&
+          updatedFormData[formDataKey].hasOwnProperty("placeholder")
+        ) {
+          updatedFormData[formDataKey].placeholder = input[key].toString();
+        }
+      });
+      console.log("Updated FormData : ", updatedFormData);
+      setFormData(updatedFormData);
+      setshowSearch(!showSearch);
+      sessionStorage.setItem("showPublisher", "false");
+    }
   };
 
   // react hooks
@@ -115,6 +136,7 @@ function Overview() {
         .post("http://localhost:5000/run-query", { query })
         .then((response) => {
           setResults(response.data);
+          setResults2(response);
         })
         .catch((error) => {
           console.log("ERROR : ", error);
@@ -161,7 +183,7 @@ function Overview() {
             //  datatypesData[index] = "checkbox";
             //}
             //drop loanID
-            if (UNIQUE_IDS.includes(element[1])) {
+            if (notFilledColumns.includes(element[1])) {
               datatypesData[index] = null;
             }
           }
@@ -182,6 +204,7 @@ function Overview() {
       .post("http://localhost:5000/run-query", { query })
       .then((response) => {
         setResults(response.data);
+        setResults2(response);
       })
       .catch((error) => {
         console.log("ERROR : ", error);
@@ -196,7 +219,7 @@ function Overview() {
         const newFormData = {};
         let newColumns = columns.data;
         newColumns.map((column, index) => {
-          if (UNIQUE_IDS.includes(column[0])) {
+          if (notFilledColumns.includes(column[0])) {
           } else {
             newFormData[column[0]] = {
               type: datatypes[index],
@@ -258,6 +281,7 @@ function Overview() {
         .post("http://localhost:5000/run-query", { query })
         .then((response) => {
           setResults(response.data);
+          setResults2(response);
         })
         .catch((error) => {
           console.log("ERROR : ", error);
@@ -272,7 +296,7 @@ function Overview() {
           const newFormData = {};
           let newColumns = columns.data;
           newColumns.map((column, index) => {
-            if (UNIQUE_IDS.includes(column[0])) {
+            if (notFilledColumns.includes(column[0])) {
             } else {
               newFormData[column[0]] = {
                 type: datatypes[index],
@@ -296,6 +320,7 @@ function Overview() {
         .post("http://localhost:5000/run-query", { query })
         .then((response) => {
           setResults(response.data);
+          setResults2(response);
         })
         .catch((error) => {
           console.log("ERROR : ", error);
@@ -342,7 +367,7 @@ function Overview() {
             //  datatypesData[index] = "checkbox";
             //}
             //drop loanID
-            if (UNIQUE_IDS.includes(element[1])) {
+            if (notFilledColumns.includes(element[1])) {
               datatypesData[index] = null;
             }
           }
@@ -369,7 +394,7 @@ function Overview() {
       if (column[0] == "loanLoanDate") {
         placeholder = new Date().toISOString().slice(0, 10);
       }
-      if (UNIQUE_IDS.includes(column[0])) {
+      if (notFilledColumns.includes(column[0])) {
       } else {
         newFormData[column[0]] = {
           type: datatypes[index],
@@ -383,6 +408,32 @@ function Overview() {
     setEditData(newFormData);
   }, [columns]);
 
+  useEffect(() => {
+    console.log("test");
+    setShowSearchAuthorButton(false);
+    setShowSearchBookButton(false);
+    setHidePublisherButton(true);
+    setShowSearchManagerButton(false);
+    if (selectedTable == "Books") {
+      setShowSearchAuthorButton(true);
+      setHidePublisherButton(false);
+    }
+
+    if (selectedTable == "Loans") {
+      sessionStorage.setItem("searchTable", "Books");
+      setShowSearchBookButton(true);
+    }
+    if (selectedTable == "LibraryOrders") {
+      sessionStorage.setItem("searchTable", "Authors");
+      setHidePublisherButton(false);
+      setShowSearchBookButton(false);
+      setShowSearchAuthorButton(true);
+      setShowSearchManagerButton(true);
+    }
+    setShowConvertOrderIntoBookButton(
+      selectedTable == "LibraryOrders" ? true : false
+    );
+  }, [selectedTable]);
   //fetch bookIDs
   useEffect(() => {
     if (bookIDs) {
@@ -406,6 +457,7 @@ function Overview() {
       selectElement.options[selectElement.selectedIndex].value;
     sessionStorage.setItem("table", selectedValue);
     console.log("SELECTED TABLE", selectedValue);
+    /*
     if (BUTTON_TABLES.includes(selectedValue)) {
       if (showButton === true) {
       } else {
@@ -417,12 +469,13 @@ function Overview() {
     if (selectedValue == "Loans") {
       sessionStorage.setItem("searchTable", "Books");
     }
-    if (selectedValue == "Books") {
+    if (selectedValue == "Books" || selectedValue == "LibraryOrders") {
       sessionStorage.setItem("searchTable", "Authors");
-      setShowPublisherButton(true);
+      setHidePublisherButton(false);
     } else {
-      setShowPublisherButton(false);
+      setHidePublisherButton(true);
     }
+    */
     setSelectedTable(selectedValue);
   }
 
@@ -592,9 +645,125 @@ function Overview() {
   }
 
   function handlePublisher() {
-    setShowSearchBook(!showSearchBook);
-    sessionStorage.setItem("showPublisher", "true");
+    setshowSearch(!showSearch);
+    sessionStorage.setItem("searchTable", "Publishers");
   }
+
+  function handleBook() {
+    setshowSearch(!showSearch);
+    sessionStorage.setItem("searchTable", "Books");
+  }
+  function handleAuthor() {
+    setshowSearch(!showSearch);
+    sessionStorage.setItem("searchTable", "Authors");
+  }
+
+  function handleManager() {
+    sessionStorage.setItem("searchTable", "Managers");
+    setshowSearch(!showSearch);
+
+    console.log("MANAGER");
+  }
+
+  function convertIntoBook(header, data) {
+    data = data[0];
+    header = header.flat();
+    let indexID = 0;
+    let insertQuery = 'INSERT INTO public."Books" (';
+    let insertColumns = "";
+    let insertData = "";
+    let oldColumn;
+    let notNeccessaryColumns = [
+      "libraryOrderAuthor",
+      "libraryOrderPublisher",
+      "libraryOrderDateOrdered",
+      "libraryOrderDeliveryDate",
+      "libraryOrderCost",
+      "libraryOrderStatusOrder",
+      "libraryOrderManagerID",
+    ];
+    header.forEach((column) => {
+      if (
+        notFilledColumns.includes(column) &&
+        column != "libraryOrderStatusOrder"
+      ) {
+        indexID = header.indexOf(column);
+      } else {
+        if (notNeccessaryColumns.includes(column)) {
+        } else {
+          switch (column) {
+            case "libraryOrderBookTitle":
+              oldColumn = column;
+              column = "bookTitle";
+              break;
+            case "libraryOrderAuthorID":
+              oldColumn = column;
+              column = "bookAuthorID";
+              break;
+            case "libraryOrderAmount":
+              oldColumn = column;
+              column = "bookAmount";
+              break;
+            case "libraryOrderISBN":
+              oldColumn = column;
+              column = "bookISBN";
+              break;
+            case "libraryOrderPublisherID":
+              oldColumn = column;
+              column = "bookPublisherID";
+              break;
+            default:
+              break;
+          }
+          insertColumns = insertColumns + `"${column}", `;
+          insertData = insertData + `'${data[header.indexOf(oldColumn)]}', `;
+        }
+      }
+    });
+    insertQuery =
+      insertQuery +
+      insertColumns.slice(0, insertColumns.length - 2) +
+      ") Values (";
+
+    /*
+    for (let index = 0; index < data.length; index++) {
+      if (index == indexID) {
+        //skip
+      } else {
+        insertData = insertData + `'${data[index]}', `;
+      }
+    }
+    */
+
+    insertQuery =
+      insertQuery + insertData.slice(0, insertData.length - 2) + ")";
+    console.log(insertQuery);
+
+    let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${data[indexID]}'`;
+    console.log(updateQuery);
+    axios
+      .post(api, {
+        query: `${updateQuery}`,
+      })
+      .then((response) => {
+        setUpdateData(!updateData);
+      })
+      .catch((error) => {
+        console.log("ERROR : ", error);
+      });
+
+    axios
+      .post(api, {
+        query: `${insertQuery}`,
+      })
+      .then((response) => {
+        setUpdateData(!updateData);
+      })
+      .catch((error) => {
+        console.log("ERROR : ", error);
+      });
+  }
+
   //if (!results.length) {
   // If there is no data available yet, show a loading indicator or an empty state.
   //  return <p>Loading...</p>;
@@ -616,22 +785,30 @@ function Overview() {
               {data.map((entry) => (
                 <td>{entry}</td>
               ))}
+
               <td>
-                <button
-                  className="w-100 btn btn-lg btn-primary"
-                  onClick={() => deleteEntry(data[0])}
-                >
-                  Delete
-                </button>
-              </td>
-              <td>
-                <button
+                <Button
+                  disabled={data[data.length - 2] == "done" ? true : false}
                   className="w-100 btn btn-lg btn-primary"
                   onClick={() => handleEdit(data)}
                 >
                   Edit
-                </button>
+                </Button>
               </td>
+              {showConvertOrderIntoBookButton ? (
+                <td>
+                  <Button
+                    disabled={data[data.length - 2] == "done" ? true : false}
+                    onClick={() => convertIntoBook(columns, results)}
+                  >
+                    {data[data.length - 2] == "done"
+                      ? "Already converted"
+                      : "Convert into Book"}
+                  </Button>
+                </td>
+              ) : (
+                <></>
+              )}
             </tr>
           ))}
         </tbody>
@@ -668,14 +845,23 @@ function Overview() {
                 </Form.Group>
               ))}
               <Button type="submit">Create</Button>
+              {showSearchBookButton ? (
+                <Button onClick={() => handleBook()}>Search Book</Button>
+              ) : (
+                <></>
+              )}
+              {showSearchAuthorButton ? (
+                <Button onClick={() => handleAuthor()}>Search Author</Button>
+              ) : (
+                <></>
+              )}
+              {showSearchManagerButton ? (
+                <Button onClick={() => handleManager()}>Search Manager</Button>
+              ) : (
+                <></>
+              )}
               <Button
-                hidden={!showButton}
-                onClick={() => setShowSearchBook(!showSearchBook)}
-              >
-                Search {selectedTable == "Books" ? "Author" : "Book"}
-              </Button>
-              <Button
-                hidden={!showPublisherButton}
+                hidden={hidePublisherButton}
                 onClick={() => handlePublisher()}
               >
                 Search Publisher
@@ -732,8 +918,8 @@ function Overview() {
         </select>
       </div>
       <div>
-        {showSearchBook && (
-          <Modal show={showSearchBook} fullscreen={true}>
+        {showSearch && (
+          <Modal show={showSearch} fullscreen={true}>
             <ModalBody>
               <TableSearch
                 id="Search"
