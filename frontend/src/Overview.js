@@ -45,8 +45,9 @@ function Overview() {
   );
   const [showSearchAuthorButton, setShowSearchAuthorButton] = useState(false);
   const [showSearchBookButton, setShowSearchBookButton] = useState(false);
+  const [showSearchManagerButton, setShowSearchManagerButton] = useState(false);
   const [showConvertOrderIntoBookButton, setShowConvertOrderIntoBookButton] =
-    useState(selectedTable == "LibraryOrders" ? true : false);
+    useState();
   const [hidePublisherButton, setHidePublisherButton] = useState(
     selectedTable == "Books" || selectedTable == "LibraryOrders" ? false : true
   );
@@ -74,13 +75,14 @@ function Overview() {
     librarianPhone: { type: "text", required: false, placeholder: "" },
   });
   const [rowUniqueID, setRowUniqueID] = useState([]);
-
+  /*
   if (selectedTable == "Loans") {
     selectedTable.setItem("searchTable", "Books");
   }
   if (selectedTable == "Books" || selectedTable == "LibraryOrders") {
     sessionStorage.setItem("searchTable", "Authors");
   }
+  */
 
   // callback
   const callThisFromChildComponent = (data) => {
@@ -110,6 +112,9 @@ function Overview() {
       }
       if (key == "authorID" && selectedTable == "LibraryOrders") {
         formDataKey = "libraryOrderAuthorID";
+      }
+      if (key == "managerID" && selectedTable == "LibraryOrders") {
+        formDataKey = "libraryOrderManagerID";
       }
 
       if (
@@ -411,6 +416,7 @@ function Overview() {
     setShowSearchAuthorButton(false);
     setShowSearchBookButton(false);
     setHidePublisherButton(true);
+    setShowSearchManagerButton(false);
     if (selectedTable == "Books") {
       setShowSearchAuthorButton(true);
       setHidePublisherButton(false);
@@ -425,7 +431,11 @@ function Overview() {
       setHidePublisherButton(false);
       setShowSearchBookButton(false);
       setShowSearchAuthorButton(true);
+      setShowSearchManagerButton(true);
     }
+    setShowConvertOrderIntoBookButton(
+      selectedTable == "LibraryOrders" ? true : false
+    );
   }, [selectedTable]);
   //fetch bookIDs
   useEffect(() => {
@@ -639,14 +649,23 @@ function Overview() {
 
   function handlePublisher() {
     setshowSearch(!showSearch);
-    sessionStorage.setItem("showPublisher", "true");
+    sessionStorage.setItem("searchTable", "Publishers");
   }
 
   function handleBook() {
     setshowSearch(!showSearch);
+    sessionStorage.setItem("searchTable", "Books");
   }
   function handleAuthor() {
     setshowSearch(!showSearch);
+    sessionStorage.setItem("searchTable", "Authors");
+  }
+
+  function handleManager() {
+    sessionStorage.setItem("searchTable", "Managers");
+    setshowSearch(!showSearch);
+
+    console.log("MANAGER");
   }
 
   function convertIntoBook(header, data) {
@@ -833,6 +852,11 @@ function Overview() {
               )}
               {showSearchAuthorButton ? (
                 <Button onClick={() => handleAuthor()}>Search Author</Button>
+              ) : (
+                <></>
+              )}
+              {showSearchManagerButton ? (
+                <Button onClick={() => handleManager()}>Search Manager</Button>
               ) : (
                 <></>
               )}
