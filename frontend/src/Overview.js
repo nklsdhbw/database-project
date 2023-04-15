@@ -679,10 +679,14 @@ function Overview() {
       "libraryOrderDateOrdered",
       "libraryOrderDeliveryDate",
       "libraryOrderCost",
-      "libraryOrderStatus",
+      "libraryOrderStatusOrder",
+      "libraryOrderManagerID",
     ];
     header.forEach((column) => {
-      if (notFilledColumns.includes(column)) {
+      if (
+        notFilledColumns.includes(column) &&
+        column != "libraryOrderStatusOrder"
+      ) {
         indexID = header.indexOf(column);
       } else {
         if (notNeccessaryColumns.includes(column)) {
@@ -735,7 +739,7 @@ function Overview() {
       insertQuery + insertData.slice(0, insertData.length - 2) + ")";
     console.log(insertQuery);
 
-    let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatus" = 'done' WHERE "libraryOrderID" = '${data[indexID]}'`;
+    let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${data[indexID]}'`;
     console.log(updateQuery);
     axios
       .post(api, {
@@ -781,16 +785,10 @@ function Overview() {
               {data.map((entry) => (
                 <td>{entry}</td>
               ))}
-              <td>
-                <button
-                  className="w-100 btn btn-lg btn-primary"
-                  onClick={() => deleteEntry(data[0])}
-                >
-                  Delete
-                </button>
-              </td>
+
               <td>
                 <Button
+                  disabled={data[data.length - 2] == "done" ? true : false}
                   className="w-100 btn btn-lg btn-primary"
                   onClick={() => handleEdit(data)}
                 >
@@ -799,8 +797,13 @@ function Overview() {
               </td>
               {showConvertOrderIntoBookButton ? (
                 <td>
-                  <Button onClick={() => convertIntoBook(columns, results)}>
-                    Convert into Book
+                  <Button
+                    disabled={data[data.length - 2] == "done" ? true : false}
+                    onClick={() => convertIntoBook(columns, results)}
+                  >
+                    {data[data.length - 2] == "done"
+                      ? "Already converted"
+                      : "Convert into Book"}
                   </Button>
                 </td>
               ) : (
