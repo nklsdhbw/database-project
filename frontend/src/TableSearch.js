@@ -4,6 +4,7 @@ import Table from "react-bootstrap/Table";
 import axios from "axios";
 import { userColumns } from "./columns";
 import { useTableSearch } from "./useTableSearch";
+import { Button } from "react-bootstrap";
 
 const { Search } = Input;
 
@@ -79,6 +80,8 @@ export default function TableSearch({ callback }) {
 
   return (
     <>
+      <Button onClick={() => callback("closePanel")}>Close</Button>
+      <br /> <br />
       <Search
         onChange={(e) => setSearchVal(e.target.value)}
         placeholder="Search"

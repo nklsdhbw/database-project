@@ -87,47 +87,51 @@ function Overview() {
   // callback
   const callThisFromChildComponent = (data) => {
     console.log("Data from Child component:", data);
-    let input = data;
-    const updatedFormData = { ...formData };
-    Object.keys(input).forEach((key) => {
-      let formDataKey = key;
-      if (key == "bookID") {
-        formDataKey = "loanBookID";
-      }
-      if (key == "authorID" && selectedTable == "Books") {
-        formDataKey = "bookAuthorID";
-      }
-      if (key == "authorName") {
-        formDataKey = "bookAuthor";
-      }
-      if (key == "publisherID" && selectedTable == "Books") {
-        formDataKey = "bookPublisherID";
-      }
-      if (key == "publisherName") {
-        formDataKey = "bookPublisherName";
-      }
+    if (data == "closePanel") {
+      setshowSearch(!showSearch);
+    } else {
+      let input = data;
+      const updatedFormData = { ...formData };
+      Object.keys(input).forEach((key) => {
+        let formDataKey = key;
+        if (key == "bookID") {
+          formDataKey = "loanBookID";
+        }
+        if (key == "authorID" && selectedTable == "Books") {
+          formDataKey = "bookAuthorID";
+        }
+        if (key == "authorName") {
+          formDataKey = "bookAuthor";
+        }
+        if (key == "publisherID" && selectedTable == "Books") {
+          formDataKey = "bookPublisherID";
+        }
+        if (key == "publisherName") {
+          formDataKey = "bookPublisherName";
+        }
 
-      if (key == "publisherID" && selectedTable == "LibraryOrders") {
-        formDataKey = "libraryOrderPublisherID";
-      }
-      if (key == "authorID" && selectedTable == "LibraryOrders") {
-        formDataKey = "libraryOrderAuthorID";
-      }
-      if (key == "managerID" && selectedTable == "LibraryOrders") {
-        formDataKey = "libraryOrderManagerID";
-      }
+        if (key == "publisherID" && selectedTable == "LibraryOrders") {
+          formDataKey = "libraryOrderPublisherID";
+        }
+        if (key == "authorID" && selectedTable == "LibraryOrders") {
+          formDataKey = "libraryOrderAuthorID";
+        }
+        if (key == "managerID" && selectedTable == "LibraryOrders") {
+          formDataKey = "libraryOrderManagerID";
+        }
 
-      if (
-        updatedFormData[formDataKey] &&
-        updatedFormData[formDataKey].hasOwnProperty("placeholder")
-      ) {
-        updatedFormData[formDataKey].placeholder = input[key].toString();
-      }
-    });
-    console.log("Updated FormData : ", updatedFormData);
-    setFormData(updatedFormData);
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("showPublisher", "false");
+        if (
+          updatedFormData[formDataKey] &&
+          updatedFormData[formDataKey].hasOwnProperty("placeholder")
+        ) {
+          updatedFormData[formDataKey].placeholder = input[key].toString();
+        }
+      });
+      console.log("Updated FormData : ", updatedFormData);
+      setFormData(updatedFormData);
+      setshowSearch(!showSearch);
+      sessionStorage.setItem("showPublisher", "false");
+    }
   };
 
   // react hooks
