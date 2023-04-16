@@ -122,6 +122,25 @@ export default function TableSearch({ callback }) {
                     <button
                       className="w-100 btn btn-lg btn-primary"
                       onClick={() => callback(row)}
+                      disabled={
+                        sessionStorage.getItem("searchTable") == "Books" &&
+                        row["bookAvailabilityAmount"] > 0
+                          ? false
+                          : true
+                      }
+                      hidden={
+                        !(sessionStorage.getItem("searchTable") == "Books")
+                      }
+                    >
+                      {sessionStorage.getItem("searchTable") == "Books" &&
+                      row["bookAvailabilityAmount"] > 0
+                        ? "Choose"
+                        : "Not available"}
+                    </button>
+                    <button
+                      className="w-100 btn btn-lg btn-primary"
+                      onClick={() => callback(row)}
+                      hidden={sessionStorage.getItem("searchTable") == "Books"}
                     >
                       Choose
                     </button>
