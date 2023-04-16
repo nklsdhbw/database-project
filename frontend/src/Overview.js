@@ -361,7 +361,7 @@ function Overview() {
     // decrese bookAvailabilityAmount by 1
     if (selectedTable == "Loans") {
       //let bookID = response.data[0];
-      let updateQuery = `UPDATE public."Books" SET "bookAvailabilityAmount"  = "bookAvailabilityAmount" -1 WHERE "bookID" = ${loanBookID}`;
+      let updateQuery = `UPDATE public."Books" SET "bookAvailabilityAmount"  = "bookAvailabilityAmount" -1, "bookAvailability" = CASE WHEN "bookAvailabilityAmount" - 1 > 0 THEN true ELSE false END WHERE "bookID" = ${loanBookID}`;
       axios
         .post(api, {
           query: `${updateQuery}`,
@@ -648,7 +648,7 @@ function Overview() {
           {results.map((data) => (
             <tr>
               {data.map((entry) => (
-                <td>{entry}</td>
+                <td>{typeof entry == "boolean" ? entry.toString() : entry}</td>
               ))}
 
               <td>
