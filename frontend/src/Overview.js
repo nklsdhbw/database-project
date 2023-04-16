@@ -129,115 +129,6 @@ function Overview() {
 
   // react hooks
 
-  // set datatypes for the first time
-  useEffect(() => {
-    if (query) {
-      axios
-        .post("http://localhost:5000/run-query", { query })
-        .then((response) => {
-          setResults(response.data);
-          setResults2(response);
-        })
-        .catch((error) => {
-          console.log("ERROR : ", error);
-        });
-
-      axios
-        .post("http://localhost:5000/run-query", {
-          query: `SELECT data_type, column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
-        })
-        .then((datatypes) => {
-          let datatypesData = datatypes.data;
-          for (let index = 0; index < datatypesData.length; index++) {
-            let element = datatypesData[index];
-            if (
-              element[0].startsWith("character") ||
-              element[0].startsWith("char")
-            ) {
-              datatypesData[index] = "text";
-            }
-            if (
-              element[0].startsWith("big") ||
-              element[0].startsWith("int") ||
-              element[0].startsWith("small") ||
-              element[0].startsWith("numeric")
-            ) {
-              datatypesData[index] = "number";
-            }
-
-            if (element[0].startsWith("date")) {
-              datatypesData[index] = "date";
-            }
-            if (element[0].startsWith("bool")) {
-              datatypesData[index] = "checked";
-            }
-            if (element[1].includes("mail")) {
-              datatypesData[index] = "email";
-            }
-            if (element[1].includes("assword")) {
-              datatypesData[index] = "password";
-            }
-
-            //bookID
-            //if (element[1] == "loanBookID") {
-            //  datatypesData[index] = "checkbox";
-            //}
-            //drop loanID
-            if (notFilledColumns.includes(element[1])) {
-              datatypesData[index] = null;
-            }
-          }
-
-          const filteredArr = datatypesData.filter((value) => value != null);
-          console.log("HTML DATATYPES : ", filteredArr);
-          setDatatypes(filteredArr);
-        })
-        .catch((error) => {
-          console.log("ERROR : ", error);
-        });
-    }
-  }, []);
-
-  //set formData/editData for the first time
-  useEffect(() => {
-    axios
-      .post("http://localhost:5000/run-query", { query })
-      .then((response) => {
-        setResults(response.data);
-        setResults2(response);
-      })
-      .catch((error) => {
-        console.log("ERROR : ", error);
-      });
-
-    axios
-      .post("http://localhost:5000/run-query", {
-        query: `SELECT column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
-      })
-      .then((columns) => {
-        setColumns(columns.data);
-        const newFormData = {};
-        let newColumns = columns.data;
-        newColumns.map((column, index) => {
-          if (notFilledColumns.includes(column[0])) {
-          } else {
-            newFormData[column[0]] = {
-              type: datatypes[index],
-              required: true,
-              placeholder: "",
-            };
-          }
-        });
-        setFormData(newFormData);
-        console.log(newFormData);
-        console.log(datatypes);
-        setEditData(newFormData);
-      })
-      .catch((error) => {
-        console.log("ERROR : ", error);
-      });
-  }, [datatypes]);
-
   useEffect(() => {
     let query = `SELECT tablename
       FROM pg_tables
@@ -259,167 +150,133 @@ function Overview() {
 
   // get data from table
   useEffect(() => {
-    if (selectedTable) {
-      const newQuery = `SELECT * FROM "${selectedTable}"`;
-      temp = selectedTable.slice(0, selectedTable.length - 1);
-      //if (selectedTable=="LibraryOrders"){
-      temp = temp.charAt(0).toLowerCase() + temp.substring(1);
-      console.log("UNIQUE COLUMN", temp);
+    const newQuery = `SELECT * FROM "${selectedTable}"`;
+    temp = selectedTable.slice(0, selectedTable.length - 1);
+    //if (selectedTable=="LibraryOrders"){
+    temp = temp.charAt(0).toLowerCase() + temp.substring(1);
+    console.log("UNIQUE COLUMN", temp);
 
-      //temp = temp.toLowerCase();
-      temp = temp + "ID";
-      setUniqueColumn(temp);
-      setQuery(newQuery);
-      setShouldRender(!shouldRender);
-    }
-  }, [selectedTable, updateData]);
+    //temp = temp.toLowerCase();
+    temp = temp + "ID";
+    setUniqueColumn(temp);
+    setQuery(newQuery);
+    setShouldRender(!shouldRender);
 
-  // get columns from table
-  useEffect(() => {
-    if (query) {
-      axios
-        .post("http://localhost:5000/run-query", { query })
-        .then((response) => {
-          setResults(response.data);
-          setResults2(response);
-        })
-        .catch((error) => {
-          console.log("ERROR : ", error);
-        });
+    //get Data
+    axios
+      .post("http://localhost:5000/run-query", {
+        query: `SELECT * FROM public."${selectedTable}"`,
+      })
+      .then((response) => {
+        setResults(response.data);
+      })
+      .catch((error) => {
+        console.log("ERROR : ", error);
+      });
 
-      axios
-        .post("http://localhost:5000/run-query", {
-          query: `SELECT column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
-        })
-        .then((columns) => {
-          setColumns(columns.data);
-          const newFormData = {};
-          let newColumns = columns.data;
-          newColumns.map((column, index) => {
-            if (notFilledColumns.includes(column[0])) {
-            } else {
-              newFormData[column[0]] = {
-                type: datatypes[index],
-                required: true,
-                placeholder: "",
-              };
-            }
-          });
-          setFormData(newFormData);
-        })
-        .catch((error) => {
-          console.log("ERROR : ", error);
-        });
-    }
-  }, [query, shouldRender, selectedTable]);
-
-  //get datatypes from table
-  useEffect(() => {
-    if (query) {
-      axios
-        .post("http://localhost:5000/run-query", { query })
-        .then((response) => {
-          setResults(response.data);
-          setResults2(response);
-        })
-        .catch((error) => {
-          console.log("ERROR : ", error);
-        });
-
-      axios
-        .post("http://localhost:5000/run-query", {
-          query: `SELECT data_type, column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
-        })
-        .then((datatypes) => {
-          let datatypesData = datatypes.data;
-          for (let index = 0; index < datatypesData.length; index++) {
-            let element = datatypesData[index];
-            if (
-              element[0].startsWith("character") ||
-              element[0].startsWith("char")
-            ) {
-              datatypesData[index] = "text";
-            }
-            if (
-              element[0].startsWith("big") ||
-              element[0].startsWith("int") ||
-              element[0].startsWith("small") ||
-              element[0].startsWith("numeric")
-            ) {
-              datatypesData[index] = "number";
-            }
-
-            if (element[0].startsWith("date")) {
-              datatypesData[index] = "date";
-            }
-            if (element[0].startsWith("bool")) {
-              datatypesData[index] = "checked";
-            }
-            if (element[1].includes("mail")) {
-              datatypesData[index] = "email";
-            }
-            if (element[1].includes("assword")) {
-              datatypesData[index] = "password";
-            }
-
-            //bookID
-            //if (element[1] == "loanBookID") {
-            //  datatypesData[index] = "checkbox";
-            //}
-            //drop loanID
-            if (notFilledColumns.includes(element[1])) {
-              datatypesData[index] = null;
-            }
+    // set datatypes
+    axios
+      .post("http://localhost:5000/run-query", {
+        query: `SELECT data_type, column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
+      })
+      .then((datatypes) => {
+        let datatypesData = datatypes.data;
+        for (let index = 0; index < datatypesData.length; index++) {
+          let element = datatypesData[index];
+          if (
+            element[0].startsWith("character") ||
+            element[0].startsWith("char")
+          ) {
+            datatypesData[index] = "text";
+          }
+          if (
+            element[0].startsWith("big") ||
+            element[0].startsWith("int") ||
+            element[0].startsWith("small") ||
+            element[0].startsWith("numeric")
+          ) {
+            datatypesData[index] = "number";
           }
 
-          const filteredArr = datatypesData.filter((value) => value != null);
-          console.log("HTML DATATYPES : ", filteredArr);
-          setDatatypes(filteredArr);
-        })
-        .catch((error) => {
-          console.log("ERROR : ", error);
+          if (element[0].startsWith("date")) {
+            datatypesData[index] = "date";
+          }
+          if (element[0].startsWith("bool")) {
+            datatypesData[index] = "checked";
+          }
+          if (element[1].includes("mail")) {
+            datatypesData[index] = "email";
+          }
+          if (element[1].includes("assword")) {
+            datatypesData[index] = "password";
+          }
+
+          //bookID
+          //if (element[1] == "loanBookID") {
+          //  datatypesData[index] = "checkbox";
+          //}
+          //drop loanID
+          if (notFilledColumns.includes(element[1])) {
+            datatypesData[index] = null;
+          }
+        }
+
+        const filteredArr = datatypesData.filter((value) => value != null);
+        console.log("HTML DATATYPES : ", filteredArr);
+        setDatatypes(filteredArr);
+      })
+      .catch((error) => {
+        console.log("ERROR : ", error);
+      });
+
+    // set columns
+    axios
+      .post("http://localhost:5000/run-query", {
+        query: `SELECT column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
+      })
+      .then((columns) => {
+        setColumns(columns.data);
+        // set EditData/formData
+        columns = columns.data;
+        const newFormData = {};
+        console.log("COLUMNS", columns);
+        let cols = columns.slice(1, columns.length);
+        let prefillDateColumns = ["loanLoanDate", "libraryOrderDateOrdered"];
+        cols.map((column, index) => {
+          let placeholder = "";
+          if (column[0] == "loanReaderEmail") {
+            placeholder = sessionStorage.getItem("loginMail");
+          }
+          if (prefillDateColumns.includes(column[0])) {
+            placeholder = new Date().toISOString().slice(0, 10);
+          }
+          if (column[0] == "loanRenewals") {
+            placeholder = 0;
+          }
+          if (column[0] == "loanOverdue") {
+            placeholder = false;
+          }
+          if (column[0] == "loanFine") {
+            placeholder = 0;
+          }
+          if (notFilledColumns.includes(column[0])) {
+          } else {
+            newFormData[column[0]] = {
+              type: datatypes[index],
+              required: true,
+              placeholder: placeholder,
+            };
+          }
         });
-    }
-  }, [query, shouldRender, selectedTable]);
+        console.log("New FormData : ", newFormData);
+        setFormData(newFormData);
+        setEditData(newFormData);
+      })
+      .catch((error) => {
+        console.log("ERROR : ", error);
+      });
 
-  useEffect(() => {
-    const newFormData = {};
-    console.log("COLUMNS", columns);
-    let cols = columns.slice(1, columns.length);
-    let prefillDateColumns = ["loanLoanDate", "libraryOrderDateOrdered"];
-    cols.map((column, index) => {
-      let placeholder = "";
-      if (column[0] == "loanReaderEmail") {
-        placeholder = sessionStorage.getItem("loginMail");
-      }
-      if (prefillDateColumns.includes(column[0])) {
-        placeholder = new Date().toISOString().slice(0, 10);
-      }
-      if (column[0] == "loanRenewals") {
-        placeholder = 0;
-      }
-      if (column[0] == "loanOverdue") {
-        placeholder = false;
-      }
-      if (column[0] == "loanFine") {
-        placeholder = 0;
-      }
-      if (notFilledColumns.includes(column[0])) {
-      } else {
-        newFormData[column[0]] = {
-          type: datatypes[index],
-          required: true,
-          placeholder: placeholder,
-        };
-      }
-    });
-    console.log("New FormData : ", newFormData);
-    setFormData(newFormData);
-    setEditData(newFormData);
-  }, [columns]);
-
-  useEffect(() => {
-    console.log("test");
+    // set visibility of buttons
     setShowSearchAuthorButton(false);
     setShowSearchBookButton(false);
     setHidePublisherButton(true);
@@ -443,7 +300,8 @@ function Overview() {
     setShowConvertOrderIntoBookButton(
       selectedTable == "LibraryOrders" ? true : false
     );
-  }, [selectedTable]);
+  }, [selectedTable, updateData]);
+
   //fetch bookIDs
   useEffect(() => {
     if (bookIDs) {
@@ -467,25 +325,6 @@ function Overview() {
       selectElement.options[selectElement.selectedIndex].value;
     sessionStorage.setItem("table", selectedValue);
     console.log("SELECTED TABLE", selectedValue);
-    /*
-    if (BUTTON_TABLES.includes(selectedValue)) {
-      if (showButton === true) {
-      } else {
-        setShowButton(true);
-      }
-    } else {
-      setShowButton(false);
-    }
-    if (selectedValue == "Loans") {
-      sessionStorage.setItem("searchTable", "Books");
-    }
-    if (selectedValue == "Books" || selectedValue == "LibraryOrders") {
-      sessionStorage.setItem("searchTable", "Authors");
-      setHidePublisherButton(false);
-    } else {
-      setHidePublisherButton(true);
-    }
-    */
     setSelectedTable(selectedValue);
   }
 
