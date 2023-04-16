@@ -328,7 +328,10 @@ function Overview() {
     setSelectedTable(selectedValue);
   }
 
-  function addEntry(data, rowID) {
+  function addEntry(data) {
+    let loanBookID = data["loanBookID"].placeholder;
+    setUpdateData(!updateData);
+    setShowModal(!showModal);
     let valuesString = "VALUES(";
     let columnsString = "";
     let values = Object.entries(data).map(
@@ -355,6 +358,19 @@ function Overview() {
       .catch((error) => {
         console.log("ERROR : ", error);
       });
+    // decrese bookAvailabilityAmount by 1
+    if (selectedTable == "Loans") {
+      //let bookID = response.data[0];
+      let updateQuery = `UPDATE public."Books" SET "bookAvailabilityAmount"  = "bookAvailabilityAmount" -1 WHERE "bookID" = ${loanBookID}`;
+      axios
+        .post(api, {
+          query: `${updateQuery}`,
+        })
+        .then((response) => {})
+        .catch((error) => {
+          console.log("ERROR : ", error);
+        });
+    }
   }
 
   function deleteEntry(rowID) {
