@@ -386,12 +386,13 @@ function Overview() {
     const newFormData = {};
     console.log("COLUMNS", columns);
     let cols = columns.slice(1, columns.length);
+    let prefillDateColumns = ["loanLoanDate", "libraryOrderDateOrdered"];
     cols.map((column, index) => {
       let placeholder = "";
       if (column[0] == "loanReaderEmail") {
         placeholder = sessionStorage.getItem("loginMail");
       }
-      if (column[0] == "loanLoanDate") {
+      if (prefillDateColumns.includes(column[0])) {
         placeholder = new Date().toISOString().slice(0, 10);
       }
       if (column[0] == "loanRenewals") {
@@ -675,7 +676,8 @@ function Overview() {
   }
 
   function convertIntoBook(header, data) {
-    data = data[0];
+    //data = data[0];
+    console.log(data);
     header = header.flat();
     let indexID = 0;
     let insertQuery = 'INSERT INTO public."Books" (';
@@ -724,8 +726,15 @@ function Overview() {
             default:
               break;
           }
-          insertColumns = insertColumns + `"${column}", `;
-          insertData = insertData + `'${data[header.indexOf(oldColumn)]}', `;
+          if (column == "bookAmount") {
+            insertColumns = insertColumns + `"${column}", `;
+            insertData = insertData + `'${data[header.indexOf(oldColumn)]}', `;
+            insertColumns = insertColumns + `"bookAvailabilityAmount", `;
+            insertData = insertData + `'${data[header.indexOf(oldColumn)]}', `;
+          } else {
+            insertColumns = insertColumns + `"${column}", `;
+            insertData = insertData + `'${data[header.indexOf(oldColumn)]}', `;
+          }
         }
       }
     });
@@ -733,6 +742,7 @@ function Overview() {
       insertQuery +
       insertColumns.slice(0, insertColumns.length - 2) +
       ") Values (";
+    console.log(insertQuery);
 
     /*
     for (let index = 0; index < data.length; index++) {
@@ -797,18 +807,26 @@ function Overview() {
 
               <td>
                 <Button
-                  disabled={data[data.length - 2] == "done" ? true : false}
                   className="w-100 btn btn-lg btn-primary"
                   onClick={() => handleEdit(data)}
                 >
                   Edit
                 </Button>
               </td>
+              <td>
+                <Button
+                  className="w-100 btn btn-lg btn-primary"
+                  onClick={() => deleteEntry(data[0])}
+                >
+                  Delete
+                </Button>
+              </td>
+
               {showConvertOrderIntoBookButton ? (
                 <td>
                   <Button
                     disabled={data[data.length - 2] == "done" ? true : false}
-                    onClick={() => convertIntoBook(columns, results)}
+                    onClick={() => convertIntoBook(columns, data)}
                   >
                     {data[data.length - 2] == "done"
                       ? "Already converted"
