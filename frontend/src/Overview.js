@@ -676,7 +676,7 @@ function Overview() {
   }
 
   function convertIntoBook(header, data) {
-    //data = data[0];
+    let successfullInsert = true;
     console.log(data);
     header = header.flat();
     let indexID = 0;
@@ -744,32 +744,12 @@ function Overview() {
       ") Values (";
     console.log(insertQuery);
 
-    /*
-    for (let index = 0; index < data.length; index++) {
-      if (index == indexID) {
-        //skip
-      } else {
-        insertData = insertData + `'${data[index]}', `;
-      }
-    }
-    */
-
     insertQuery =
       insertQuery + insertData.slice(0, insertData.length - 2) + ")";
     console.log(insertQuery);
 
     let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${data[indexID]}'`;
     console.log(updateQuery);
-    axios
-      .post(api, {
-        query: `${updateQuery}`,
-      })
-      .then((response) => {
-        setUpdateData(!updateData);
-      })
-      .catch((error) => {
-        console.log("ERROR : ", error);
-      });
 
     axios
       .post(api, {
@@ -777,6 +757,17 @@ function Overview() {
       })
       .then((response) => {
         setUpdateData(!updateData);
+        // successfull insert -> now update exsting Data
+        axios
+          .post(api, {
+            query: `${updateQuery}`,
+          })
+          .then((response) => {
+            setUpdateData(!updateData);
+          })
+          .catch((error) => {
+            console.log("ERROR : ", error);
+          });
       })
       .catch((error) => {
         console.log("ERROR : ", error);
