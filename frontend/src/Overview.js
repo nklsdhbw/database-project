@@ -394,6 +394,15 @@ function Overview() {
       if (column[0] == "loanLoanDate") {
         placeholder = new Date().toISOString().slice(0, 10);
       }
+      if (column[0] == "loanRenewals") {
+        placeholder = 0;
+      }
+      if (column[0] == "loanOverdue") {
+        placeholder = false;
+      }
+      if (column[0] == "loanFine") {
+        placeholder = 0;
+      }
       if (notFilledColumns.includes(column[0])) {
       } else {
         newFormData[column[0]] = {
