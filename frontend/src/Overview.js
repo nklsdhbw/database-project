@@ -329,9 +329,7 @@ function Overview() {
   }
 
   function addEntry(data) {
-    let loanBookID = data["loanBookID"].placeholder;
-    setUpdateData(!updateData);
-    setShowModal(!showModal);
+    let loanBookID;
     let valuesString = "VALUES(";
     let columnsString = "";
     let values = Object.entries(data).map(
@@ -360,7 +358,7 @@ function Overview() {
       });
     // decrese bookAvailabilityAmount by 1
     if (selectedTable == "Loans") {
-      //let bookID = response.data[0];
+      loanBookID = data["loanBookID"].placeholder;
       let updateQuery = `UPDATE public."Books" SET "bookAvailabilityAmount"  = "bookAvailabilityAmount" -1, "bookAvailability" = CASE WHEN "bookAvailabilityAmount" - 1 > 0 THEN true ELSE false END WHERE "bookID" = ${loanBookID}`;
       axios
         .post(api, {
@@ -371,6 +369,8 @@ function Overview() {
           console.log("ERROR : ", error);
         });
     }
+    setUpdateData(!updateData);
+    setShowModal(!showModal);
   }
 
   function deleteEntry(rowID) {
@@ -457,6 +457,7 @@ function Overview() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    console.log(formData);
     addEntry(formData);
     setUpdateData(!updateData);
     setShowModal(!showModal);
