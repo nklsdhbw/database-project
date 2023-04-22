@@ -259,6 +259,10 @@ function Overview() {
           if (column[0] == "loanFine") {
             placeholder = 0;
           }
+          //prefill loanReaderID
+          if (column[0] == "loanReaderID") {
+            placeholder = sessionStorage.getItem("readerID");
+          }
           if (notFilledColumns.includes(column[0])) {
           } else {
             newFormData[column[0]] = {

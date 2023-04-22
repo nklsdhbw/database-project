@@ -74,11 +74,32 @@ const Register = () => {
         })
         .then((response) => {
           setResults(response.data);
+
+          //get readerData from database
+          axios
+            .post("http://localhost:5000/run-query", {
+              query: `SELECT * FROM public."Readers"`,
+            })
+            .then((response) => {
+              setResults(response.data);
+              let results = response.data;
+              //get readerID from User and save it in sessionStorage
+              console.log(results);
+              results.forEach((element) => {
+                if (element[2] == registerData.eMail) {
+                  let readerID = element[0];
+                  sessionStorage.setItem("readerID", readerID);
+                  navigate("/overview");
+                }
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         })
         .catch((error) => {
           console.log(error);
         });
-      navigate("/overview");
     }
   };
 
