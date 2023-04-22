@@ -535,6 +535,14 @@ function Overview() {
               oldColumn = column;
               column = "bookPublisherID";
               break;
+            case "libraryOrderPublicationDate":
+              oldColumn = column;
+              column = "bookPublicationDate";
+              break;
+            case "libraryOrderPublicationPlace":
+              oldColumn = column;
+              column = "bookPublicationPlace";
+              break;
             default:
               break;
           }
@@ -557,7 +565,7 @@ function Overview() {
 
     insertQuery =
       insertQuery + insertData.slice(0, insertData.length - 2) + ")";
-
+    console.log(insertQuery);
     let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${data[indexID]}'`;
 
     axios
@@ -620,10 +628,10 @@ function Overview() {
               {showConvertOrderIntoBookButton ? (
                 <td>
                   <Button
-                    disabled={data[data.length - 2] == "done" ? true : false}
+                    disabled={data[data.length - 4] == "done" ? true : false}
                     onClick={() => convertIntoBook(columns, data)}
                   >
-                    {data[data.length - 2] == "done"
+                    {data[data.length - 4] == "done"
                       ? "Already converted"
                       : "Convert into Book"}
                   </Button>
