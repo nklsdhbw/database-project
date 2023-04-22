@@ -202,57 +202,63 @@ function Overview() {
         const filteredArr = datatypesData.filter((value) => value != null);
         console.log("HTML DATATYPES : ", filteredArr);
         setDatatypes(filteredArr);
-      })
-      .catch((error) => {
-        console.log("ERROR : ", error);
-      });
 
-    // set columns
-    axios
-      .post("http://localhost:5000/run-query", {
-        query: `SELECT column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
-      })
-      .then((columns) => {
-        setColumns(columns.data);
-        // set EditData/formData
-        columns = columns.data;
-        const newFormData = {};
-        console.log("COLUMNS", columns);
-        let cols = columns.slice(1, columns.length);
-        let prefillDateColumns = ["loanLoanDate", "libraryOrderDateOrdered"];
-        cols.map((column, index) => {
-          let placeholder = "";
-          if (column[0] == "loanReaderEmail") {
-            placeholder = sessionStorage.getItem("loginMail");
-          }
-          if (prefillDateColumns.includes(column[0])) {
-            placeholder = new Date().toISOString().slice(0, 10);
-          }
-          if (column[0] == "loanRenewals") {
-            placeholder = 0;
-          }
-          if (column[0] == "loanOverdue") {
-            placeholder = false;
-          }
-          if (column[0] == "loanFine") {
-            placeholder = 0;
-          }
-          //prefill loanReaderID
-          if (column[0] == "loanReaderID") {
-            placeholder = sessionStorage.getItem("readerID");
-          }
-          if (notFilledColumns.includes(column[0])) {
-          } else {
-            newFormData[column[0]] = {
-              type: datatypes[index],
-              required: true,
-              placeholder: placeholder,
-            };
-          }
-        });
-        console.log("New FormData : ", newFormData);
-        setFormData(newFormData);
-        setEditData(newFormData);
+        // set columns
+        datatypes = datatypes.data;
+        datatypes = datatypes.slice(1, datatypes.length);
+        axios
+          .post("http://localhost:5000/run-query", {
+            query: `SELECT column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
+          })
+          .then((columns) => {
+            setColumns(columns.data);
+            // set EditData/formData
+            columns = columns.data;
+            const newFormData = {};
+            console.log("COLUMNS", columns);
+            let cols = columns.slice(1, columns.length);
+            let prefillDateColumns = [
+              "loanLoanDate",
+              "libraryOrderDateOrdered",
+            ];
+            cols.map((column, index) => {
+              let placeholder = "";
+              if (column[0] == "loanReaderEmail") {
+                placeholder = sessionStorage.getItem("loginMail");
+              }
+              if (prefillDateColumns.includes(column[0])) {
+                placeholder = new Date().toISOString().slice(0, 10);
+              }
+              if (column[0] == "loanRenewals") {
+                placeholder = 0;
+              }
+              if (column[0] == "loanOverdue") {
+                placeholder = false;
+              }
+              if (column[0] == "loanFine") {
+                placeholder = 0;
+              }
+              //prefill loanReaderID
+              if (column[0] == "loanReaderID") {
+                placeholder = sessionStorage.getItem("readerID");
+              }
+              if (notFilledColumns.includes(column[0])) {
+              } else {
+                newFormData[column[0]] = {
+                  type: datatypes[index],
+                  required: true,
+                  placeholder: placeholder,
+                };
+              }
+            });
+            console.log("DATATYPES", datatypes);
+            console.log("New FormData : ", newFormData);
+            setFormData(newFormData);
+            setEditData(newFormData);
+          })
+          .catch((error) => {
+            console.log("ERROR : ", error);
+          });
       })
       .catch((error) => {
         console.log("ERROR : ", error);
@@ -440,6 +446,7 @@ function Overview() {
 
   function handleEdit(data) {
     let keys = Object.keys(editData);
+    console.log("EDITDATA", editData);
     setRowUniqueID(data[0]);
     let dataWithoutRowUniqueID = data.slice(1);
 
@@ -453,6 +460,7 @@ function Overview() {
         editData[keys[index]]["placeholder"] = placeholder;
       }
     });
+    console.log("DATA", data);
 
     setShowEditModal(!showEditModal);
     setEditData(editData);
