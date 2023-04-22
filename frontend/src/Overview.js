@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { Modal, Form, Button, ModalBody } from "react-bootstrap";
 import axios from "axios";
-import BootstrapTable from "react-bootstrap-table-next";
 import Table from "react-bootstrap/Table";
-import CreateRecordModal from "./createRecord";
 import { useNavigate } from "react-router-dom";
 import TableSearch from "./TableSearch";
 import bcrypt from "bcryptjs";
@@ -30,20 +28,15 @@ function Overview() {
   const [selectedTable, setSelectedTable] = useState(
     sessionStorage.getItem("table") || "Librarians"
   );
-  //sessionStorage.setItem("searchTable", "Books");
   let temp = selectedTable.slice(0, selectedTable.length - 1);
   temp = temp.toLowerCase();
   temp = temp + "ID";
 
-  // state variables
+  //* State variables //
   const [results, setResults] = useState([]);
-  const [results2, setResults2] = useState([]);
   const [columns, setColumns] = useState([]);
   const [datatypes, setDatatypes] = useState([]);
   const [bookIDs, setBookIDs] = useState([]);
-  const [showButton, setShowButton] = useState(
-    BUTTON_TABLES.includes(selectedTable) ? true : false
-  );
   const [showSearchAuthorButton, setShowSearchAuthorButton] = useState(false);
   const [showSearchBookButton, setShowSearchBookButton] = useState(false);
   const [showSearchManagerButton, setShowSearchManagerButton] = useState(false);
@@ -52,9 +45,7 @@ function Overview() {
   const [hidePublisherButton, setHidePublisherButton] = useState(
     selectedTable == "Books" || selectedTable == "LibraryOrders" ? false : true
   );
-
   const [query, setQuery] = useState("");
-
   const [options, setOptions] = useState(["Librarians", "Authors"]);
   const [uniqueColumn, setUniqueColumn] = useState(temp);
   const [shouldRender, setShouldRender] = useState(false);
@@ -77,7 +68,7 @@ function Overview() {
   });
   const [rowUniqueID, setRowUniqueID] = useState([]);
 
-  // callback
+  //* Callback function //
   const callThisFromChildComponent = (data) => {
     console.log("Data from Child component:", data);
     if (data == "closePanel") {
@@ -102,7 +93,6 @@ function Overview() {
         if (key == "publisherName") {
           formDataKey = "bookPublisherName";
         }
-
         if (key == "publisherID" && selectedTable == "LibraryOrders") {
           formDataKey = "libraryOrderPublisherID";
         }
@@ -120,22 +110,20 @@ function Overview() {
           updatedFormData[formDataKey].placeholder = input[key].toString();
         }
       });
-      console.log("Updated FormData : ", updatedFormData);
       setFormData(updatedFormData);
       setshowSearch(!showSearch);
       sessionStorage.setItem("showPublisher", "false");
     }
   };
 
-  // react hooks
-
+  //* React Hooks
+  // get all table names
   useEffect(() => {
     let query = `SELECT tablename
       FROM pg_tables
       WHERE schemaname = 'public'
       ORDER BY tablename;
       `;
-
     axios
       .post("http://localhost:5000/run-query", {
         query,
@@ -148,17 +136,14 @@ function Overview() {
       });
   }, []);
 
-  // get data from table
+  // Main Hook: This hook is called whenever the selected table is changed or the data updates
   useEffect(() => {
     const newQuery = `SELECT * FROM "${selectedTable}"`;
-    temp = selectedTable.slice(0, selectedTable.length - 1);
-    //if (selectedTable=="LibraryOrders"){
-    temp = temp.charAt(0).toLowerCase() + temp.substring(1);
-    console.log("UNIQUE COLUMN", temp);
-
-    //temp = temp.toLowerCase();
-    temp = temp + "ID";
-    setUniqueColumn(temp);
+    let uniqueColumn = selectedTable.slice(0, selectedTable.length - 1);
+    uniqueColumn =
+      uniqueColumn.charAt(0).toLowerCase() + uniqueColumn.substring(1);
+    uniqueColumn = uniqueColumn + "ID";
+    setUniqueColumn(uniqueColumn);
     setQuery(newQuery);
     setShouldRender(!shouldRender);
 
@@ -197,7 +182,6 @@ function Overview() {
           ) {
             datatypesData[index] = "number";
           }
-
           if (element[0].startsWith("date")) {
             datatypesData[index] = "date";
           }
@@ -210,12 +194,6 @@ function Overview() {
           if (element[1].includes("assword")) {
             datatypesData[index] = "password";
           }
-
-          //bookID
-          //if (element[1] == "loanBookID") {
-          //  datatypesData[index] = "checkbox";
-          //}
-          //drop loanID
           if (notFilledColumns.includes(element[1])) {
             datatypesData[index] = null;
           }
@@ -306,7 +284,7 @@ function Overview() {
     );
   }, [selectedTable, updateData]);
 
-  //fetch bookIDs
+  //! fetch bookIDs: currently not used
   useEffect(() => {
     if (bookIDs) {
       axios
@@ -322,7 +300,7 @@ function Overview() {
     }
   }, [updateBookIDs]);
 
-  // functions
+  //* functions //
   function changeTable() {
     const selectElement = document.getElementById("mySelect");
     const selectedValue =
@@ -391,20 +369,13 @@ function Overview() {
       });
   }
   async function editEntry(data) {
-    let valuesString = "SET ";
     let columnsString = "";
     let query = "SET ";
     let rowID = selectedTable.slice(0, selectedTable.length - 1);
     rowID = rowID.toLowerCase();
     rowID = rowID + "ID";
-    console.log(data);
     let keyValue = rowUniqueID;
-    console.log("KEY VALUE", keyValue);
 
-    /*let values = Object.entries(data).map(
-      ([key, value]) => (query = query + `"${key}" = '${value.placeholder}',`)
-    );
-    */
     let arr = Object.entries(data);
     for (let index = 0; index < arr.length; index++) {
       const column = arr[index][0];
@@ -413,7 +384,6 @@ function Overview() {
       console.log(arr[index], column, values, datatype);
       let placeholder = values.placeholder;
       if (datatype == "password") {
-        console.log("THIS DATA IS PASSWORD");
         const password = values.placeholder;
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -432,13 +402,7 @@ function Overview() {
           )} ` + `WHERE "${rowID}" = ${keyValue}`,
       })
       .then((response) => {
-        console.log("SUCCESS");
-
         setUpdateData(!updateData);
-        sessionStorage.setItem(
-          "updateData",
-          !Boolean(JSON.parse(sessionStorage.getItem("updateData")))
-        );
       })
       .catch((error) => {});
   }
@@ -476,7 +440,6 @@ function Overview() {
 
   function handleEdit(data) {
     let keys = Object.keys(editData);
-    console.log("handleEdit EDIT DAT", editData);
     setRowUniqueID(data[0]);
     let dataWithoutRowUniqueID = data.slice(1);
 
@@ -493,25 +456,10 @@ function Overview() {
 
     setShowEditModal(!showEditModal);
     setEditData(editData);
-    console.log("EDIT DATA", editData);
   }
 
   function handleCreate() {
-    console.log("ACTUAL", formData);
-    const newFormData = {};
-    /*
-    columns.map(
-      (column, index) =>
-        (newFormData[column] = {
-          type: datatypes[index],
-          required: true,
-          placeholder: "",
-        })
-    );
-    setFormData(newFormData);
-    */
     setShowModal(!showModal);
-    //navigate("/Search");
   }
 
   function handlePublisher() {
@@ -531,13 +479,9 @@ function Overview() {
   function handleManager() {
     sessionStorage.setItem("searchTable", "Managers");
     setshowSearch(!showSearch);
-
-    console.log("MANAGER");
   }
 
   function convertIntoBook(header, data) {
-    let successfullInsert = true;
-    console.log(data);
     header = header.flat();
     let indexID = 0;
     let insertQuery = 'INSERT INTO public."Books" (';
@@ -602,14 +546,11 @@ function Overview() {
       insertQuery +
       insertColumns.slice(0, insertColumns.length - 2) +
       ") Values (";
-    console.log(insertQuery);
 
     insertQuery =
       insertQuery + insertData.slice(0, insertData.length - 2) + ")";
-    console.log(insertQuery);
 
     let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${data[indexID]}'`;
-    console.log(updateQuery);
 
     axios
       .post(api, {
@@ -633,11 +574,6 @@ function Overview() {
         console.log("ERROR : ", error);
       });
   }
-
-  //if (!results.length) {
-  // If there is no data available yet, show a loading indicator or an empty state.
-  //  return <p>Loading...</p>;
-  //}
 
   return (
     <div>
