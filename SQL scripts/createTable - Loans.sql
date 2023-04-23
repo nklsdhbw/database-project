@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS "Loans";
 
 CREATE TABLE "Loans" (
-"loanID" SERIAL PRIMARY KEY,
+    "loanID" SERIAL PRIMARY KEY,
 	"loanBookID" INTEGER,
     "loanReaderID" INTEGER,
     "loanLoanDate" DATE,
@@ -10,6 +10,7 @@ CREATE TABLE "Loans" (
     "loanRenewals" INTEGER,
     "loanOverdue" BOOLEAN,
     "loanFine" DECIMAL,
+    "loanCurrencyCode" varchar(255),
     
 
 	CONSTRAINT fk_loanBookID
@@ -20,5 +21,10 @@ CREATE TABLE "Loans" (
       CONSTRAINT fk_loanReaderID
       FOREIGN KEY("loanReaderID") 
 	  REFERENCES "Readers"("readerID")
+	  ON DELETE CASCADE,
+
+      CONSTRAINT fk_loanCurrencyCode
+      FOREIGN KEY("loanCurrencyCode") 
+	  REFERENCES "Currencies"("currencyCode")
 	  ON DELETE CASCADE
 )

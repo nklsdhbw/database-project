@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS "Managers";
 
 CREATE TABLE "Managers" (
-    "managerLibrarianID" INTEGER,
+    "managerLibrarianID" INTEGER UNIQUE,
     "managerTeamID" INTEGER,
     UNIQUE ("managerLibrarianID", "managerTeamID"),
 

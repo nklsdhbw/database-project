@@ -1,16 +1,16 @@
 DROP TABLE IF EXISTS "Books";
 
 CREATE TABLE "Books" (
-"bookID" SERIAL PRIMARY KEY,
+    "bookID" SERIAL PRIMARY KEY,
 	"bookAmount" INTEGER,
     "bookTitle" varchar(255),
     "bookAuthorID" INTEGER,
-    "bookISBN" varchar(255),
+    "bookISBN" varchar(255) UNIQUE,
     "bookPublisherID" INTEGER,
     "bookPublicationDate" DATE,
     "bookPublicationPlace" varchar(255),
     "bookAvailability" BOOLEAN,
-    "bookAvailabilityAmount" INTEGER,
+    "bookAvailableAmount" INTEGER,
     "bookCategoryID" INTEGER,
 	CONSTRAINT fk_authorID
       FOREIGN KEY("bookAuthorID") 

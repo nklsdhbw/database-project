@@ -11,7 +11,8 @@ CREATE TABLE "LibraryOrders" (
 "libraryOrderISBN" varchar(255),
 "libraryOrderAuthorID" INTEGER,
 "libraryOrderStatusOrder" varchar(255) DEFAULT 'order',
-"libraryOrderManagerID" INTEGER, 
+"libraryOrderManagerLibrarianID" INTEGER, 
+"libraryOrderCurrencyCode" varchar(255), 
 
 	CONSTRAINT fk_libraryOrderPublisherID
       FOREIGN KEY("libraryOrderPublisherID") 
@@ -24,8 +25,13 @@ CREATE TABLE "LibraryOrders" (
 	  ON DELETE CASCADE,
       
     CONSTRAINT fk_libraryOrderManagerID
-      FOREIGN KEY("libraryOrderManagerID") 
-	  REFERENCES "Managers"("managerID")
+      FOREIGN KEY("libraryOrderManagerLibrarianID") 
+	  REFERENCES "Managers"("managerLibrarianID")
+	  ON DELETE CASCADE,
+
+	CONSTRAINT fk_libraryOrderCurrencyCode
+      FOREIGN KEY("libraryOrderCurrencyCode") 
+	  REFERENCES "Currencies"("currencyCode")
 	  ON DELETE CASCADE
 
 )
