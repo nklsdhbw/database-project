@@ -37,6 +37,7 @@ function Overview() {
   const [columns, setColumns] = useState([]);
   const [datatypes, setDatatypes] = useState([]);
   const [bookIDs, setBookIDs] = useState([]);
+  const [bookISBNs, setBookISBNs] = useState([]);
   const [showSearchAuthorButton, setShowSearchAuthorButton] = useState(false);
   const [showSearchBookButton, setShowSearchBookButton] = useState(false);
   const [showSearchManagerButton, setShowSearchManagerButton] = useState(false);
@@ -288,6 +289,18 @@ function Overview() {
     setShowConvertOrderIntoBookButton(
       selectedTable == "LibraryOrders" ? true : false
     );
+
+    // update boookISBNs
+    axios
+      .post(api, {
+        query: `SELECT "bookISBN" FROM public."Books"`,
+      })
+      .then((response) => {
+        setBookISBNs(response.data.flat());
+      })
+      .catch((error) => {
+        console.log("ERROR : ", error);
+      });
   }, [selectedTable, updateData]);
 
   //! fetch bookIDs: currently not used
@@ -305,6 +318,19 @@ function Overview() {
         });
     }
   }, [updateBookIDs]);
+
+  useEffect(() => {
+    axios
+      .post(api, {
+        query: `SELECT "bookISBN" FROM public."Books"`,
+      })
+      .then((response) => {
+        setBookISBNs(response.data.flat());
+      })
+      .catch((error) => {
+        console.log("ERROR : ", error);
+      });
+  }, []);
 
   //* functions //
   function changeTable() {
@@ -490,105 +516,147 @@ function Overview() {
   }
 
   function convertIntoBook(header, data) {
+    console.log(bookISBNs);
+
     header = header.flat();
-    let indexID = 0;
-    let insertQuery = 'INSERT INTO public."Books" (';
-    let insertColumns = "";
-    let insertData = "";
-    let oldColumn;
-    let notNeccessaryColumns = [
-      "libraryOrderAuthor",
-      "libraryOrderPublisher",
-      "libraryOrderDateOrdered",
-      "libraryOrderDeliveryDate",
-      "libraryOrderCost",
-      "libraryOrderStatusOrder",
-      "libraryOrderManagerID",
-    ];
-    header.forEach((column) => {
+    let libraryOrderISBN = data[header.indexOf("libraryOrderISBN")];
+    console.log("libraryOrderISBN", libraryOrderISBN);
+    let libraryOrderAmount = data[header.indexOf("libraryOrderAmount")];
+    if (bookISBNs.includes(libraryOrderISBN)) {
       if (
-        notFilledColumns.includes(column) &&
-        column != "libraryOrderStatusOrder"
+        window.confirm(
+          "A book with this ISBN already exists. The order amount will be added to the existing book if you press confirm. Otherwise press cancel to abort the order."
+        )
       ) {
-        indexID = header.indexOf(column);
-      } else {
-        if (notNeccessaryColumns.includes(column)) {
-        } else {
-          switch (column) {
-            case "libraryOrderBookTitle":
-              oldColumn = column;
-              column = "bookTitle";
-              break;
-            case "libraryOrderAuthorID":
-              oldColumn = column;
-              column = "bookAuthorID";
-              break;
-            case "libraryOrderAmount":
-              oldColumn = column;
-              column = "bookAmount";
-              break;
-            case "libraryOrderISBN":
-              oldColumn = column;
-              column = "bookISBN";
-              break;
-            case "libraryOrderPublisherID":
-              oldColumn = column;
-              column = "bookPublisherID";
-              break;
-            case "libraryOrderPublicationDate":
-              oldColumn = column;
-              column = "bookPublicationDate";
-              break;
-            case "libraryOrderPublicationPlace":
-              oldColumn = column;
-              column = "bookPublicationPlace";
-              break;
-            default:
-              break;
-          }
-          if (column == "bookAmount") {
-            insertColumns = insertColumns + `"${column}", `;
-            insertData = insertData + `'${data[header.indexOf(oldColumn)]}', `;
-            insertColumns = insertColumns + `"bookAvailabilityAmount", `;
-            insertData = insertData + `'${data[header.indexOf(oldColumn)]}', `;
-          } else {
-            insertColumns = insertColumns + `"${column}", `;
-            insertData = insertData + `'${data[header.indexOf(oldColumn)]}', `;
-          }
-        }
-      }
-    });
-    insertQuery =
-      insertQuery +
-      insertColumns.slice(0, insertColumns.length - 2) +
-      ") Values (";
-
-    insertQuery =
-      insertQuery + insertData.slice(0, insertData.length - 2) + ")";
-    console.log(insertQuery);
-    let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${data[indexID]}'`;
-
-    axios
-      .post(api, {
-        query: `${insertQuery}`,
-      })
-      .then((response) => {
-        setUpdateData(!updateData);
-        // successfull insert -> now update exsting Data
+        // book already exists, update bookAmount and bookAvilabilityAmount
+        let query = `UPDATE public."Books" SET "bookAmount" = "bookAmount" + ${libraryOrderAmount}, "bookAvailabilityAmount" = "bookAvailabilityAmount" + ${libraryOrderAmount} WHERE "bookISBN" = '${libraryOrderISBN}'`;
+        console.log("QUERY", query);
         axios
           .post(api, {
-            query: `${updateQuery}`,
+            query: `${query}`,
           })
           .then((response) => {
             setUpdateData(!updateData);
+            let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${data[0]}'`;
+            // successfull insert -> now update libraryOrderStatusOrder to done
+            axios
+              .post(api, {
+                query: `${updateQuery}`,
+              })
+              .then((response) => {
+                setUpdateData(!updateData);
+              })
+              .catch((error) => {
+                console.log("ERROR : ", error);
+              });
           })
           .catch((error) => {
             console.log("ERROR : ", error);
           });
-      })
-      .catch((error) => {
-        console.log("ERROR : ", error);
+      }
+    } else {
+      let indexID = 0;
+      let insertQuery = 'INSERT INTO public."Books" (';
+      let insertColumns = "";
+      let insertData = "";
+      let oldColumn;
+      let notNeccessaryColumns = [
+        "libraryOrderAuthor",
+        "libraryOrderPublisher",
+        "libraryOrderDateOrdered",
+        "libraryOrderDeliveryDate",
+        "libraryOrderCost",
+        "libraryOrderStatusOrder",
+        "libraryOrderManagerID",
+      ];
+      header.forEach((column) => {
+        if (
+          notFilledColumns.includes(column) &&
+          column != "libraryOrderStatusOrder"
+        ) {
+          indexID = header.indexOf(column);
+        } else {
+          if (notNeccessaryColumns.includes(column)) {
+          } else {
+            switch (column) {
+              case "libraryOrderBookTitle":
+                oldColumn = column;
+                column = "bookTitle";
+                break;
+              case "libraryOrderAuthorID":
+                oldColumn = column;
+                column = "bookAuthorID";
+                break;
+              case "libraryOrderAmount":
+                oldColumn = column;
+                column = "bookAmount";
+                break;
+              case "libraryOrderISBN":
+                oldColumn = column;
+                column = "bookISBN";
+                break;
+              case "libraryOrderPublisherID":
+                oldColumn = column;
+                column = "bookPublisherID";
+                break;
+              case "libraryOrderPublicationDate":
+                oldColumn = column;
+                column = "bookPublicationDate";
+                break;
+              case "libraryOrderPublicationPlace":
+                oldColumn = column;
+                column = "bookPublicationPlace";
+                break;
+              default:
+                break;
+            }
+            if (column == "bookAmount") {
+              insertColumns = insertColumns + `"${column}", `;
+              insertData =
+                insertData + `'${data[header.indexOf(oldColumn)]}', `;
+              insertColumns = insertColumns + `"bookAvailabilityAmount", `;
+              insertData =
+                insertData + `'${data[header.indexOf(oldColumn)]}', `;
+            } else {
+              insertColumns = insertColumns + `"${column}", `;
+              insertData =
+                insertData + `'${data[header.indexOf(oldColumn)]}', `;
+            }
+          }
+        }
       });
+      insertQuery =
+        insertQuery +
+        insertColumns.slice(0, insertColumns.length - 2) +
+        ") Values (";
+
+      insertQuery =
+        insertQuery + insertData.slice(0, insertData.length - 2) + ")";
+      console.log(insertQuery);
+      let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${data[indexID]}'`;
+
+      axios
+        .post(api, {
+          query: `${insertQuery}`,
+        })
+        .then((response) => {
+          setUpdateData(!updateData);
+          // successfull insert -> now update exsting Data
+          axios
+            .post(api, {
+              query: `${updateQuery}`,
+            })
+            .then((response) => {
+              setUpdateData(!updateData);
+            })
+            .catch((error) => {
+              console.log("ERROR : ", error);
+            });
+        })
+        .catch((error) => {
+          console.log("ERROR : ", error);
+        });
+    }
   }
 
   return (
