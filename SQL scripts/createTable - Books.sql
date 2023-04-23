@@ -8,7 +8,6 @@ CREATE TABLE "Books" (
     "bookISBN" varchar(255) UNIQUE,
     "bookPublisherID" INTEGER,
     "bookPublicationDate" DATE,
-    "bookPublicationPlace" varchar(255),
     "bookAvailability" BOOLEAN,
     "bookAvailableAmount" INTEGER,
     "bookCategoryID" INTEGER,

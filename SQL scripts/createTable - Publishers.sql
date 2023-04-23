@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS "Publishers";
 CREATE TABLE "Publishers" (
 	"publisherID" SERIAL PRIMARY KEY,
 	"publisherName" varchar(255),
-	"publisherZipCode" INTEGER,
+	"publisherZipID" INTEGER,
     "publisherStreetName" varchar(255),
 	"publisherHouseNumber" varchar(255),
 	"publisherCountry" varchar(255),
@@ -11,8 +11,8 @@ CREATE TABLE "Publishers" (
 	"publisherPhone" varchar(255),
 
 	CONSTRAINT fk_publisherCurrencyCode
-      FOREIGN KEY("publisherZipCode") 
-	  REFERENCES "ZIPs"("zipCode")
+      FOREIGN KEY("publisherZipID") 
+	  REFERENCES "ZIPs"("zipID")
 	  ON DELETE CASCADE
 	
 )

@@ -10,7 +10,7 @@ CREATE TABLE "Loans" (
     "loanRenewals" INTEGER,
     "loanOverdue" BOOLEAN,
     "loanFine" DECIMAL,
-    "loanCurrencyCode" varchar(255),
+    "loanCurrencyID" INTEGER,
     
 
 	CONSTRAINT fk_loanBookID
@@ -23,8 +23,8 @@ CREATE TABLE "Loans" (
 	  REFERENCES "Readers"("readerID")
 	  ON DELETE CASCADE,
 
-      CONSTRAINT fk_loanCurrencyCode
-      FOREIGN KEY("loanCurrencyCode") 
-	  REFERENCES "Currencies"("currencyCode")
+      CONSTRAINT fk_loanCurrencyID
+      FOREIGN KEY("loanCurrencyID") 
+	  REFERENCES "Currencies"("currencyID")
 	  ON DELETE CASCADE
 )

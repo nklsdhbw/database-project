@@ -17,6 +17,8 @@ function Overview() {
     "readerID",
     "libraryOrderStatusOrder",
     "categoryID",
+    "zipID",
+    "currencyID",
   ];
   const BUTTON_TABLES = ["Loans", "Books", "LibraryOrders"];
   const navigate = useNavigate();
@@ -102,7 +104,7 @@ function Overview() {
           formDataKey = "libraryOrderAuthorID";
         }
         if (key == "managerID" && selectedTable == "LibraryOrders") {
-          formDataKey = "libraryOrderManagerID";
+          formDataKey = "libraryOrderManagerLibrarianID";
         }
 
         if (
@@ -371,10 +373,10 @@ function Overview() {
       .catch((error) => {
         console.log("ERROR : ", error);
       });
-    // decrese bookAvailabilityAmount by 1
+    // decrese bookAvailableAmount by 1
     if (selectedTable == "Loans") {
       loanBookID = data["loanBookID"].placeholder;
-      let updateQuery = `UPDATE public."Books" SET "bookAvailabilityAmount"  = "bookAvailabilityAmount" -1, "bookAvailability" = CASE WHEN "bookAvailabilityAmount" - 1 > 0 THEN true ELSE false END WHERE "bookID" = ${loanBookID}`;
+      let updateQuery = `UPDATE public."Books" SET "bookAvailableAmount"  = "bookAvailableAmount" -1, "bookAvailability" = CASE WHEN "bookAvailableAmount" - 1 > 0 THEN true ELSE false END WHERE "bookID" = ${loanBookID}`;
       axios
         .post(api, {
           query: `${updateQuery}`,
@@ -534,7 +536,7 @@ function Overview() {
         )
       ) {
         // book already exists, update bookAmount and bookAvilabilityAmount
-        let query = `UPDATE public."Books" SET "bookAmount" = "bookAmount" + ${libraryOrderAmount}, "bookAvailabilityAmount" = "bookAvailabilityAmount" + ${libraryOrderAmount} WHERE "bookISBN" = '${libraryOrderISBN}'`;
+        let query = `UPDATE public."Books" SET "bookAmount" = "bookAmount" + ${libraryOrderAmount}, "bookAvailableAmount" = "bookAvailableAmount" + ${libraryOrderAmount} WHERE "bookISBN" = '${libraryOrderISBN}'`;
         console.log("QUERY", query);
         axios
           .post(api, {
@@ -573,6 +575,8 @@ function Overview() {
         "libraryOrderCost",
         "libraryOrderStatusOrder",
         "libraryOrderManagerID",
+        "libraryOrderManagerLibrarianID",
+        "libraryOrderCurrencyID",
       ];
       header.forEach((column) => {
         if (
@@ -604,14 +608,6 @@ function Overview() {
                 oldColumn = column;
                 column = "bookPublisherID";
                 break;
-              case "libraryOrderPublicationDate":
-                oldColumn = column;
-                column = "bookPublicationDate";
-                break;
-              case "libraryOrderPublicationPlace":
-                oldColumn = column;
-                column = "bookPublicationPlace";
-                break;
               default:
                 break;
             }
@@ -619,7 +615,7 @@ function Overview() {
               insertColumns = insertColumns + `"${column}", `;
               insertData =
                 insertData + `'${data[header.indexOf(oldColumn)]}', `;
-              insertColumns = insertColumns + `"bookAvailabilityAmount", `;
+              insertColumns = insertColumns + `"bookAvailableAmount", `;
               insertData =
                 insertData + `'${data[header.indexOf(oldColumn)]}', `;
             } else {
@@ -701,10 +697,10 @@ function Overview() {
               {showConvertOrderIntoBookButton ? (
                 <td>
                   <Button
-                    disabled={data[data.length - 4] == "done" ? true : false}
+                    disabled={data[9] == "done" ? true : false}
                     onClick={() => convertIntoBook(columns, data)}
                   >
-                    {data[data.length - 4] == "done"
+                    {data[9] == "done"
                       ? "Already converted"
                       : "Convert into Book"}
                   </Button>

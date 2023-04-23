@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS "Managers";
 
 CREATE TABLE "Managers" (
+    "managerID" SERIAL PRIMARY KEY,
     "managerLibrarianID" INTEGER UNIQUE,
     "managerTeamID" INTEGER,
     UNIQUE ("managerLibrarianID", "managerTeamID"),
