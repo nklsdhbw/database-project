@@ -16,6 +16,7 @@ function Overview() {
     "libraryOrderID",
     "readerID",
     "libraryOrderStatusOrder",
+    "categoryID",
   ];
   const BUTTON_TABLES = ["Loans", "Books", "LibraryOrders"];
   const navigate = useNavigate();
@@ -420,6 +421,10 @@ function Overview() {
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         placeholder = hashedPassword;
+      }
+      if (datatype == "date") {
+        console.log(placeholder);
+        placeholder = new Date(placeholder).toISOString().slice(0, 10);
       }
       query = query + `"${column}" = '${placeholder}',`;
     }
