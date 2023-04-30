@@ -13,6 +13,6 @@ CREATE TABLE "Managers" (
     
     CONSTRAINT fk_managerTeamID
       FOREIGN KEY("managerTeamID") 
-	  REFERENCES "Teams"("teamTeamID")
+	  REFERENCES "Teams"("teamID")
 	  ON DELETE CASCADE
 )

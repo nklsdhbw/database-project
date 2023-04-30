@@ -50,8 +50,8 @@ const Login = () => {
     //get readerID and hashePassword from User and store readerID in session storage
     results.forEach((element) => {
       console.log(element[2], formData.username);
-      if (element[2] == formData.username) {
-        hashedPassword = element[3];
+      if (element[3] == formData.username) {
+        hashedPassword = element[4];
         readerID = element[0];
         sessionStorage.setItem("readerID", readerID);
       }
