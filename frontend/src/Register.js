@@ -62,7 +62,7 @@ const Register = () => {
     console.log("HÄÄ");
 
     if (!userExists) {
-      let query2 = `INSERT INTO public."Readers" ("readerName", "readerEmail", "readerPassword") Values('${fullName}', '${registerData.eMail}', '${hashedPassword}')`;
+      let query2 = `INSERT INTO public."Readers" ("readerFirstName","readerLastName", "readerEmail", "readerPassword") Values('${fullName}', '${registerData.eMail}', '${hashedPassword}')`;
       console.log("QUERY", query2);
       // after registration, user is logged in so change loggedIn variable to true
       // and navigate then to the "overview" page
@@ -70,7 +70,7 @@ const Register = () => {
       sessionStorage.setItem("loginMail", registerData.eMail);
       axios
         .post("http://localhost:5000/run-query", {
-          query: `INSERT INTO public."Readers" ("readerName", "readerEmail", "readerPassword") Values('${fullName}', '${registerData.eMail}', '${hashedPassword}')`,
+          query: `INSERT INTO public."Readers" ("readerFirstName", "readerLastName", "readerEmail", "readerPassword") Values('${registerData.firstname}', '${registerData.lastname}', '${registerData.eMail}', '${hashedPassword}')`,
         })
         .then((response) => {
           setResults(response.data);
@@ -86,7 +86,7 @@ const Register = () => {
               //get readerID from User and save it in sessionStorage
               console.log(results);
               results.forEach((element) => {
-                if (element[2] == registerData.eMail) {
+                if (element[3] == registerData.eMail) {
                   let readerID = element[0];
                   sessionStorage.setItem("readerID", readerID);
                   navigate("/overview");
