@@ -132,6 +132,7 @@ function Overview() {
       })
       .then((datatypes) => {
         let datatypesData = datatypes.data[1];
+        console.log("DATATYPES", datatypes);
         for (let index = 0; index < datatypesData.length; index++) {
           let element = datatypesData[index];
           if (
@@ -166,75 +167,60 @@ function Overview() {
         }
 
         const filteredArr = datatypesData.filter((value) => value != null);
-        console.log("HTML DATATYPES : ", filteredArr);
         setDatatypes(filteredArr);
 
-        // set columns
-        datatypes = datatypes.data;
-        datatypes = datatypes.slice(1, datatypes.length);
+        // set formData/editData
+        datatypes = filteredArr;
         axios
           .post("http://localhost:5000/run-query", {
-            query: `SELECT column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
+            query: sessionStorage.getItem("query"),
           })
-          .then((columns) => {
-            //setColumns(columns.data[1]);
+          .then((results) => {
+            setResults(results.data[1]);
+            setColumns(results.data[0]);
+
             // set EditData/formData
-            columns = columns.data[1];
+            let cols = results.data[0];
             const newFormData = {};
-            console.log("COLUMNS", columns);
-            let cols = columns.slice(1, columns.length);
+            // columns without id row
+            cols = cols.slice(1, cols.length);
+            console.log("COLS", cols);
             let prefillDateColumns = [
               "loanLoanDate",
               "libraryOrderDateOrdered",
             ];
             cols.map((column, index) => {
               let placeholder = "";
-              if (column[0] == "loanReaderEmail") {
+              if (column == "loanReaderEmail") {
                 placeholder = sessionStorage.getItem("loginMail");
               }
-              if (prefillDateColumns.includes(column[0])) {
+              if (prefillDateColumns.includes(column)) {
                 placeholder = new Date().toISOString().slice(0, 10);
               }
-              if (column[0] == "loanRenewals") {
+              if (column == "loanRenewals") {
                 placeholder = 0;
               }
-              if (column[0] == "loanOverdue") {
+              if (column == "loanOverdue") {
                 placeholder = false;
               }
-              if (column[0] == "loanFine") {
+              if (column == "loanFine") {
                 placeholder = 0;
               }
               //prefill loanReaderID
-              if (column[0] == "loanReaderID") {
+              if (column == "loanReaderID") {
                 placeholder = sessionStorage.getItem("readerID");
               }
               if (notFilledColumns.includes(column[0])) {
               } else {
-                newFormData[column[0]] = {
+                newFormData[column] = {
                   type: datatypes[index],
                   required: true,
                   placeholder: placeholder,
                 };
               }
             });
-            console.log("DATATYPES", datatypes);
-            console.log("New FormData : ", newFormData);
             setFormData(newFormData);
             setEditData(newFormData);
-
-            let selectQuery = sessionStorage.getItem("query");
-            axios
-              .post("http://localhost:5000/run-query", {
-                query: selectQuery,
-              })
-              .then((results) => {
-                setResults(results.data[1]);
-                console.log("TABLE COLUMNS", results.data[0]);
-                setColumns(results.data[0]);
-              })
-              .catch((error) => {
-                console.log("ERROR : ", error);
-              });
           })
           .catch((error) => {
             console.log("ERROR : ", error);
@@ -364,16 +350,21 @@ function Overview() {
       });
   }
   async function editEntry(data) {
+    console.log("EDIT ENTRY DATA", data);
     let columnsString = "";
     let query = "SET ";
     let rowID = selectedTable.slice(0, selectedTable.length - 1);
     rowID = rowID.toLowerCase();
     rowID = rowID + "ID";
+    if (selectedTable == "LibraryOrders") {
+      rowID = "libraryOrderID";
+    }
     let keyValue = rowUniqueID;
 
     let arr = Object.entries(data);
     for (let index = 0; index < arr.length; index++) {
       const column = arr[index][0];
+      console.log("COLUMN? ", column);
       const values = arr[index][1];
       const datatype = values.type;
       console.log(arr[index], column, values, datatype);
@@ -439,6 +430,7 @@ function Overview() {
 
   function handleEdit(data) {
     let keys = Object.keys(editData);
+    console.log("KEYS", keys);
     console.log("EDITDATA", editData);
     setRowUniqueID(data[0]);
     let dataWithoutRowUniqueID = data.slice(1);
@@ -453,7 +445,6 @@ function Overview() {
         editData[keys[index]]["placeholder"] = placeholder;
       }
     });
-    console.log("DATA", data);
 
     setShowEditModal(!showEditModal);
     setEditData(editData);

@@ -18,7 +18,13 @@ const NavigationMenue = () => {
     {
       label: "Order overview",
       table: "LibraryOrders",
-      query: 'SELECT "libraryOrderID" FROM "LibraryOrders"',
+      query:
+        'SELECT "libraryOrderID", "libraryOrderAuthorID" FROM "LibraryOrders"',
+    },
+    {
+      label: "All Loans",
+      table: "Loans",
+      query: 'SELECT * FROM "Loans"',
     },
   ];
 
