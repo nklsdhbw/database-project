@@ -22,9 +22,23 @@ const NavigationMenue = () => {
         'SELECT "libraryOrderID", "libraryOrderAuthorID" FROM "LibraryOrders"',
     },
     {
-      label: "All Loans",
+      label: "Manage Loans",
       table: "Loans",
       query: 'SELECT * FROM "Loans"',
+    },
+    {
+      label: "Manage my Loans",
+      table: "Loans",
+      query: `SELECT * FROM "Loans" where "loanReaderID" = ${sessionStorage.getItem(
+        "readerID"
+      )}`,
+    },
+    {
+      label: "Manage personal data",
+      table: "Readers",
+      query: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
+        "readerID"
+      )}`,
     },
   ];
 
