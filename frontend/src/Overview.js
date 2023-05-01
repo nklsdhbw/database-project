@@ -49,7 +49,7 @@ function Overview() {
   const [hidePublisherButton, setHidePublisherButton] = useState(
     selectedTable == "Books" || selectedTable == "LibraryOrders" ? false : true
   );
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(sessionStorage.getItem("query"));
   const [options, setOptions] = useState(["Librarians", "Authors"]);
   const [uniqueColumn, setUniqueColumn] = useState(temp);
   const [shouldRender, setShouldRender] = useState(false);
@@ -141,7 +141,9 @@ function Overview() {
   }, []);
 
   // Main Hook: This hook is called whenever the selected table is changed or the data updates
+
   useEffect(() => {
+    /*
     const newQuery = `SELECT * FROM "${selectedTable}"`;
     let uniqueColumn = selectedTable.slice(0, selectedTable.length - 1);
     uniqueColumn =
@@ -162,6 +164,7 @@ function Overview() {
       .catch((error) => {
         console.log("ERROR : ", error);
       });
+    */
 
     // set datatypes
     axios

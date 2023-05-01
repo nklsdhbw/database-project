@@ -14,6 +14,14 @@ import Overview from "./Overview";
 //import 'bootstrap/dist/css/bootstrap.min.css';
 
 const NavigationMenue = () => {
+  const Actions = [
+    {
+      label: "Order overview",
+      table: "LibraryOrders",
+      query: 'SELECT "libraryOrderID" FROM "LibraryOrders"',
+    },
+  ];
+
   const navigate = useNavigate();
 
   const [results, setResults] = useState([]);
@@ -27,9 +35,16 @@ const NavigationMenue = () => {
     //navigate("/Overview");
   }
 
-  function handleClick(table) {
+  function handleClick(option) {
     navigate("/Overview");
-    sessionStorage.setItem("table", table);
+    console.log(option);
+    sessionStorage.setItem("table", option.table);
+    const filteredActions = Actions.filter(
+      (action) => action.table === option.table
+    );
+    const orderOverviewQuery = filteredActions[0].query;
+    //const orderOverviewQuery = filteredActions.map((action) => action.query)[0];
+    sessionStorage.setItem("query", orderOverviewQuery);
   }
 
   useEffect(() => {
@@ -53,9 +68,9 @@ const NavigationMenue = () => {
 
   return (
     <div>
-      {options.map((option) => (
-        <Button key={option} onClick={() => handleClick(option)}>
-          {option}
+      {Actions.map((option) => (
+        <Button key={option.label} onClick={() => handleClick(option)}>
+          {option.label}
         </Button>
       ))}
     </div>
