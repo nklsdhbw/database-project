@@ -29,8 +29,14 @@ def run_query():
         conn.commit()
         if query.startswith("SELECT"):
             result = cur.fetchall()
+            print("test")
+            print(result)
+            
             # Return the results as JSON
-            return jsonify(result)
+            columnNames = [desc[0] for desc in cur.description]
+            print(jsonify(result))
+            returnValue = [columnNames, result]
+            return jsonify(returnValue)
         else:
             return '', 204
     finally:

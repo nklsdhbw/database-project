@@ -22,7 +22,7 @@ const fetchUsers = async () => {
       query: `SELECT column_name FROM information_schema.columns  WHERE table_name = '${table}' AND table_schema = 'public'`,
     })
     .then((columns) => {
-      inputColumns = columns.data.flat();
+      inputColumns = columns.data[1].flat();
     })
     .catch((error) => {
       console.log(error);
@@ -34,7 +34,7 @@ const fetchUsers = async () => {
     })
     .then((response) => {
       console.log(response.data);
-      let data2 = response.data;
+      let data2 = response.data[1];
       console.log(data2);
       console.log(typeof data2);
       let entries = Object.values(data2);

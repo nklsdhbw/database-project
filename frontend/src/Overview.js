@@ -121,58 +121,17 @@ function Overview() {
   };
 
   //* React Hooks
-  // get all table names
-  useEffect(() => {
-    let query = `SELECT tablename
-      FROM pg_tables
-      WHERE schemaname = 'public'
-      ORDER BY tablename;
-      `;
-    axios
-      .post("http://localhost:5000/run-query", {
-        query,
-      })
-      .then((tables) => {
-        setOptions(tables.data);
-      })
-      .catch((error) => {
-        console.log("ERROR : ", error);
-      });
-  }, []);
 
   // Main Hook: This hook is called whenever the selected table is changed or the data updates
 
   useEffect(() => {
-    /*
-    const newQuery = `SELECT * FROM "${selectedTable}"`;
-    let uniqueColumn = selectedTable.slice(0, selectedTable.length - 1);
-    uniqueColumn =
-      uniqueColumn.charAt(0).toLowerCase() + uniqueColumn.substring(1);
-    uniqueColumn = uniqueColumn + "ID";
-    setUniqueColumn(uniqueColumn);
-    setQuery(newQuery);
-    setShouldRender(!shouldRender);
-
-    //get Data
-    axios
-      .post("http://localhost:5000/run-query", {
-        query: `SELECT * FROM public."${selectedTable}"`,
-      })
-      .then((response) => {
-        setResults(response.data);
-      })
-      .catch((error) => {
-        console.log("ERROR : ", error);
-      });
-    */
-
     // set datatypes
     axios
       .post("http://localhost:5000/run-query", {
         query: `SELECT data_type, column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
       })
       .then((datatypes) => {
-        let datatypesData = datatypes.data;
+        let datatypesData = datatypes.data[1];
         for (let index = 0; index < datatypesData.length; index++) {
           let element = datatypesData[index];
           if (
@@ -218,9 +177,9 @@ function Overview() {
             query: `SELECT column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
           })
           .then((columns) => {
-            setColumns(columns.data);
+            //setColumns(columns.data[1]);
             // set EditData/formData
-            columns = columns.data;
+            columns = columns.data[1];
             const newFormData = {};
             console.log("COLUMNS", columns);
             let cols = columns.slice(1, columns.length);
@@ -262,6 +221,20 @@ function Overview() {
             console.log("New FormData : ", newFormData);
             setFormData(newFormData);
             setEditData(newFormData);
+
+            let selectQuery = sessionStorage.getItem("query");
+            axios
+              .post("http://localhost:5000/run-query", {
+                query: selectQuery,
+              })
+              .then((results) => {
+                setResults(results.data[1]);
+                console.log("TABLE COLUMNS", results.data[0]);
+                setColumns(results.data[0]);
+              })
+              .catch((error) => {
+                console.log("ERROR : ", error);
+              });
           })
           .catch((error) => {
             console.log("ERROR : ", error);
@@ -302,28 +275,12 @@ function Overview() {
         query: `SELECT "bookISBN" FROM public."Books"`,
       })
       .then((response) => {
-        setBookISBNs(response.data.flat());
+        setBookISBNs(response.data[1].flat());
       })
       .catch((error) => {
         console.log("ERROR : ", error);
       });
   }, [selectedTable, updateData]);
-
-  //! fetch bookIDs: currently not used
-  useEffect(() => {
-    if (bookIDs) {
-      axios
-        .post("http://localhost:5000/run-query", {
-          query: `SELECT "bookID" FROM public."Books"`,
-        })
-        .then((bookIDs) => {
-          setBookIDs(bookIDs.data);
-        })
-        .catch((error) => {
-          console.log("ERROR : ", error);
-        });
-    }
-  }, [updateBookIDs]);
 
   useEffect(() => {
     axios
@@ -331,7 +288,7 @@ function Overview() {
         query: `SELECT "bookISBN" FROM public."Books"`,
       })
       .then((response) => {
-        setBookISBNs(response.data.flat());
+        setBookISBNs(response.data[1].flat());
       })
       .catch((error) => {
         console.log("ERROR : ", error);
@@ -668,7 +625,7 @@ function Overview() {
       <Table striped bordered hover className="table mx-auto">
         <thead>
           {columns.map((column) => (
-            <th>{column[0]}</th>
+            <th>{column}</th>
           ))}
 
           <th className="col"></th>

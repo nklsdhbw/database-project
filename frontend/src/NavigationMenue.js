@@ -58,8 +58,8 @@ const NavigationMenue = () => {
         query,
       })
       .then((tables) => {
-        setOptions(tables.data.flat());
-        console.log("ALL TABLES", tables.data.flat());
+        setOptions(tables[0].data.flat());
+        console.log("ALL TABLES", tables[0].data.flat());
       })
       .catch((error) => {
         console.log("ERROR : ", error);
