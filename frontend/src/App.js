@@ -9,6 +9,7 @@ import Register from "./Register.js";
 import Views from "./Views.js";
 import TableSearch from "./TableSearch.js";
 import Playground from "./Playground.js";
+import NavigationMenue from "./NavigationMenue.js";
 
 // import required css
 //import "./App.css";
@@ -26,6 +27,7 @@ const App = () => {
         <Route path="/Views" element={<Views />} />
         <Route path="/Search" element={<TableSearch />} />
         <Route path="/Playground" element={<Playground />} />
+        <Route path="/NavigationMenue" element={<NavigationMenue />} />
       </Routes>
     </BrowserRouter>
   );
