@@ -173,54 +173,60 @@ function Overview() {
         datatypes = filteredArr;
         axios
           .post("http://localhost:5000/run-query", {
-            query: sessionStorage.getItem("query"),
+            query: sessionStorage.getItem("tableQuery"),
           })
           .then((results) => {
             setResults(results.data[1]);
             setColumns(results.data[0]);
 
-            // set EditData/formData
-            let cols = results.data[0];
-            const newFormData = {};
-            // columns without id row
-            cols = cols.slice(1, cols.length);
-            console.log("COLS", cols);
-            let prefillDateColumns = [
-              "loanLoanDate",
-              "libraryOrderDateOrdered",
-            ];
-            cols.map((column, index) => {
-              let placeholder = "";
-              if (column == "loanReaderEmail") {
-                placeholder = sessionStorage.getItem("loginMail");
-              }
-              if (prefillDateColumns.includes(column)) {
-                placeholder = new Date().toISOString().slice(0, 10);
-              }
-              if (column == "loanRenewals") {
-                placeholder = 0;
-              }
-              if (column == "loanOverdue") {
-                placeholder = false;
-              }
-              if (column == "loanFine") {
-                placeholder = 0;
-              }
-              //prefill loanReaderID
-              if (column == "loanReaderID") {
-                placeholder = sessionStorage.getItem("readerID");
-              }
-              if (notFilledColumns.includes(column[0])) {
-              } else {
-                newFormData[column] = {
-                  type: datatypes[index],
-                  required: true,
-                  placeholder: placeholder,
-                };
-              }
-            });
-            setFormData(newFormData);
-            setEditData(newFormData);
+            axios
+              .post("http://localhost:5000/run-query", {
+                query: sessionStorage.getItem("formQuery"),
+              })
+              .then((results) => {
+                // set EditData/formData
+                let cols = results.data[0];
+                const newFormData = {};
+                // columns without id row
+                cols = cols.slice(1, cols.length);
+                console.log("COLS", cols);
+                let prefillDateColumns = [
+                  "loanLoanDate",
+                  "libraryOrderDateOrdered",
+                ];
+                cols.map((column, index) => {
+                  let placeholder = "";
+                  if (column == "loanReaderEmail") {
+                    placeholder = sessionStorage.getItem("loginMail");
+                  }
+                  if (prefillDateColumns.includes(column)) {
+                    placeholder = new Date().toISOString().slice(0, 10);
+                  }
+                  if (column == "loanRenewals") {
+                    placeholder = 0;
+                  }
+                  if (column == "loanOverdue") {
+                    placeholder = false;
+                  }
+                  if (column == "loanFine") {
+                    placeholder = 0;
+                  }
+                  //prefill loanReaderID
+                  if (column == "loanReaderID") {
+                    placeholder = sessionStorage.getItem("readerID");
+                  }
+                  if (notFilledColumns.includes(column[0])) {
+                  } else {
+                    newFormData[column] = {
+                      type: datatypes[index],
+                      required: true,
+                      placeholder: placeholder,
+                    };
+                  }
+                });
+                setFormData(newFormData);
+                setEditData(newFormData);
+              });
           })
           .catch((error) => {
             console.log("ERROR : ", error);

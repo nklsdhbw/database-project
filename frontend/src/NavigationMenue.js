@@ -18,34 +18,33 @@ const NavigationMenue = () => {
     {
       label: "Order overview",
       table: "LibraryOrders",
-      query:
+      entryQuery:
+        'SELECT "libraryOrderID" AS "Library Order ID", "libraryOrderAuthorID" AS "Author" FROM "LibraryOrders"',
+      formQuery:
         'SELECT "libraryOrderID", "libraryOrderAuthorID" FROM "LibraryOrders"',
     },
     {
       label: "Manage Loans",
       table: "Loans",
-      query: 'SELECT * FROM "Loans"',
+      formQuery: 'SELECT * FROM "Loans"',
     },
     {
       label: "Manage my Loans",
       table: "Loans",
-      query: `SELECT * FROM "Loans" where "loanReaderID" = ${sessionStorage.getItem(
+      formQuery: `SELECT * FROM "Loans" where "loanReaderID" = ${sessionStorage.getItem(
         "readerID"
       )}`,
     },
     {
       label: "Manage personal data",
       table: "Readers",
-      query: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
+      formQuery: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
         "readerID"
       )}`,
     },
   ];
 
   const navigate = useNavigate();
-
-  const [results, setResults] = useState([]);
-  const [options, setOptions] = useState([]);
 
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
   console.log("LoginStatus", loginStatus);
@@ -62,29 +61,12 @@ const NavigationMenue = () => {
     const filteredActions = Actions.filter(
       (action) => action.table === option.table
     );
-    const orderOverviewQuery = filteredActions[0].query;
-    //const orderOverviewQuery = filteredActions.map((action) => action.query)[0];
-    sessionStorage.setItem("query", orderOverviewQuery);
-  }
+    const tableQuery = filteredActions[0].formQuery;
+    const entryQuery = filteredActions[0].entryQuery;
 
-  useEffect(() => {
-    let query = `SELECT tablename
-      FROM pg_tables
-      WHERE schemaname = 'public'
-      ORDER BY tablename;
-      `;
-    axios
-      .post("http://localhost:5000/run-query", {
-        query,
-      })
-      .then((tables) => {
-        setOptions(tables[0].data.flat());
-        console.log("ALL TABLES", tables[0].data.flat());
-      })
-      .catch((error) => {
-        console.log("ERROR : ", error);
-      });
-  }, []);
+    sessionStorage.setItem("tableQuery", tableQuery);
+    sessionStorage.setItem("formQuery", entryQuery);
+  }
 
   return (
     <div>
