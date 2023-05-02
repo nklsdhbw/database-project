@@ -33,8 +33,7 @@ const Register = () => {
     axios
       .post("http://localhost:5000/run-query", { query })
       .then((response) => {
-        setExistingUsers(response.data);
-        console.log(response.data);
+        setExistingUsers(response.data[1]);
       })
       .catch((error) => {
         console.log(error);
@@ -51,7 +50,7 @@ const Register = () => {
     const email = registerData.eMail;
     console.log(existingUsers);
     for (let i = 0; i < existingUsers.length; i++) {
-      if (existingUsers[i][2] === email) {
+      if (existingUsers[i][3] === email) {
         console.log("hallo?");
         setUserExists(true);
         window.alert("User already exists. Please login");
@@ -59,11 +58,8 @@ const Register = () => {
         break;
       }
     }
-    console.log("HÄÄ");
 
     if (!userExists) {
-      let query2 = `INSERT INTO public."Readers" ("readerFirstName","readerLastName", "readerEmail", "readerPassword") Values('${fullName}', '${registerData.eMail}', '${hashedPassword}')`;
-      console.log("QUERY", query2);
       // after registration, user is logged in so change loggedIn variable to true
       // and navigate then to the "overview" page
       sessionStorage.setItem("loggedIn", JSON.stringify(true));
@@ -81,8 +77,8 @@ const Register = () => {
               query: `SELECT * FROM public."Readers"`,
             })
             .then((response) => {
-              setResults(response.data);
-              let results = response.data;
+              setResults(response.data[1]);
+              let results = response.data[1];
               //get readerID from User and save it in sessionStorage
               console.log(results);
               results.forEach((element) => {

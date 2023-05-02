@@ -31,8 +31,7 @@ const Login = () => {
     axios
       .post("http://localhost:5000/run-query", { query })
       .then((response) => {
-        setResults(response.data);
-        console.log(response.data);
+        setResults(response.data[1]);
       })
       .catch((error) => {
         console.log(error);
@@ -49,7 +48,7 @@ const Login = () => {
 
     //get readerID and hashePassword from User and store readerID in session storage
     results.forEach((element) => {
-      console.log(element[2], formData.username);
+      console.log(element[3], formData.username);
       if (element[3] == formData.username) {
         hashedPassword = element[4];
         readerID = element[0];
@@ -58,7 +57,7 @@ const Login = () => {
     });
 
     const passwordsMatch = await bcrypt.compare(password, hashedPassword);
-    console.log(hashedPassword, password);
+    console.log(hashedPassword, " : ", password);
     console.log(passwordsMatch);
     if (passwordsMatch) {
       sessionStorage.setItem("loggedIn", JSON.stringify(true));
