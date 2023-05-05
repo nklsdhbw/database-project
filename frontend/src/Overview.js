@@ -29,11 +29,8 @@ function Overview() {
   }
   const api = "http://localhost:5000/run-query";
   const [selectedTable, setSelectedTable] = useState(
-    sessionStorage.getItem("table") || "Librarians"
+    sessionStorage.getItem("table")
   );
-  let temp = selectedTable.slice(0, selectedTable.length - 1);
-  temp = temp.toLowerCase();
-  temp = temp + "ID";
 
   //* State variables //
   const [results, setResults] = useState([]);
@@ -46,12 +43,11 @@ function Overview() {
   const [showSearchManagerButton, setShowSearchManagerButton] = useState(false);
   const [showConvertOrderIntoBookButton, setShowConvertOrderIntoBookButton] =
     useState();
-  const [hidePublisherButton, setHidePublisherButton] = useState(
-    selectedTable == "Books" || selectedTable == "LibraryOrders" ? false : true
-  );
+
+  const [hidePublisherButton, setHidePublisherButton] = useState();
   const [query, setQuery] = useState(sessionStorage.getItem("query"));
   const [options, setOptions] = useState(["Librarians", "Authors"]);
-  const [uniqueColumn, setUniqueColumn] = useState(temp);
+  const [uniqueColumn, setUniqueColumn] = useState();
   const [shouldRender, setShouldRender] = useState(false);
   const [updateData, setUpdateData] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -125,6 +121,18 @@ function Overview() {
   // Main Hook: This hook is called whenever the selected table is changed or the data updates
 
   useEffect(() => {
+    let temp = selectedTable.slice(0, selectedTable.length - 1);
+    temp = temp.toLowerCase();
+    temp = temp + "ID";
+    setUniqueColumn(temp);
+    console.log(selectedTable, "selectedTable");
+
+    setHidePublisherButton(
+      selectedTable == "Books" || selectedTable == "LibraryOrders"
+        ? false
+        : true
+    );
+
     // set datatypes
     axios
       .post("http://localhost:5000/run-query", {
@@ -325,6 +333,8 @@ function Overview() {
       .catch((error) => {
         console.log("ERROR : ", error);
       });
+    setUpdateData(!updateData);
+    /*  
     // decrese bookAvailableAmount by 1
     if (selectedTable == "Loans") {
       loanBookID = data["loanBookID"].placeholder;
@@ -340,6 +350,7 @@ function Overview() {
     }
     setUpdateData(!updateData);
     setShowModal(!showModal);
+    */
   }
 
   function deleteEntry(rowID) {

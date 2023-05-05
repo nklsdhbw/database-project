@@ -26,11 +26,15 @@ const NavigationMenue = () => {
     {
       label: "Manage Loans",
       table: "Loans",
+      entryQuery: 'SELECT * FROM "Loans"',
       formQuery: 'SELECT * FROM "Loans"',
     },
     {
       label: "Manage my Loans",
       table: "Loans",
+      entryQuery: `SELECT * FROM "Loans" where "loanReaderID" = ${sessionStorage.getItem(
+        "readerID"
+      )}`,
       formQuery: `SELECT * FROM "Loans" where "loanReaderID" = ${sessionStorage.getItem(
         "readerID"
       )}`,
@@ -39,6 +43,9 @@ const NavigationMenue = () => {
       label: "Manage personal data",
       table: "Readers",
       formQuery: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
+        "readerID"
+      )}`,
+      entryQuery: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
         "readerID"
       )}`,
     },
@@ -59,13 +66,14 @@ const NavigationMenue = () => {
     console.log(option);
     sessionStorage.setItem("table", option.table);
     const filteredActions = Actions.filter(
-      (action) => action.table === option.table
+      (action) => action.label === option.label
     );
-    const tableQuery = filteredActions[0].formQuery;
+    console.log(filteredActions[0]);
     const entryQuery = filteredActions[0].entryQuery;
-
-    sessionStorage.setItem("tableQuery", tableQuery);
-    sessionStorage.setItem("formQuery", entryQuery);
+    const formQuery = filteredActions[0].formQuery;
+    console.log(entryQuery, "entryQuery");
+    sessionStorage.setItem("tableQuery", entryQuery);
+    sessionStorage.setItem("formQuery", formQuery);
   }
 
   return (

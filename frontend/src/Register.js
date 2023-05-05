@@ -85,7 +85,7 @@ const Register = () => {
                 if (element[3] == registerData.eMail) {
                   let readerID = element[0];
                   sessionStorage.setItem("readerID", readerID);
-                  navigate("/overview");
+                  navigate("/NavigationMenue");
                 }
               });
             })

@@ -62,7 +62,7 @@ const Login = () => {
     if (passwordsMatch) {
       sessionStorage.setItem("loggedIn", JSON.stringify(true));
       sessionStorage.setItem("loginMail", loginMail);
-      navigate("/Overview");
+      navigate("/NavigationMenue");
     } else {
       window.alert("Pech");
     }
