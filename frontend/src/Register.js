@@ -51,7 +51,6 @@ const Register = () => {
     console.log(existingUsers);
     for (let i = 0; i < existingUsers.length; i++) {
       if (existingUsers[i][3] === email) {
-        console.log("hallo?");
         setUserExists(true);
         window.alert("User already exists. Please login");
         navigate("/Login");

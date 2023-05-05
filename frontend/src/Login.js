@@ -7,7 +7,6 @@ import useFetch from "react-fetch-hook";
 import "bootstrap/dist/css/bootstrap.min.css";
 import bcrypt from "bcryptjs";
 import axios from "axios";
-import Overview from "./Overview";
 
 // import required css
 //import 'bootstrap/dist/css/bootstrap.min.css';
@@ -20,9 +19,8 @@ const Login = () => {
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
   console.log("LoginStatus", loginStatus);
   if (!loginStatus) {
-    //navigate("/Login");
   } else {
-    navigate("/Overview");
+    navigate("/NavigationMenue");
   }
 
   //let { isLoading, data } = useFetch("/api/login");
@@ -64,46 +62,10 @@ const Login = () => {
       sessionStorage.setItem("loginMail", loginMail);
       navigate("/NavigationMenue");
     } else {
-      window.alert("Pech");
+      window.alert("Wrong password or username. Please try again.");
     }
-
-    // iterate over the data from /api/login and check if the inputs are in the array(=database)
-    // lowercase input email, so that the case of the input email doesn't matter
-    /*
-    let loginData = data;
-
-    loginData.forEach((element) => {
-      if (
-        formData.username.toLowerCase() === element.eMail &&
-        formData.password === element.password
-      ) {
-        // set user specific variables and store them in session storage of browser
-        // after successfull login navigate to overview page
-        sessionStorage.setItem("loggedIn", JSON.stringify(true));
-        navigate("overview");
-      }
-    });
-
-    // alert user if password or email is false
-    if (!JSON.parse(sessionStorage.getItem("loggedIn"))) {
-      window.alert("invalid password or email!");
-    }
-    // }
-    */
   };
 
-  /*
-  // dont do sth, until data isnt loaded
-  if (!isLoading) {
-    //check if user is already logged in, if so, automatically redirect to overview
-    if (JSON.parse(sessionStorage.getItem("loggedIn"))) {
-      window.location.href = "/overview";
-    } else {
-      // user is not logged in
-      // return login mask
-      // checks if email input is email type
-      // input fields are set ro required to prevent user from submitting (button is disabled until the validation doesn't fail anymore)
-*/
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <h1>Anmelden</h1>

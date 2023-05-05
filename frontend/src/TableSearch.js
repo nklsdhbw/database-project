@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Input } from "antd";
 import Table from "react-bootstrap/Table";
 import axios from "axios";
-import { userColumns } from "./columns";
 import { useTableSearch } from "./useTableSearch";
 import { Button } from "react-bootstrap";
 
@@ -59,17 +58,6 @@ const fetchUsers = async () => {
   return { data };
 };
 
-/*
-const fetchUsers = async () => {
-  const { data } = await axios.get(
-    "https://jsonplaceholder.typicode.com/users/"
-  );
-  console.log(data);
-  console.log(typeof data);
-  return { data };
-};
-*/
-
 export default function TableSearch({ callback }) {
   const [searchVal, setSearchVal] = useState(null);
 
@@ -90,14 +78,6 @@ export default function TableSearch({ callback }) {
       />
       <br /> <br />
       {
-        /*<Table
-        rowKey="name"
-        dataSource={filteredData}
-        columns={userColumns}
-        loading={loading}
-        pagination={false}
-      />
-      */
         <div>
           <Table striped bordered hover className="table mx-auto">
             <thead>

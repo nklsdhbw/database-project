@@ -43,12 +43,8 @@ function Overview() {
   const [showSearchManagerButton, setShowSearchManagerButton] = useState(false);
   const [showConvertOrderIntoBookButton, setShowConvertOrderIntoBookButton] =
     useState();
-
   const [hidePublisherButton, setHidePublisherButton] = useState();
-  const [query, setQuery] = useState(sessionStorage.getItem("query"));
-  const [options, setOptions] = useState(["Librarians", "Authors"]);
   const [uniqueColumn, setUniqueColumn] = useState();
-  const [shouldRender, setShouldRender] = useState(false);
   const [updateData, setUpdateData] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showSearch, setshowSearch] = useState(false);
@@ -294,16 +290,6 @@ function Overview() {
         console.log("ERROR : ", error);
       });
   }, []);
-
-  //* functions //
-  function changeTable() {
-    const selectElement = document.getElementById("mySelect");
-    const selectedValue =
-      selectElement.options[selectElement.selectedIndex].value;
-    sessionStorage.setItem("table", selectedValue);
-    console.log("SELECTED TABLE", selectedValue);
-    setSelectedTable(selectedValue);
-  }
 
   function addEntry(data) {
     let loanBookID;
@@ -775,15 +761,7 @@ function Overview() {
           </Modal.Body>
         </Modal>
       </div>
-      <div>
-        <select id="mySelect" value={selectedTable} onChange={changeTable}>
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-      </div>
+
       <div>
         {showSearch && (
           <Modal show={showSearch} fullscreen={true}>

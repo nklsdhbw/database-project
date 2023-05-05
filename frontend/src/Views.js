@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Modal, Form, Button } from "react-bootstrap";
 import axios from "axios";
 import Table from "react-bootstrap/Table";
-import CreateRecordModal from "./createRecord";
 import { useNavigate } from "react-router-dom";
 
 function Views() {
