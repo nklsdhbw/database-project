@@ -117,10 +117,10 @@ function Overview() {
   // Main Hook: This hook is called whenever the selected table is changed or the data updates
 
   useEffect(() => {
-    let temp = selectedTable.slice(0, selectedTable.length - 1);
-    temp = temp.toLowerCase();
-    temp = temp + "ID";
-    setUniqueColumn(temp);
+    let uniqueColumn = selectedTable.slice(0, selectedTable.length - 1);
+    uniqueColumn = uniqueColumn.toLowerCase();
+    uniqueColumn = uniqueColumn + "ID"; //e.g. loanID
+    setUniqueColumn(uniqueColumn);
     console.log(selectedTable, "selectedTable");
 
     setHidePublisherButton(
@@ -139,33 +139,32 @@ function Overview() {
         console.log("DATATYPES", datatypes);
         for (let index = 0; index < datatypesData.length; index++) {
           let element = datatypesData[index];
-          if (
-            element[0].startsWith("character") ||
-            element[0].startsWith("char")
-          ) {
+          let type = element[0];
+          let columnName = element[1];
+          if (type.startsWith("character") || type.startsWith("char")) {
             datatypesData[index] = "text";
           }
           if (
-            element[0].startsWith("big") ||
-            element[0].startsWith("int") ||
-            element[0].startsWith("small") ||
-            element[0].startsWith("numeric")
+            type.startsWith("big") ||
+            type.startsWith("int") ||
+            type.startsWith("small") ||
+            type.startsWith("numeric")
           ) {
             datatypesData[index] = "number";
           }
-          if (element[0].startsWith("date")) {
+          if (type.startsWith("date")) {
             datatypesData[index] = "date";
           }
-          if (element[0].startsWith("bool")) {
+          if (type.startsWith("bool")) {
             datatypesData[index] = "checked";
           }
-          if (element[1].includes("mail")) {
+          if (columnName.includes("mail")) {
             datatypesData[index] = "email";
           }
-          if (element[1].includes("assword")) {
+          if (columnName.includes("assword")) {
             datatypesData[index] = "password";
           }
-          if (notFilledColumns.includes(element[1])) {
+          if (notFilledColumns.includes(columnName)) {
             datatypesData[index] = null;
           }
         }
@@ -311,32 +310,12 @@ function Overview() {
           )})` + `${valuesString.slice(0, valuesString.length - 1)}) `,
       })
       .then((response) => {
-        sessionStorage.setItem(
-          "updateData",
-          !Boolean(JSON.parse(sessionStorage.getItem("updateData")))
-        );
+        //stored function is executed in the background that updates bookAvailability and bookAvailabilityAmount
+        setUpdateData(!updateData);
       })
       .catch((error) => {
         console.log("ERROR : ", error);
       });
-    setUpdateData(!updateData);
-    /*  
-    // decrese bookAvailableAmount by 1
-    if (selectedTable == "Loans") {
-      loanBookID = data["loanBookID"].placeholder;
-      let updateQuery = `UPDATE public."Books" SET "bookAvailableAmount"  = "bookAvailableAmount" -1, "bookAvailability" = CASE WHEN "bookAvailableAmount" - 1 > 0 THEN true ELSE false END WHERE "bookID" = ${loanBookID}`;
-      axios
-        .post(api, {
-          query: `${updateQuery}`,
-        })
-        .then((response) => {})
-        .catch((error) => {
-          console.log("ERROR : ", error);
-        });
-    }
-    setUpdateData(!updateData);
-    setShowModal(!showModal);
-    */
   }
 
   function deleteEntry(rowID) {
@@ -352,6 +331,7 @@ function Overview() {
         console.log("ERROR : ", error);
       });
   }
+
   async function editEntry(data) {
     console.log("EDIT ENTRY DATA", data);
     let columnsString = "";
@@ -667,9 +647,9 @@ function Overview() {
         </tbody>
       </Table>
       <div>
-        <button onClick={() => handleCreate() /*setShowModal(!showModal)}>*/}>
+        <Button onClick={() => handleCreate() /*setShowModal(!showModal)}>*/}>
           Create New Record
-        </button>
+        </Button>
 
         <Modal show={showModal}>
           <Modal.Header>
