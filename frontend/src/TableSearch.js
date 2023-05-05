@@ -94,7 +94,9 @@ export default function TableSearch({ callback }) {
                   {Object.entries(row).map(([key, value]) => (
                     <td key={key}>
                       <div>
-                        <div>{value}</div>
+                        <div>
+                          {typeof value == "boolean" ? value.toString() : value}
+                        </div>
                       </div>
                     </td>
                   ))}
@@ -104,7 +106,7 @@ export default function TableSearch({ callback }) {
                       onClick={() => callback(row)}
                       disabled={
                         sessionStorage.getItem("searchTable") == "Books" &&
-                        row["bookAvailabilityAmount"] > 0
+                        row["bookAvailableAmount"] > 0
                           ? false
                           : true
                       }
@@ -113,7 +115,7 @@ export default function TableSearch({ callback }) {
                       }
                     >
                       {sessionStorage.getItem("searchTable") == "Books" &&
-                      row["bookAvailabilityAmount"] > 0
+                      row["bookAvailableAmount"] > 0
                         ? "Choose"
                         : "Not available"}
                     </button>
