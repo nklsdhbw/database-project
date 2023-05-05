@@ -16,11 +16,11 @@ def run_query():
     query = request.json['query']
 
     conn = psycopg2.connect(
-        host="ep-little-rain-759001-pooler.us-east-1.postgres.vercel-storage.com",
+        host="localhost",
         port=5432,
-        database="verceldb",
-        user="default",
-        password="93thMrxkqSjc"
+        database="postgres",
+        user="postgres",
+        password="0609"
     )
 
     try:
