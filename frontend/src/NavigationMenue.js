@@ -49,6 +49,16 @@ const NavigationMenue = () => {
         "readerID"
       )}`,
     },
+    {
+      label: "Manage library orders",
+      table: "LibraryOrders",
+      formQuery: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
+        "readerID"
+      )}`,
+      entryQuery: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
+        "readerID"
+      )}`,
+    },
   ];
 
   const navigate = useNavigate();
