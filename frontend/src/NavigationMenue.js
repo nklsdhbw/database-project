@@ -24,17 +24,17 @@ const NavigationMenue = () => {
         'SELECT "libraryOrderID", "libraryOrderAuthorID" FROM "LibraryOrders"',
     },
     {
-      label: "Manage Loans",
+      label: "Manage all Loans",
       table: "Loans",
-      entryQuery: 'SELECT * FROM "Loans"',
+      entryQuery: 'SELECT * FROM "allLoans"',
       formQuery: 'SELECT * FROM "Loans"',
     },
     {
       label: "Manage my Loans",
       table: "Loans",
-      entryQuery: `SELECT * FROM "Loans" where "loanReaderID" = ${sessionStorage.getItem(
-        "readerID"
-      )}`,
+      entryQuery: `SELECT * FROM "allLoans" where "User" = '${sessionStorage.getItem(
+        "loginMail"
+      )}'`,
       formQuery: `SELECT * FROM "Loans" where "loanReaderID" = ${sessionStorage.getItem(
         "readerID"
       )}`,
