@@ -52,12 +52,24 @@ const NavigationMenue = () => {
     {
       label: "Manage library orders",
       table: "LibraryOrders",
-      formQuery: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
-        "readerID"
-      )}`,
-      entryQuery: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
-        "readerID"
-      )}`,
+      formQuery: `SELECT * FROM "LibraryOrders"`,
+      entryQuery: `SELECT "libraryOrderID" as "Library Order ID",
+      "libraryOrderBookTitle" AS "Book title",
+      "libraryOrderISBN" AS "ISBN",
+      concat(a."authorFirstName",a."authorLastName")  as "Author",
+      "libraryOrderAmount" AS "Order amount",
+      "libraryOrderCost" as "Cost",
+      c."currencyName" AS "Currency",
+      "libraryOrderDateOrdered" AS "Order date",
+      "libraryOrderDeliveryDate" AS "Delivery Date",
+      "libraryOrderStatusOrder" AS "Order status",
+      concat(l."librarianFirstName", ' ', l."librarianLastName") AS "Manager"
+      
+      
+  FROM "LibraryOrders" lo
+  JOIN "Authors" a ON lo."libraryOrderAuthorID" = a."authorID"
+  JOIN "Currencies" c ON lo."libraryOrderCurrencyID" = c."currencyID"
+  JOIN "Librarians" l ON lo."libraryOrderManagerLibrarianID" = l."librarianID";`,
     },
   ];
 
