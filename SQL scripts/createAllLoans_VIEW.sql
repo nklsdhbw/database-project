@@ -1,7 +1,13 @@
 DROP View IF EXISTS "allLoans";
-
 Create View "allLoans" AS
-SELECT b."bookTitle", b."bookAuthor", b."bookISBN", l."loanReaderEmail", l."loanLoanDate", l."loanDueDate", l."loanReturnDate", r."readerName"
+SELECT b."bookTitle" AS "Book title", b."bookISBN" AS "ISBN",
+	   concat(a."authorFirstName", ' ', a."authorLastName") AS "Author",
+	   p."publisherName" AS "Publisher",
+	   l."loanLoanDate" AS "Loan date", l."loanDueDate" AS "Due date", 
+	   l."loanReturnDate" AS "Return date",
+	   r."readerEmail" as "User"
 FROM "Books" b
 JOIN "Loans" l ON b."bookID"=l."loanBookID"
-JOIN "Readers" r ON l."loanReaderEmail" = r."readerEmail"
+JOIN "Readers" r ON l."loanReaderID" = r."readerID"
+JOIN "Authors" a ON b."bookAuthorID" = a."authorID"
+JOIN "Publishers" p ON b."bookPublisherID" = p."publisherID";
