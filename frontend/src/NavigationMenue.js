@@ -42,10 +42,10 @@ const NavigationMenue = () => {
     {
       label: "Manage personal data",
       table: "Readers",
-      formQuery: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
+      entryQuery: `SELECT "readerID" AS "ID", "readerFirstName" AS "Firstname", "readerLastName" AS "Lastname", "readerEmail" AS "Email", "readerPassword" AS "Password" FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
         "readerID"
       )}`,
-      entryQuery: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
+      formQuery: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
         "readerID"
       )}`,
     },

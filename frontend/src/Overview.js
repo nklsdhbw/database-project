@@ -65,7 +65,12 @@ function Overview() {
     librarianPhone: { type: "text", required: false, placeholder: "" },
   });
   const [rowUniqueID, setRowUniqueID] = useState([]);
-  const amountIDColumns = { Loans: 3, Publishers: 1 };
+  const amountIDColumns = {
+    Loans: 3,
+    Publishers: 1,
+    LibraryOrders: 0,
+    Readers: 0,
+  };
 
   //* Callback function //
   const callThisFromChildComponent = (data) => {
@@ -502,6 +507,35 @@ function Overview() {
           console.log("ERROR : ", error);
         });
     }
+    if (selectedTable == "Readers") {
+      let dbColumns = [
+        "readerID",
+        "readerFirstName",
+        "readerLastName",
+        "readerEmail",
+        "readerPassword",
+      ];
+      let vals = data;
+      setRowUniqueID(data[0]);
+      vals = vals.splice(1);
+      dbColumns = dbColumns.splice(1);
+
+      vals.map((element, index) => {
+        let placeholder = element;
+        console.log("COLUMN", dbColumns[index], "value", element);
+        if (editData[dbColumns[index]]["type"] == "date") {
+          placeholder = new Date(element).toISOString().slice(0, 10);
+          editData[dbColumns[index]]["placeholder"] = placeholder;
+          console.log("DATE");
+        } else {
+          editData[dbColumns[index]]["placeholder"] = placeholder;
+        }
+      });
+      console.log("EDITDATA", editData);
+      setEditData(editData);
+      setShowEditModal(!showEditModal);
+    }
+
     if (selectedTable == "Loans") {
       let dataWithIDs = resultsWithIDs.filter((el) => {
         return el[0] == data[0];
@@ -576,10 +610,10 @@ function Overview() {
         } else {
           editData[cols[index]]["placeholder"] = placeholder;
         }
-        console.log("EDITDATA", editData);
-        setEditData(editData);
-        setShowEditModal(!showEditModal);
       });
+      console.log("EDITDATA", editData);
+      setEditData(editData);
+      setShowEditModal(!showEditModal);
 
       // get columns that are needed for editData
     }
