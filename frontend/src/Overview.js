@@ -419,6 +419,67 @@ function Overview() {
     let keys = Object.keys(editData);
     console.log("KEYS", keys);
     console.log("EDITDATA", editData);
+    if (selectedTable == "Loans") {
+      // get columns that are needed for editData
+      let difference = keys.filter((x) => !mappedColumns.includes(x));
+      let loanISBNIndex = 1;
+      let loanAuhorIndex = 2;
+      let loanPublisherIDIndex = 3;
+
+      // add missing columns
+      //get bookID
+      axios
+        .post(api, {
+          query: `SELECT "bookID" FROM "Books" WHERE "bookISBN" = '${data[loanISBNIndex]}'`,
+        })
+        .then((response) => {
+          let bookID = response.data[1][0][0];
+          console.log(bookID);
+          setRowUniqueID(bookID);
+
+          //delete bookTitle from data
+          delete mappedColumns[0];
+          delete data[0];
+          delete mappedColumns[zipCityIndex];
+          delete data[zipCityIndex];
+          //remove uniqueID from data
+          delete mappedColumns[0];
+          delete data[0];
+          mappedColumns = mappedColumns.filter((el) => {
+            return el != undefined;
+          });
+          data = data.filter((el) => {
+            return el != undefined;
+          });
+          data.push(zipID);
+          mappedColumns.push("publisherZipID");
+          console.log("MAPPEDCOLUMNS", mappedColumns);
+          //let dataWithoutRowUniqueID = data.splice(1);
+
+          let dataWithoutRowUniqueID = data;
+
+          keys = mappedColumns;
+
+          dataWithoutRowUniqueID.map((element, index) => {
+            let placeholder = element;
+            console.log("COLUMN", mappedColumns[index], "value", element);
+            console.log(mappedColumns[index]);
+            if (editData[mappedColumns[index]]["type"] == "date") {
+              placeholder = new Date(element).toISOString().slice(0, 10);
+              console.log("DATE");
+            } else {
+              editData[keys[index]]["placeholder"] = placeholder;
+            }
+          });
+          console.log("EDITDATA", editData);
+
+          setShowEditModal(!showEditModal);
+          setEditData(editData);
+        })
+        .catch((error) => {
+          console.log("ERROR : ", error);
+        });
+    }
     if (selectedTable == "Publishers") {
       // get columns that are needed for editData
       let difference = keys.filter((x) => !mappedColumns.includes(x));
