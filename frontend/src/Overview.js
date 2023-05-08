@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import TableSearch from "./TableSearch";
 import bcrypt from "bcryptjs";
 import DataTable from "./DataTable.js";
+import CreateRecordModal from "./CreateRecordModal";
 
 function Overview() {
   const notFilledColumns = [
@@ -797,57 +798,22 @@ function Overview() {
           Create New Record
         </Button>
 
-        <Modal show={showModal}>
-          <Modal.Header>
-            <Modal.Title>Create New Record</Modal.Title>
-            <Button
-              variant="secondary"
-              aria-label="Close"
-              onClick={() => handleCreate()} //setShowModal(!showModal)}
-            >
-              Close
-            </Button>
-          </Modal.Header>
-          <Modal.Body>
-            <Form onSubmit={handleSubmit}>
-              {Object.entries(formData).map(([key, value], index) => (
-                <Form.Group controlId={`${String(key)}`}>
-                  <Form.Label>{`${String(key)}`}</Form.Label>
-
-                  <Form.Control
-                    name={key}
-                    value={formData[key]["placeholder"]}
-                    onChange={handleInputChange}
-                    required
-                    type={datatypes[index]}
-                  ></Form.Control>
-                </Form.Group>
-              ))}
-              <Button type="submit">Create</Button>
-              {showSearchBookButton ? (
-                <Button onClick={() => handleBook()}>Search Book</Button>
-              ) : (
-                <></>
-              )}
-              {showSearchAuthorButton ? (
-                <Button onClick={() => handleAuthor()}>Search Author</Button>
-              ) : (
-                <></>
-              )}
-              {showSearchManagerButton ? (
-                <Button onClick={() => handleManager()}>Search Manager</Button>
-              ) : (
-                <></>
-              )}
-              <Button
-                hidden={hidePublisherButton}
-                onClick={() => handlePublisher()}
-              >
-                Search Publisher
-              </Button>
-            </Form>
-          </Modal.Body>
-        </Modal>
+        <CreateRecordModal
+          showModal={showModal}
+          handleCreate={handleCreate}
+          formData={formData}
+          datatypes={datatypes}
+          handleInputChange={handleInputChange}
+          handleSubmit={handleSubmit}
+          showSearchBookButton={showSearchBookButton}
+          handleBook={handleBook}
+          showSearchAuthorButton={showSearchAuthorButton}
+          handleAuthor={handleAuthor}
+          showSearchManagerButton={showSearchManagerButton}
+          handleManager={handleManager}
+          hidePublisherButton={hidePublisherButton}
+          handlePublisher={handlePublisher}
+        />
       </div>
       <div>
         <Modal show={showEditModal}>
