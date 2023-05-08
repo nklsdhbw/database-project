@@ -34,7 +34,9 @@ function Overview() {
 
   //* State variables //
   const [results, setResults] = useState([]);
+  const [resultsWithIDs, setResultsWithIDs] = useState([]);
   const [columns, setColumns] = useState([]);
+  const [columnsWithIDs, setColumnsWithIDs] = useState([]);
   const [datatypes, setDatatypes] = useState([]);
   const [bookIDs, setBookIDs] = useState([]);
   const [bookISBNs, setBookISBNs] = useState([]);
@@ -63,6 +65,7 @@ function Overview() {
     librarianPhone: { type: "text", required: false, placeholder: "" },
   });
   const [rowUniqueID, setRowUniqueID] = useState([]);
+  const amountIDColumns = { Loans: 3, Publishers: 1 };
 
   //* Callback function //
   const callThisFromChildComponent = (data) => {
@@ -179,8 +182,26 @@ function Overview() {
             query: sessionStorage.getItem("tableQuery"),
           })
           .then((results) => {
-            setResults(results.data[1]);
-            setColumns(results.data[0]);
+            console.log(results.data[1], "RESULTS");
+            setResultsWithIDs(results.data[1]);
+            let resultsWithoutIDs = Array.from(results.data[1]);
+            resultsWithoutIDs.forEach((element, index) => {
+              resultsWithoutIDs[index] = element.slice(
+                0,
+                element.length - amountIDColumns[selectedTable]
+              );
+            });
+
+            console.log("RESULTS", resultsWithoutIDs);
+            setResults(resultsWithoutIDs);
+            let columnswithoutID = results.data[0];
+            columnswithoutID = columnswithoutID.slice(
+              0,
+              columnswithoutID.length - amountIDColumns[selectedTable]
+            );
+
+            setColumnsWithIDs(results.data[0]);
+            setColumns(columnswithoutID);
 
             axios
               .post("http://localhost:5000/run-query", {
@@ -412,75 +433,14 @@ function Overview() {
   };
 
   function handleEdit(data) {
-    let mappedColumns = Object.keys(
-      JSON.parse(sessionStorage.getItem("columnMapping"))
-    );
-
-    let keys = Object.keys(editData);
-    console.log("KEYS", keys);
-    console.log("EDITDATA", editData);
-    if (selectedTable == "Loans") {
-      // get columns that are needed for editData
-      let difference = keys.filter((x) => !mappedColumns.includes(x));
-      let loanISBNIndex = 1;
-      let loanAuhorIndex = 2;
-      let loanPublisherIDIndex = 3;
-
-      // add missing columns
-      //get bookID
-      axios
-        .post(api, {
-          query: `SELECT "bookID" FROM "Books" WHERE "bookISBN" = '${data[loanISBNIndex]}'`,
-        })
-        .then((response) => {
-          let bookID = response.data[1][0][0];
-          console.log(bookID);
-          setRowUniqueID(bookID);
-
-          //delete bookTitle from data
-          delete mappedColumns[0];
-          delete data[0];
-          delete mappedColumns[zipCityIndex];
-          delete data[zipCityIndex];
-          //remove uniqueID from data
-          delete mappedColumns[0];
-          delete data[0];
-          mappedColumns = mappedColumns.filter((el) => {
-            return el != undefined;
-          });
-          data = data.filter((el) => {
-            return el != undefined;
-          });
-          data.push(zipID);
-          mappedColumns.push("publisherZipID");
-          console.log("MAPPEDCOLUMNS", mappedColumns);
-          //let dataWithoutRowUniqueID = data.splice(1);
-
-          let dataWithoutRowUniqueID = data;
-
-          keys = mappedColumns;
-
-          dataWithoutRowUniqueID.map((element, index) => {
-            let placeholder = element;
-            console.log("COLUMN", mappedColumns[index], "value", element);
-            console.log(mappedColumns[index]);
-            if (editData[mappedColumns[index]]["type"] == "date") {
-              placeholder = new Date(element).toISOString().slice(0, 10);
-              console.log("DATE");
-            } else {
-              editData[keys[index]]["placeholder"] = placeholder;
-            }
-          });
-          console.log("EDITDATA", editData);
-
-          setShowEditModal(!showEditModal);
-          setEditData(editData);
-        })
-        .catch((error) => {
-          console.log("ERROR : ", error);
-        });
-    }
     if (selectedTable == "Publishers") {
+      let mappedColumns = Object.keys(
+        JSON.parse(sessionStorage.getItem("columnMapping"))
+      );
+
+      let keys = Object.keys(editData);
+      console.log("KEYS", keys);
+      console.log("EDITDATA", editData);
       // get columns that are needed for editData
       let difference = keys.filter((x) => !mappedColumns.includes(x));
       let zipCodeIndex = mappedColumns.indexOf("zipCode");
@@ -541,6 +501,87 @@ function Overview() {
         .catch((error) => {
           console.log("ERROR : ", error);
         });
+    }
+    if (selectedTable == "Loans") {
+      let dataWithIDs = resultsWithIDs.filter((el) => {
+        return el[0] == data[0];
+      });
+      let loanID = data[0];
+
+      setRowUniqueID(loanID);
+      console.log(dataWithIDs, "DATAWITHIDS");
+      dataWithIDs = dataWithIDs.flat();
+      console.log(resultsWithIDs);
+
+      let newColumns = [
+        "loanID",
+        "bookTitle",
+        "ISBN",
+        "Author",
+        "Publisher",
+        "loanLoanDate",
+        "loanDueDate",
+        "loanReturnDate",
+        "User",
+        "loanRenewals",
+        "loanOverdue",
+        "loanFine",
+        "Currency",
+        "loanBookID",
+        "loanReaderID",
+        "loanCurrencyID",
+      ];
+      let nodelete = [
+        "loanOverdue",
+        "loanFine",
+        "loanLoanDate",
+        "loanDueDate",
+        "loanReturnDate",
+        "loanRenewals",
+      ];
+      let columnsWithoutIDS = newColumns.filter((el) => {
+        return !el.endsWith("ID");
+      });
+      columnsWithoutIDS = columnsWithoutIDS.filter(
+        (x) => !nodelete.includes(x)
+      );
+      console.log(columnsWithoutIDS, "COLUMNSWITHOUTIDS");
+
+      let obj = Object.fromEntries(
+        newColumns.map((key, index) => [key, dataWithIDs[index]])
+      );
+      console.log(obj);
+      columnsWithoutIDS.forEach((element) => {
+        delete obj[element];
+      });
+
+      let keys = Object.keys(editData);
+      obj = Object.fromEntries(
+        Object.entries(obj).filter(([_, value]) => value !== undefined)
+      );
+      console.log(obj, "OBJ");
+      let cols = Object.keys(obj);
+      let vals = Object.values(obj);
+      vals = vals.splice(1);
+      console.log(vals, "VALS");
+      cols = cols.splice(1);
+      console.log("COLS", cols);
+      vals.map((element, index) => {
+        let placeholder = element;
+        console.log("COLUMN", cols[index], "value", element);
+        if (editData[cols[index]]["type"] == "date") {
+          placeholder = new Date(element).toISOString().slice(0, 10);
+          editData[cols[index]]["placeholder"] = placeholder;
+          console.log("DATE");
+        } else {
+          editData[cols[index]]["placeholder"] = placeholder;
+        }
+        console.log("EDITDATA", editData);
+        setEditData(editData);
+        setShowEditModal(!showEditModal);
+      });
+
+      // get columns that are needed for editData
     }
   }
 
