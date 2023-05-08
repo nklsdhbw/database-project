@@ -41,7 +41,6 @@ function Overview() {
   const [columns, setColumns] = useState([]);
   const [columnsWithIDs, setColumnsWithIDs] = useState([]);
   const [datatypes, setDatatypes] = useState([]);
-  const [bookIDs, setBookIDs] = useState([]);
   const [bookISBNs, setBookISBNs] = useState([]);
   const [showSearchAuthorButton, setShowSearchAuthorButton] = useState(false);
   const [showSearchBookButton, setShowSearchBookButton] = useState(false);
@@ -54,7 +53,6 @@ function Overview() {
   const [showModal, setShowModal] = useState(false);
   const [showSearch, setshowSearch] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [updateBookIDs, setUpdateBookIDs] = useState(false);
   const [formData, setFormData] = useState({
     librarianID: { type: "number", required: true, placeholder: "123" },
     librarianName: { type: "text", required: true, placeholder: "" },
@@ -190,7 +188,6 @@ function Overview() {
             query: sessionStorage.getItem("tableQuery"),
           })
           .then((results) => {
-            console.log(results.data[1], "RESULTS");
             setResultsWithIDs(results.data[1]);
             let resultsWithoutIDs = Array.from(results.data[1]);
             resultsWithoutIDs.forEach((element, index) => {
@@ -200,7 +197,6 @@ function Overview() {
               );
             });
 
-            console.log("RESULTS", resultsWithoutIDs);
             setResults(resultsWithoutIDs);
             let columnswithoutID = results.data[0];
             columnswithoutID = columnswithoutID.slice(
@@ -320,7 +316,6 @@ function Overview() {
   }, []);
 
   function addEntry(data) {
-    let loanBookID;
     let valuesString = "VALUES(";
     let columnsString = "";
     let values = Object.entries(data).map(
@@ -348,7 +343,6 @@ function Overview() {
   }
 
   function deleteEntry(rowID) {
-    const tempTable = selectedTable;
     axios
       .post(api, {
         query: `DELETE FROM public."${selectedTable}" WHERE "${uniqueColumn}" = ${rowID}`,
@@ -393,7 +387,6 @@ function Overview() {
       }
       query = query + `"${column}" = '${placeholder}',`;
     }
-    console.log(query);
 
     axios
       .post(api, {
@@ -447,10 +440,7 @@ function Overview() {
       );
 
       let keys = Object.keys(editData);
-      console.log("KEYS", keys);
-      console.log("EDITDATA", editData);
       // get columns that are needed for editData
-      let difference = keys.filter((x) => !mappedColumns.includes(x));
       let zipCodeIndex = mappedColumns.indexOf("zipCode");
       let zipCityIndex = mappedColumns.indexOf("zipCity");
 
@@ -463,10 +453,7 @@ function Overview() {
         .then((response) => {
           let zipID = response.data[1][0][0];
           console.log(zipID);
-          console.log("DIFFERENCE", difference);
           setRowUniqueID(zipID);
-
-          console.log(zipCodeIndex, "zipCodeIndex"); //2
           //delete zipCode from data
           delete mappedColumns[zipCodeIndex];
           delete data[zipCodeIndex];
@@ -483,11 +470,7 @@ function Overview() {
           });
           data.push(zipID);
           mappedColumns.push("publisherZipID");
-          console.log("MAPPEDCOLUMNS", mappedColumns);
-          //let dataWithoutRowUniqueID = data.splice(1);
-
           let dataWithoutRowUniqueID = data;
-
           keys = mappedColumns;
 
           dataWithoutRowUniqueID.map((element, index) => {
@@ -501,8 +484,6 @@ function Overview() {
               editData[keys[index]]["placeholder"] = placeholder;
             }
           });
-          console.log("EDITDATA", editData);
-
           setShowEditModal(!showEditModal);
           setEditData(editData);
         })
@@ -525,16 +506,14 @@ function Overview() {
 
       vals.map((element, index) => {
         let placeholder = element;
-        console.log("COLUMN", dbColumns[index], "value", element);
+
         if (editData[dbColumns[index]]["type"] == "date") {
           placeholder = new Date(element).toISOString().slice(0, 10);
           editData[dbColumns[index]]["placeholder"] = placeholder;
-          console.log("DATE");
         } else {
           editData[dbColumns[index]]["placeholder"] = placeholder;
         }
       });
-      console.log("EDITDATA", editData);
       setEditData(editData);
       setShowEditModal(!showEditModal);
     }
@@ -600,12 +579,11 @@ function Overview() {
       let cols = Object.keys(obj);
       let vals = Object.values(obj);
       vals = vals.splice(1);
-      console.log(vals, "VALS");
       cols = cols.splice(1);
-      console.log("COLS", cols);
+
       vals.map((element, index) => {
         let placeholder = element;
-        console.log("COLUMN", cols[index], "value", element);
+
         if (editData[cols[index]]["type"] == "date") {
           placeholder = new Date(element).toISOString().slice(0, 10);
           editData[cols[index]]["placeholder"] = placeholder;
@@ -614,11 +592,8 @@ function Overview() {
           editData[cols[index]]["placeholder"] = placeholder;
         }
       });
-      console.log("EDITDATA", editData);
       setEditData(editData);
       setShowEditModal(!showEditModal);
-
-      // get columns that are needed for editData
     }
   }
 
@@ -793,12 +768,10 @@ function Overview() {
         showConvertOrderIntoBookButton={showConvertOrderIntoBookButton}
         convertIntoBook={convertIntoBook}
       />
-
       <div>
         <Button onClick={() => handleCreate() /*setShowModal(!showModal)}>*/}>
           Create New Record
         </Button>
-
         <CreateRecordModal
           showModal={showModal}
           handleCreate={handleCreate}
@@ -827,7 +800,6 @@ function Overview() {
           columns={columns}
         />
       </div>
-
       <div>
         {showSearch && (
           <Modal show={showSearch} fullscreen={true}>
