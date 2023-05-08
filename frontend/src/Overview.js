@@ -412,25 +412,75 @@ function Overview() {
   };
 
   function handleEdit(data) {
+    let mappedColumns = Object.keys(
+      JSON.parse(sessionStorage.getItem("columnMapping"))
+    );
+
     let keys = Object.keys(editData);
     console.log("KEYS", keys);
     console.log("EDITDATA", editData);
-    setRowUniqueID(data[0]);
-    let dataWithoutRowUniqueID = data.slice(1);
+    if (selectedTable == "Publishers") {
+      // get columns that are needed for editData
+      let difference = keys.filter((x) => !mappedColumns.includes(x));
+      let zipCodeIndex = mappedColumns.indexOf("zipCode");
+      let zipCityIndex = mappedColumns.indexOf("zipCity");
 
-    dataWithoutRowUniqueID.map((element, index) => {
-      let placeholder = element;
-      console.log("COLUMN", keys[index], "value", element);
-      if (keys[index]["type"] == "date") {
-        placeholder = new Date(element).toISOString().slice(0, 10);
-        console.log("DATE");
-      } else {
-        editData[keys[index]]["placeholder"] = placeholder;
-      }
-    });
+      // add missing columns
+      //get zipID
+      axios
+        .post(api, {
+          query: `SELECT "zipID" FROM "ZIPs" WHERE "zipCode" = '${data[zipCodeIndex]}'`,
+        })
+        .then((response) => {
+          let zipID = response.data[1][0][0];
+          console.log(zipID);
+          console.log("DIFFERENCE", difference);
+          setRowUniqueID(zipID);
 
-    setShowEditModal(!showEditModal);
-    setEditData(editData);
+          console.log(zipCodeIndex, "zipCodeIndex"); //2
+          //delete zipCode from data
+          delete mappedColumns[zipCodeIndex];
+          delete data[zipCodeIndex];
+          delete mappedColumns[zipCityIndex];
+          delete data[zipCityIndex];
+          //remove uniqueID from data
+          delete mappedColumns[0];
+          delete data[0];
+          mappedColumns = mappedColumns.filter((el) => {
+            return el != undefined;
+          });
+          data = data.filter((el) => {
+            return el != undefined;
+          });
+          data.push(zipID);
+          mappedColumns.push("publisherZipID");
+          console.log("MAPPEDCOLUMNS", mappedColumns);
+          //let dataWithoutRowUniqueID = data.splice(1);
+
+          let dataWithoutRowUniqueID = data;
+
+          keys = mappedColumns;
+
+          dataWithoutRowUniqueID.map((element, index) => {
+            let placeholder = element;
+            console.log("COLUMN", mappedColumns[index], "value", element);
+            console.log(mappedColumns[index]);
+            if (editData[mappedColumns[index]]["type"] == "date") {
+              placeholder = new Date(element).toISOString().slice(0, 10);
+              console.log("DATE");
+            } else {
+              editData[keys[index]]["placeholder"] = placeholder;
+            }
+          });
+          console.log("EDITDATA", editData);
+
+          setShowEditModal(!showEditModal);
+          setEditData(editData);
+        })
+        .catch((error) => {
+          console.log("ERROR : ", error);
+        });
+    }
   }
 
   function handleCreate() {

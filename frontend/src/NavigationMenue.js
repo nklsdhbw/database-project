@@ -88,6 +88,17 @@ const NavigationMenue = () => {
     FROM "Publishers" p
     JOIN "ZIPs" z ON p."publisherZipID" = z."zipID"
     `,
+      columnMapping: {
+        publisherID: "Publisher ID",
+        publisherName: "Name",
+        zipCode: "Zip",
+        zipCity: "City",
+        publisherStreetName: "Street",
+        publisherHouseNumber: "Housenumber",
+        publisherCountry: "Country",
+        publisherEmail: "Email",
+        publisherPhone: "Phone",
+      },
     },
   ];
 
@@ -114,6 +125,10 @@ const NavigationMenue = () => {
     console.log(entryQuery, "entryQuery");
     sessionStorage.setItem("tableQuery", entryQuery);
     sessionStorage.setItem("formQuery", formQuery);
+    sessionStorage.setItem(
+      "columnMapping",
+      JSON.stringify(filteredActions[0].columnMapping)
+    );
   }
 
   return (
