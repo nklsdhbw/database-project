@@ -1,6 +1,6 @@
 DROP View IF EXISTS "allLoans";
 Create View "allLoans" AS
-SELECT b."bookTitle" AS "Book title", b."bookISBN" AS "ISBN",
+SELECT "loanID" AS "Loan ID", b."bookTitle" AS "Book title", b."bookISBN" AS "ISBN",
 	   concat(a."authorFirstName", ' ', a."authorLastName") AS "Author",
 	   p."publisherName" AS "Publisher",
 	   l."loanLoanDate" AS "Loan date", l."loanDueDate" AS "Due date", 
