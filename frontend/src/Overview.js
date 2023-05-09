@@ -355,53 +355,6 @@ function Overview() {
       });
   }
 
-  async function editEntry(data) {
-    console.log("EDIT ENTRY DATA", data);
-    let columnsString = "";
-    let query = "SET ";
-    let rowID = selectedTable.slice(0, selectedTable.length - 1);
-    rowID = rowID.toLowerCase();
-    rowID = rowID + "ID";
-    if (selectedTable == "LibraryOrders") {
-      rowID = "libraryOrderID";
-    }
-    let keyValue = rowUniqueID;
-
-    let arr = Object.entries(data);
-    for (let index = 0; index < arr.length; index++) {
-      const column = arr[index][0];
-      console.log("COLUMN? ", column);
-      const values = arr[index][1];
-      const datatype = values.type;
-      console.log(arr[index], column, values, datatype);
-      let placeholder = values.placeholder;
-      if (datatype == "password") {
-        const password = values.placeholder;
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        placeholder = hashedPassword;
-      }
-      if (datatype == "date") {
-        console.log(placeholder);
-        placeholder = new Date(placeholder).toISOString().slice(0, 10);
-      }
-      query = query + `"${column}" = '${placeholder}',`;
-    }
-
-    axios
-      .post(api, {
-        query:
-          `UPDATE public."${selectedTable}" ${query.slice(
-            0,
-            columnsString.length - 1
-          )} ` + `WHERE "${rowID}" = ${keyValue}`,
-      })
-      .then((response) => {
-        setUpdateData(!updateData);
-      })
-      .catch((error) => {});
-  }
-
   // event handler
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -410,29 +363,6 @@ function Overview() {
       [name]: { ...formData[name], placeholder: value },
     });
   };
-  const handleEditInputChange = (event) => {
-    const { name, value } = event.target;
-    setEditData({
-      ...editData,
-      [name]: { ...editData[name], placeholder: value },
-    });
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(formData);
-    addEntry(formData);
-    setUpdateData(!updateData);
-    setShowModal(!showModal);
-  };
-
-  const handleEditSubmit = (event) => {
-    event.preventDefault();
-    editEntry(editData);
-    setUpdateData(!updateData);
-    setShowEditModal(!showEditModal);
-  };
-
   function handleEdit(data) {
     if (selectedTable == "Publishers") {
       let mappedColumns = Object.keys(
@@ -596,6 +526,14 @@ function Overview() {
       setShowEditModal(!showEditModal);
     }
   }
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(formData);
+    addEntry(formData);
+    setUpdateData(!updateData);
+    setShowModal(!showModal);
+  };
 
   function handleCreate() {
     setShowModal(!showModal);
@@ -793,11 +731,15 @@ function Overview() {
         <EditRecordModal
           showEditModal={showEditModal}
           setShowEditModal={setShowEditModal}
-          handleEditSubmit={handleEditSubmit}
+          updateData={updateData}
+          setUpdateData={setUpdateData}
           editData={editData}
           datatypes={datatypes}
-          handleEditInputChange={handleEditInputChange}
+          setEditData={setEditData}
           columns={columns}
+          selectedTable={selectedTable}
+          api={api}
+          rowUniqueID={rowUniqueID}
         />
       </div>
       <div>
