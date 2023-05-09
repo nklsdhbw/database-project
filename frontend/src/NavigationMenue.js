@@ -24,17 +24,17 @@ const NavigationMenue = () => {
         'SELECT "libraryOrderID", "libraryOrderAuthorID" FROM "LibraryOrders"',
     },
     {
-      label: "Manage Loans",
+      label: "Manage all Loans",
       table: "Loans",
-      entryQuery: 'SELECT * FROM "Loans"',
+      entryQuery: 'SELECT * FROM "allLoans"',
       formQuery: 'SELECT * FROM "Loans"',
     },
     {
       label: "Manage my Loans",
       table: "Loans",
-      entryQuery: `SELECT * FROM "Loans" where "loanReaderID" = ${sessionStorage.getItem(
-        "readerID"
-      )}`,
+      entryQuery: `SELECT * FROM "allLoans" where "User" = '${sessionStorage.getItem(
+        "loginMail"
+      )}'`,
       formQuery: `SELECT * FROM "Loans" where "loanReaderID" = ${sessionStorage.getItem(
         "readerID"
       )}`,
@@ -42,12 +42,63 @@ const NavigationMenue = () => {
     {
       label: "Manage personal data",
       table: "Readers",
+      entryQuery: `SELECT "readerID" AS "ID", "readerFirstName" AS "Firstname", "readerLastName" AS "Lastname", "readerEmail" AS "Email", "readerPassword" AS "Password" FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
+        "readerID"
+      )}`,
       formQuery: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
         "readerID"
       )}`,
-      entryQuery: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
-        "readerID"
-      )}`,
+    },
+    {
+      label: "Manage library orders",
+      table: "LibraryOrders",
+      formQuery: `SELECT * FROM "LibraryOrders"`,
+      entryQuery: `SELECT "libraryOrderID" as "Library Order ID",
+      "libraryOrderBookTitle" AS "Book title",
+      "libraryOrderISBN" AS "ISBN",
+      concat(a."authorFirstName",a."authorLastName")  as "Author",
+      "libraryOrderAmount" AS "Order amount",
+      "libraryOrderCost" as "Cost",
+      c."currencyName" AS "Currency",
+      "libraryOrderDateOrdered" AS "Order date",
+      "libraryOrderDeliveryDate" AS "Delivery Date",
+      "libraryOrderStatusOrder" AS "Order status",
+      concat(l."librarianFirstName", ' ', l."librarianLastName") AS "Manager"
+      
+      
+  FROM "LibraryOrders" lo
+  JOIN "Authors" a ON lo."libraryOrderAuthorID" = a."authorID"
+  JOIN "Currencies" c ON lo."libraryOrderCurrencyID" = c."currencyID"
+  JOIN "Librarians" l ON lo."libraryOrderManagerLibrarianID" = l."librarianID";`,
+    },
+    {
+      label: "Manage publishers",
+      table: "Publishers",
+      formQuery: `SELECT * FROM "Publishers"`,
+      entryQuery: `SELECT 
+      "publisherID" AS "Publisher ID",
+      "publisherName" AS "Name",
+      z."zipCode" AS "Zip",
+      z."zipCity" AS "City",
+        "publisherStreetName" AS "Street",
+      "publisherHouseNumber" AS "Housenumber",
+      "publisherCountry" AS "Country",
+      "publisherEmail" AS "Email",
+      "publisherPhone" AS "Phone"
+    FROM "Publishers" p
+    JOIN "ZIPs" z ON p."publisherZipID" = z."zipID"
+    `,
+      columnMapping: {
+        publisherID: "Publisher ID",
+        publisherName: "Name",
+        zipCode: "Zip",
+        zipCity: "City",
+        publisherStreetName: "Street",
+        publisherHouseNumber: "Housenumber",
+        publisherCountry: "Country",
+        publisherEmail: "Email",
+        publisherPhone: "Phone",
+      },
     },
   ];
 
@@ -74,6 +125,10 @@ const NavigationMenue = () => {
     console.log(entryQuery, "entryQuery");
     sessionStorage.setItem("tableQuery", entryQuery);
     sessionStorage.setItem("formQuery", formQuery);
+    sessionStorage.setItem(
+      "columnMapping",
+      JSON.stringify(filteredActions[0].columnMapping)
+    );
   }
 
   return (

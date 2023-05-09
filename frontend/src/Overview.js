@@ -5,6 +5,9 @@ import Table from "react-bootstrap/Table";
 import { useNavigate } from "react-router-dom";
 import TableSearch from "./TableSearch";
 import bcrypt from "bcryptjs";
+import DataTable from "./DataTable.js";
+import CreateRecordModal from "./CreateRecordModal";
+import EditRecordModal from "./EditRecordModal";
 
 function Overview() {
   const notFilledColumns = [
@@ -34,9 +37,10 @@ function Overview() {
 
   //* State variables //
   const [results, setResults] = useState([]);
+  const [resultsWithIDs, setResultsWithIDs] = useState([]);
   const [columns, setColumns] = useState([]);
+  const [columnsWithIDs, setColumnsWithIDs] = useState([]);
   const [datatypes, setDatatypes] = useState([]);
-  const [bookIDs, setBookIDs] = useState([]);
   const [bookISBNs, setBookISBNs] = useState([]);
   const [showSearchAuthorButton, setShowSearchAuthorButton] = useState(false);
   const [showSearchBookButton, setShowSearchBookButton] = useState(false);
@@ -49,7 +53,6 @@ function Overview() {
   const [showModal, setShowModal] = useState(false);
   const [showSearch, setshowSearch] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [updateBookIDs, setUpdateBookIDs] = useState(false);
   const [formData, setFormData] = useState({
     librarianID: { type: "number", required: true, placeholder: "123" },
     librarianName: { type: "text", required: true, placeholder: "" },
@@ -63,6 +66,12 @@ function Overview() {
     librarianPhone: { type: "text", required: false, placeholder: "" },
   });
   const [rowUniqueID, setRowUniqueID] = useState([]);
+  const amountIDColumns = {
+    Loans: 3,
+    Publishers: 1,
+    LibraryOrders: 0,
+    Readers: 0,
+  };
 
   //* Callback function //
   const callThisFromChildComponent = (data) => {
@@ -179,8 +188,24 @@ function Overview() {
             query: sessionStorage.getItem("tableQuery"),
           })
           .then((results) => {
-            setResults(results.data[1]);
-            setColumns(results.data[0]);
+            setResultsWithIDs(results.data[1]);
+            let resultsWithoutIDs = Array.from(results.data[1]);
+            resultsWithoutIDs.forEach((element, index) => {
+              resultsWithoutIDs[index] = element.slice(
+                0,
+                element.length - amountIDColumns[selectedTable]
+              );
+            });
+
+            setResults(resultsWithoutIDs);
+            let columnswithoutID = results.data[0];
+            columnswithoutID = columnswithoutID.slice(
+              0,
+              columnswithoutID.length - amountIDColumns[selectedTable]
+            );
+
+            setColumnsWithIDs(results.data[0]);
+            setColumns(columnswithoutID);
 
             axios
               .post("http://localhost:5000/run-query", {
@@ -290,36 +315,7 @@ function Overview() {
       });
   }, []);
 
-  function addEntry(data) {
-    let loanBookID;
-    let valuesString = "VALUES(";
-    let columnsString = "";
-    let values = Object.entries(data).map(
-      ([key, value]) =>
-        (valuesString = valuesString + `'${value.placeholder}',`)
-    );
-    let columns = Object.entries(data).map(
-      ([key, value]) => (columnsString = columnsString + `"${key}",`)
-    );
-    axios
-      .post(api, {
-        query:
-          `INSERT INTO public."${selectedTable}" (${columnsString.slice(
-            0,
-            columnsString.length - 1
-          )})` + `${valuesString.slice(0, valuesString.length - 1)}) `,
-      })
-      .then((response) => {
-        //stored function is executed in the background that updates bookAvailability and bookAvailabilityAmount
-        setUpdateData(!updateData);
-      })
-      .catch((error) => {
-        console.log("ERROR : ", error);
-      });
-  }
-
   function deleteEntry(rowID) {
-    const tempTable = selectedTable;
     axios
       .post(api, {
         query: `DELETE FROM public."${selectedTable}" WHERE "${uniqueColumn}" = ${rowID}`,
@@ -330,130 +326,6 @@ function Overview() {
       .catch((error) => {
         console.log("ERROR : ", error);
       });
-  }
-
-  async function editEntry(data) {
-    console.log("EDIT ENTRY DATA", data);
-    let columnsString = "";
-    let query = "SET ";
-    let rowID = selectedTable.slice(0, selectedTable.length - 1);
-    rowID = rowID.toLowerCase();
-    rowID = rowID + "ID";
-    if (selectedTable == "LibraryOrders") {
-      rowID = "libraryOrderID";
-    }
-    let keyValue = rowUniqueID;
-
-    let arr = Object.entries(data);
-    for (let index = 0; index < arr.length; index++) {
-      const column = arr[index][0];
-      console.log("COLUMN? ", column);
-      const values = arr[index][1];
-      const datatype = values.type;
-      console.log(arr[index], column, values, datatype);
-      let placeholder = values.placeholder;
-      if (datatype == "password") {
-        const password = values.placeholder;
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        placeholder = hashedPassword;
-      }
-      if (datatype == "date") {
-        console.log(placeholder);
-        placeholder = new Date(placeholder).toISOString().slice(0, 10);
-      }
-      query = query + `"${column}" = '${placeholder}',`;
-    }
-    console.log(query);
-
-    axios
-      .post(api, {
-        query:
-          `UPDATE public."${selectedTable}" ${query.slice(
-            0,
-            columnsString.length - 1
-          )} ` + `WHERE "${rowID}" = ${keyValue}`,
-      })
-      .then((response) => {
-        setUpdateData(!updateData);
-      })
-      .catch((error) => {});
-  }
-
-  // event handler
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: { ...formData[name], placeholder: value },
-    });
-  };
-  const handleEditInputChange = (event) => {
-    const { name, value } = event.target;
-    setEditData({
-      ...editData,
-      [name]: { ...editData[name], placeholder: value },
-    });
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(formData);
-    addEntry(formData);
-    setUpdateData(!updateData);
-    setShowModal(!showModal);
-  };
-
-  const handleEditSubmit = (event) => {
-    event.preventDefault();
-    editEntry(editData);
-    setUpdateData(!updateData);
-    setShowEditModal(!showEditModal);
-  };
-
-  function handleEdit(data) {
-    let keys = Object.keys(editData);
-    console.log("KEYS", keys);
-    console.log("EDITDATA", editData);
-    setRowUniqueID(data[0]);
-    let dataWithoutRowUniqueID = data.slice(1);
-
-    dataWithoutRowUniqueID.map((element, index) => {
-      let placeholder = element;
-      console.log("COLUMN", keys[index], "value", element);
-      if (keys[index]["type"] == "date") {
-        placeholder = new Date(element).toISOString().slice(0, 10);
-        console.log("DATE");
-      } else {
-        editData[keys[index]]["placeholder"] = placeholder;
-      }
-    });
-
-    setShowEditModal(!showEditModal);
-    setEditData(editData);
-  }
-
-  function handleCreate() {
-    setShowModal(!showModal);
-  }
-
-  function handlePublisher() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "Publishers");
-  }
-
-  function handleBook() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "Books");
-  }
-  function handleAuthor() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "Authors");
-  }
-
-  function handleManager() {
-    sessionStorage.setItem("searchTable", "Managers");
-    setshowSearch(!showSearch);
   }
 
   function convertIntoBook(header, data) {
@@ -593,155 +465,65 @@ function Overview() {
         });
     }
   }
+  function handleCreate() {
+    setShowModal(!showModal);
+  }
 
   return (
     <div>
-      <Table striped bordered hover className="table mx-auto">
-        <thead>
-          {columns.map((column) => (
-            <th>{column}</th>
-          ))}
-
-          <th className="col"></th>
-        </thead>
-        <tbody>
-          {results.map((data) => (
-            <tr>
-              {data.map((entry) => (
-                <td>{typeof entry == "boolean" ? entry.toString() : entry}</td>
-              ))}
-
-              <td>
-                <Button
-                  className="w-100 btn btn-lg btn-primary"
-                  onClick={() => handleEdit(data)}
-                >
-                  Edit
-                </Button>
-              </td>
-              <td>
-                <Button
-                  className="w-100 btn btn-lg btn-primary"
-                  onClick={() => deleteEntry(data[0])}
-                >
-                  Delete
-                </Button>
-              </td>
-
-              {showConvertOrderIntoBookButton ? (
-                <td>
-                  <Button
-                    disabled={data[9] == "done" ? true : false}
-                    onClick={() => convertIntoBook(columns, data)}
-                  >
-                    {data[9] == "done"
-                      ? "Already converted"
-                      : "Convert into Book"}
-                  </Button>
-                </td>
-              ) : (
-                <></>
-              )}
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <DataTable
+        columns={columns}
+        results={results}
+        deleteEntry={deleteEntry}
+        showConvertOrderIntoBookButton={showConvertOrderIntoBookButton}
+        convertIntoBook={convertIntoBook}
+        selectedTable={selectedTable}
+        editData={editData}
+        api={api}
+        setRowUniqueID={setRowUniqueID}
+        setShowEditModal={setShowEditModal}
+        setEditData={setEditData}
+        showEditModal={showEditModal}
+        resultsWithIDs={resultsWithIDs}
+      />
       <div>
         <Button onClick={() => handleCreate() /*setShowModal(!showModal)}>*/}>
           Create New Record
         </Button>
-
-        <Modal show={showModal}>
-          <Modal.Header>
-            <Modal.Title>Create New Record</Modal.Title>
-            <Button
-              variant="secondary"
-              aria-label="Close"
-              onClick={() => handleCreate()} //setShowModal(!showModal)}
-            >
-              Close
-            </Button>
-          </Modal.Header>
-          <Modal.Body>
-            <Form onSubmit={handleSubmit}>
-              {Object.entries(formData).map(([key, value], index) => (
-                <Form.Group controlId={`${String(key)}`}>
-                  <Form.Label>{`${String(key)}`}</Form.Label>
-
-                  <Form.Control
-                    name={key}
-                    value={formData[key]["placeholder"]}
-                    onChange={handleInputChange}
-                    required
-                    type={datatypes[index]}
-                  ></Form.Control>
-                </Form.Group>
-              ))}
-              <Button type="submit">Create</Button>
-              {showSearchBookButton ? (
-                <Button onClick={() => handleBook()}>Search Book</Button>
-              ) : (
-                <></>
-              )}
-              {showSearchAuthorButton ? (
-                <Button onClick={() => handleAuthor()}>Search Author</Button>
-              ) : (
-                <></>
-              )}
-              {showSearchManagerButton ? (
-                <Button onClick={() => handleManager()}>Search Manager</Button>
-              ) : (
-                <></>
-              )}
-              <Button
-                hidden={hidePublisherButton}
-                onClick={() => handlePublisher()}
-              >
-                Search Publisher
-              </Button>
-            </Form>
-          </Modal.Body>
-        </Modal>
+        <CreateRecordModal
+          showModal={showModal}
+          handleCreate={handleCreate}
+          formData={formData}
+          datatypes={datatypes}
+          showSearchBookButton={showSearchBookButton}
+          showSearchAuthorButton={showSearchAuthorButton}
+          showSearchManagerButton={showSearchManagerButton}
+          hidePublisherButton={hidePublisherButton}
+          setShowModal={setShowModal}
+          setFormData={setFormData}
+          setUpdateData={setUpdateData}
+          updateData={updateData}
+          setshowSearch={setshowSearch}
+          showSearch={showSearch}
+          api={api}
+          selectedTable={selectedTable}
+        />
       </div>
       <div>
-        <Modal show={showEditModal}>
-          <Modal.Header>
-            <Modal.Title>Edit Record</Modal.Title>
-            <Button
-              variant="secondary"
-              aria-label="Close"
-              onClick={() => setShowEditModal(!showEditModal)}
-            >
-              Close
-            </Button>
-          </Modal.Header>
-          <Modal.Body>
-            <Form onSubmit={handleEditSubmit}>
-              {Object.entries(editData).map(([key, value], index) => (
-                <Form.Group controlId={`${String(key)}`}>
-                  <Form.Label>{`${String(key)}`}</Form.Label>
-                  <Form.Control
-                    type={datatypes[index]} //`${String(value.type)}`}
-                    name={`${String(key)}`}
-                    value={
-                      value.type == "date" &&
-                      !isNaN(new Date(value.placeholder))
-                        ? new Date(value.placeholder).toISOString().slice(0, 10)
-                        : `${value.placeholder}`
-                    }
-                    //{`${value.placeholder}`}
-                    onChange={handleEditInputChange}
-                    required
-                    readOnly={key == columns[0] ? true : false}
-                  />
-                </Form.Group>
-              ))}
-              <Button type="submit">Submit Edit</Button>
-            </Form>
-          </Modal.Body>
-        </Modal>
+        <EditRecordModal
+          showEditModal={showEditModal}
+          setShowEditModal={setShowEditModal}
+          updateData={updateData}
+          setUpdateData={setUpdateData}
+          editData={editData}
+          datatypes={datatypes}
+          setEditData={setEditData}
+          columns={columns}
+          selectedTable={selectedTable}
+          api={api}
+          rowUniqueID={rowUniqueID}
+        />
       </div>
-
       <div>
         {showSearch && (
           <Modal show={showSearch} fullscreen={true}>
