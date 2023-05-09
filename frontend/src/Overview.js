@@ -315,33 +315,6 @@ function Overview() {
       });
   }, []);
 
-  function addEntry(data) {
-    let valuesString = "VALUES(";
-    let columnsString = "";
-    let values = Object.entries(data).map(
-      ([key, value]) =>
-        (valuesString = valuesString + `'${value.placeholder}',`)
-    );
-    let columns = Object.entries(data).map(
-      ([key, value]) => (columnsString = columnsString + `"${key}",`)
-    );
-    axios
-      .post(api, {
-        query:
-          `INSERT INTO public."${selectedTable}" (${columnsString.slice(
-            0,
-            columnsString.length - 1
-          )})` + `${valuesString.slice(0, valuesString.length - 1)}) `,
-      })
-      .then((response) => {
-        //stored function is executed in the background that updates bookAvailability and bookAvailabilityAmount
-        setUpdateData(!updateData);
-      })
-      .catch((error) => {
-        console.log("ERROR : ", error);
-      });
-  }
-
   function deleteEntry(rowID) {
     axios
       .post(api, {
@@ -353,46 +326,6 @@ function Overview() {
       .catch((error) => {
         console.log("ERROR : ", error);
       });
-  }
-
-  // event handler
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: { ...formData[name], placeholder: value },
-    });
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(formData);
-    addEntry(formData);
-    setUpdateData(!updateData);
-    setShowModal(!showModal);
-  };
-
-  function handleCreate() {
-    setShowModal(!showModal);
-  }
-
-  function handlePublisher() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "Publishers");
-  }
-
-  function handleBook() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "Books");
-  }
-  function handleAuthor() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "Authors");
-  }
-
-  function handleManager() {
-    sessionStorage.setItem("searchTable", "Managers");
-    setshowSearch(!showSearch);
   }
 
   function convertIntoBook(header, data) {
@@ -532,6 +465,9 @@ function Overview() {
         });
     }
   }
+  function handleCreate() {
+    setShowModal(!showModal);
+  }
 
   return (
     <div>
@@ -559,16 +495,18 @@ function Overview() {
           handleCreate={handleCreate}
           formData={formData}
           datatypes={datatypes}
-          handleInputChange={handleInputChange}
-          handleSubmit={handleSubmit}
           showSearchBookButton={showSearchBookButton}
-          handleBook={handleBook}
           showSearchAuthorButton={showSearchAuthorButton}
-          handleAuthor={handleAuthor}
           showSearchManagerButton={showSearchManagerButton}
-          handleManager={handleManager}
           hidePublisherButton={hidePublisherButton}
-          handlePublisher={handlePublisher}
+          setShowModal={setShowModal}
+          setFormData={setFormData}
+          setUpdateData={setUpdateData}
+          updateData={updateData}
+          setshowSearch={setshowSearch}
+          showSearch={showSearch}
+          api={api}
+          selectedTable={selectedTable}
         />
       </div>
       <div>
