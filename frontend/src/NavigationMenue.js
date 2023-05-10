@@ -9,6 +9,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import bcrypt from "bcryptjs";
 import axios from "axios";
 import Overview from "./Overview";
+import loansMmanagement from "./img/loans_management.png";
+import orderHistory from "./img/order_history.png";
+import personalInformation from "./img/personal_information.png";
+import placeOrder from "./img/place_order.png";
+import supplierManagement from "./img/supplier_management.png";
 
 // import required css
 //import 'bootstrap/dist/css/bootstrap.min.css';
@@ -22,12 +27,14 @@ const NavigationMenue = () => {
         'SELECT "libraryOrderID" AS "Library Order ID", "libraryOrderAuthorID" AS "Author" FROM "LibraryOrders"',
       formQuery:
         'SELECT "libraryOrderID", "libraryOrderAuthorID" FROM "LibraryOrders"',
+      img: orderHistory,
     },
     {
       label: "Manage all Loans",
       table: "Loans",
       entryQuery: 'SELECT * FROM "allLoans"',
       formQuery: 'SELECT * FROM "Loans"',
+      img: loansMmanagement,
     },
     {
       label: "Manage my Loans",
@@ -38,6 +45,7 @@ const NavigationMenue = () => {
       formQuery: `SELECT * FROM "Loans" where "loanReaderID" = ${sessionStorage.getItem(
         "readerID"
       )}`,
+      img: loansMmanagement,
     },
     {
       label: "Manage personal data",
@@ -48,6 +56,7 @@ const NavigationMenue = () => {
       formQuery: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
         "readerID"
       )}`,
+      img: personalInformation,
     },
     {
       label: "Manage library orders",
@@ -70,6 +79,7 @@ const NavigationMenue = () => {
   JOIN "Authors" a ON lo."libraryOrderAuthorID" = a."authorID"
   JOIN "Currencies" c ON lo."libraryOrderCurrencyID" = c."currencyID"
   JOIN "Librarians" l ON lo."libraryOrderManagerLibrarianID" = l."librarianID";`,
+      img: placeOrder,
     },
     {
       label: "Manage publishers",
@@ -99,6 +109,7 @@ const NavigationMenue = () => {
         publisherEmail: "Email",
         publisherPhone: "Phone",
       },
+      img: supplierManagement,
     },
   ];
 
@@ -136,6 +147,7 @@ const NavigationMenue = () => {
       {Actions.map((option) => (
         <Button key={option.label} onClick={() => handleClick(option)}>
           {option.label}
+          <img key={option.label} src={option.img} alt={option.img} />
         </Button>
       ))}
     </div>

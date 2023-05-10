@@ -16,6 +16,14 @@ function EditRecordModal(props) {
     selectedTable,
     api,
     rowUniqueID,
+    showSearchBookButton,
+    showSearchAuthorButton,
+    showSearchManagerButton,
+    hidePublisherButton,
+    showSearchZipButton,
+    showSearchCurrencyButton,
+    setshowSearch,
+    showSearch,
   } = props;
 
   const handleEditInputChange = (event) => {
@@ -78,6 +86,32 @@ function EditRecordModal(props) {
     setUpdateData(!updateData);
     setShowEditModal(!showEditModal);
   };
+  function handlePublisher() {
+    setshowSearch(!showSearch);
+    sessionStorage.setItem("searchTable", "Publishers");
+  }
+  function handleZip() {
+    setshowSearch(!showSearch);
+    sessionStorage.setItem("searchTable", "ZIPs");
+  }
+
+  function handleBook() {
+    setshowSearch(!showSearch);
+    sessionStorage.setItem("searchTable", "Books");
+  }
+  function handleAuthor() {
+    setshowSearch(!showSearch);
+    sessionStorage.setItem("searchTable", "Authors");
+  }
+
+  function handleManager() {
+    sessionStorage.setItem("searchTable", "Managers");
+    setshowSearch(!showSearch);
+  }
+  function handleCurrency() {
+    sessionStorage.setItem("searchTable", "Currencies");
+    setshowSearch(!showSearch);
+  }
 
   return (
     <Modal show={showEditModal}>
@@ -112,6 +146,24 @@ function EditRecordModal(props) {
             </Form.Group>
           ))}
           <Button type="submit">Submit Edit</Button>
+          {showSearchBookButton && (
+            <Button onClick={handleBook}>Search Book</Button>
+          )}
+          {showSearchAuthorButton && (
+            <Button onClick={handleAuthor}>Search Author</Button>
+          )}
+          {showSearchManagerButton && (
+            <Button onClick={handleManager}>Search Manager</Button>
+          )}
+          {showSearchZipButton && (
+            <Button onClick={handleZip}>Search Zip</Button>
+          )}
+          {showSearchCurrencyButton && (
+            <Button onClick={handleCurrency}>Search Currency</Button>
+          )}
+          <Button hidden={hidePublisherButton} onClick={handlePublisher}>
+            Search Publisher
+          </Button>
         </Form>
       </Modal.Body>
     </Modal>

@@ -12,12 +12,13 @@ const fetchUsers = async () => {
   let data;
   let table = sessionStorage.getItem("searchTable");
   console.log("SEARCH TABLE", table);
+  const api = "http://localhost:5000/run-query";
   //if (sessionStorage.getItem("showPublisher") == "true") {
   //  table = "Publishers";
   //}
   console.log("FETCH USERS");
   await axios
-    .post("http://localhost:5000/run-query", {
+    .post(api, {
       query: `SELECT column_name FROM information_schema.columns  WHERE table_name = '${table}' AND table_schema = 'public'`,
     })
     .then((columns) => {
