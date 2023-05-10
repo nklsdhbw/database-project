@@ -68,7 +68,7 @@ function Overview() {
   const [rowUniqueID, setRowUniqueID] = useState([]);
   const amountIDColumns = {
     Loans: 3,
-    Publishers: 1,
+    Publishers: 0,
     LibraryOrders: 0,
     Readers: 0,
   };
