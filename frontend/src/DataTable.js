@@ -194,7 +194,18 @@ function DataTable(props) {
         {results.map((data) => (
           <tr>
             {data.map((entry) => (
-              <td>{typeof entry == "boolean" ? entry.toString() : entry}</td>
+              <td>
+                {typeof entry === "boolean"
+                  ? entry.toString()
+                  : typeof entry === "string" &&
+                    /^[\w]{3}, \d{2} [\w]{3} \d{4} \d{2}:\d{2}:\d{2} GMT$/.test(
+                      entry
+                    )
+                  ? new Date(entry).toLocaleDateString()
+                  : typeof entry === "number"
+                  ? entry
+                  : entry}
+              </td>
             ))}
             <td>
               <Button
