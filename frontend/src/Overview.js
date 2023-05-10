@@ -46,6 +46,8 @@ function Overview() {
   const [showSearchBookButton, setShowSearchBookButton] = useState(false);
   const [showSearchManagerButton, setShowSearchManagerButton] = useState(false);
   const [showSearchZipButton, setShowSearchZipButton] = useState(false);
+  const [showSearchCurrencyButton, setShowSearchCurrencyButton] =
+    useState(false);
   const [showConvertOrderIntoBookButton, setShowConvertOrderIntoBookButton] =
     useState();
   const [hidePublisherButton, setHidePublisherButton] = useState();
@@ -110,6 +112,12 @@ function Overview() {
         }
         if (key == "zipID" && selectedTable == "Publishers") {
           formDataKey = "publisherZipID";
+        }
+        if (key == "currencyID" && selectedTable == "Loans") {
+          formDataKey = "loanCurrencyID";
+        }
+        if (key == "currencyID" && selectedTable == "LibraryOrders") {
+          formDataKey = "libraryOrderCurrencyID";
         }
 
         if (
@@ -282,6 +290,7 @@ function Overview() {
     if (selectedTable == "Loans") {
       sessionStorage.setItem("searchTable", "Books");
       setShowSearchBookButton(true);
+      setShowSearchCurrencyButton(true);
     }
     if (selectedTable == "LibraryOrders") {
       sessionStorage.setItem("searchTable", "Authors");
@@ -289,6 +298,7 @@ function Overview() {
       setShowSearchBookButton(false);
       setShowSearchAuthorButton(true);
       setShowSearchManagerButton(true);
+      setShowSearchCurrencyButton(true);
     }
     if (selectedTable == "Publishers") {
       setShowSearchZipButton(true);
@@ -516,6 +526,7 @@ function Overview() {
           api={api}
           selectedTable={selectedTable}
           showSearchZipButton={showSearchZipButton}
+          showSearchCurrencyButton={showSearchCurrencyButton}
         />
       </div>
       <div>

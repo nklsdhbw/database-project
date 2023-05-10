@@ -21,6 +21,7 @@ function CreateRecordModal(props) {
     api,
     selectedTable,
     showSearchZipButton,
+    showSearchCurrencyButton,
   } = props;
 
   // event handler
@@ -60,6 +61,10 @@ function CreateRecordModal(props) {
 
   function handleManager() {
     sessionStorage.setItem("searchTable", "Managers");
+    setshowSearch(!showSearch);
+  }
+  function handleCurrency() {
+    sessionStorage.setItem("searchTable", "Currencies");
     setshowSearch(!showSearch);
   }
 
@@ -124,6 +129,9 @@ function CreateRecordModal(props) {
           )}
           {showSearchZipButton && (
             <Button onClick={handleZip}>Search Zip</Button>
+          )}
+          {showSearchCurrencyButton && (
+            <Button onClick={handleCurrency}>Search Currency</Button>
           )}
           <Button hidden={hidePublisherButton} onClick={handlePublisher}>
             Search Publisher
