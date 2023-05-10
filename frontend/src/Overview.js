@@ -45,6 +45,7 @@ function Overview() {
   const [showSearchAuthorButton, setShowSearchAuthorButton] = useState(false);
   const [showSearchBookButton, setShowSearchBookButton] = useState(false);
   const [showSearchManagerButton, setShowSearchManagerButton] = useState(false);
+  const [showSearchZipButton, setShowSearchZipButton] = useState(false);
   const [showConvertOrderIntoBookButton, setShowConvertOrderIntoBookButton] =
     useState();
   const [hidePublisherButton, setHidePublisherButton] = useState();
@@ -106,6 +107,9 @@ function Overview() {
         }
         if (key == "managerID" && selectedTable == "LibraryOrders") {
           formDataKey = "libraryOrderManagerLibrarianID";
+        }
+        if (key == "zipID" && selectedTable == "Publishers") {
+          formDataKey = "publisherZipID";
         }
 
         if (
@@ -269,6 +273,7 @@ function Overview() {
     setShowSearchBookButton(false);
     setHidePublisherButton(true);
     setShowSearchManagerButton(false);
+    setShowSearchZipButton(false);
     if (selectedTable == "Books") {
       setShowSearchAuthorButton(true);
       setHidePublisherButton(false);
@@ -284,6 +289,9 @@ function Overview() {
       setShowSearchBookButton(false);
       setShowSearchAuthorButton(true);
       setShowSearchManagerButton(true);
+    }
+    if (selectedTable == "Publishers") {
+      setShowSearchZipButton(true);
     }
     setShowConvertOrderIntoBookButton(
       selectedTable == "LibraryOrders" ? true : false
@@ -507,6 +515,7 @@ function Overview() {
           showSearch={showSearch}
           api={api}
           selectedTable={selectedTable}
+          showSearchZipButton={showSearchZipButton}
         />
       </div>
       <div>

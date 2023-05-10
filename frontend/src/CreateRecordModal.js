@@ -20,6 +20,7 @@ function CreateRecordModal(props) {
     showSearch,
     api,
     selectedTable,
+    showSearchZipButton,
   } = props;
 
   // event handler
@@ -42,6 +43,10 @@ function CreateRecordModal(props) {
   function handlePublisher() {
     setshowSearch(!showSearch);
     sessionStorage.setItem("searchTable", "Publishers");
+  }
+  function handleZip() {
+    setshowSearch(!showSearch);
+    sessionStorage.setItem("searchTable", "ZIPs");
   }
 
   function handleBook() {
@@ -116,6 +121,9 @@ function CreateRecordModal(props) {
           )}
           {showSearchManagerButton && (
             <Button onClick={handleManager}>Search Manager</Button>
+          )}
+          {showSearchZipButton && (
+            <Button onClick={handleZip}>Search Zip</Button>
           )}
           <Button hidden={hidePublisherButton} onClick={handlePublisher}>
             Search Publisher
