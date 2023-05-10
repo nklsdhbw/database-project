@@ -21,6 +21,7 @@ const Register = () => {
   const [results, setResults] = useState([]);
   const [existingUsers, setExistingUsers] = useState([]);
   const [userExists, setUserExists] = useState(false);
+  const api = "http://localhost:5000/run-query";
 
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
   console.log("LoginStatus", loginStatus);
@@ -32,7 +33,7 @@ const Register = () => {
   useEffect(() => {
     let query = 'SELECT * FROM public."Readers"';
     axios
-      .post("http://localhost:5000/run-query", { query })
+      .post(api, { query })
       .then((response) => {
         setExistingUsers(response.data[1]);
       })
@@ -65,7 +66,7 @@ const Register = () => {
       sessionStorage.setItem("loggedIn", JSON.stringify(true));
       sessionStorage.setItem("loginMail", registerData.eMail);
       axios
-        .post("http://localhost:5000/run-query", {
+        .post(api, {
           query: `INSERT INTO public."Readers" ("readerFirstName", "readerLastName", "readerEmail", "readerPassword") Values('${registerData.firstname}', '${registerData.lastname}', '${registerData.eMail}', '${hashedPassword}')`,
         })
         .then((response) => {
@@ -73,7 +74,7 @@ const Register = () => {
 
           //get readerData from database
           axios
-            .post("http://localhost:5000/run-query", {
+            .post(api, {
               query: `SELECT * FROM public."Readers"`,
             })
             .then((response) => {

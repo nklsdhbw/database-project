@@ -152,7 +152,7 @@ function Overview() {
 
     // set datatypes
     axios
-      .post("http://localhost:5000/run-query", {
+      .post(api, {
         query: `SELECT data_type, column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
       })
       .then((datatypes) => {
@@ -196,7 +196,7 @@ function Overview() {
         // set formData/editData
         datatypes = filteredArr;
         axios
-          .post("http://localhost:5000/run-query", {
+          .post(api, {
             query: sessionStorage.getItem("tableQuery"),
           })
           .then((results) => {
@@ -220,7 +220,7 @@ function Overview() {
             setColumns(columnswithoutID);
 
             axios
-              .post("http://localhost:5000/run-query", {
+              .post(api, {
                 query: sessionStorage.getItem("formQuery"),
               })
               .then((results) => {

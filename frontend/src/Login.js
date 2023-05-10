@@ -17,6 +17,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, formState } = useForm();
   const [results, setResults] = useState([]);
+  const api = "http://localhost:5000/run-query";
 
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
   console.log("LoginStatus", loginStatus);
@@ -29,7 +30,7 @@ const Login = () => {
   useEffect(() => {
     let query = 'SELECT * FROM public."Readers"';
     axios
-      .post("http://localhost:5000/run-query", { query })
+      .post(api, { query })
       .then((response) => {
         setResults(response.data[1]);
       })
