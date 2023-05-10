@@ -7,7 +7,7 @@ import useFetch from "react-fetch-hook";
 import "bootstrap/dist/css/bootstrap.min.css";
 import bcrypt from "bcryptjs";
 import axios from "axios";
-import loginBackground from "./img/login_background.jpg";
+import loginBackground from "./img/login_background.svg";
 import "./Login.css";
 
 // import required css

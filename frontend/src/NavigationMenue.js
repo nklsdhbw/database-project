@@ -9,11 +9,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import bcrypt from "bcryptjs";
 import axios from "axios";
 import Overview from "./Overview";
-import loansMmanagement from "./img/loans_management.png";
-import orderHistory from "./img/order_history.png";
-import personalInformation from "./img/personal_information.png";
-import placeOrder from "./img/place_order.png";
-import supplierManagement from "./img/supplier_management.png";
+import loansMmanagement from "./img/loans_management.svg";
+import orderHistory from "./img/order_history.svg";
+import personalInformation from "./img/personal_information.svg";
+import placeOrder from "./img/place_order.svg";
+import supplierManagement from "./img/supplier_management.svg";
 
 // import required css
 //import 'bootstrap/dist/css/bootstrap.min.css';

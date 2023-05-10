@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import bcrypt from "bcryptjs";
 import axios from "axios";
 import "./Login.css";
-import loginBackground from "./img/login_background.jpg";
+import loginBackground from "./img/login_background.svg";
 // import required css
 
 import "bootstrap/dist/css/bootstrap.min.css";
