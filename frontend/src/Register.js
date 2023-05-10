@@ -6,7 +6,8 @@ import Form from "react-bootstrap/Form";
 import { useForm } from "react-hook-form";
 import bcrypt from "bcryptjs";
 import axios from "axios";
-
+import "./Login.css";
+import loginBackground from "./img/login_background.jpg";
 // import required css
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -102,67 +103,75 @@ const Register = () => {
   // disable the "register" button if inputValidation is false,
   // for example empty input fields or not an input with eMail format in email input field
   return (
-    <form novalidate onSubmit={handleSubmit(onSubmit)}>
-      <div>
-        <h1>Registrieren</h1>
-      </div>
+    <div
+      className="login-container"
+      style={{
+        backgroundImage: `url(${loginBackground})`,
+      }}
+    >
+      <form novalidate onSubmit={handleSubmit(onSubmit)}>
+        <div>
+          <h1>Registrieren</h1>
+        </div>
 
-      <div className="form-group">
-        <label>Vorname</label>
-        <input
-          {...register("firstname", { required: true })}
-          className="form-control"
-          id="firstname"
-          placeholder="Max"
-        />
-      </div>
+        <div className="form-group">
+          <label>Vorname</label>
+          <input
+            {...register("firstname", { required: true })}
+            className="form-control"
+            id="firstname"
+            placeholder="Max"
+          />
+        </div>
 
-      <div className="form-group">
-        <label>Nachname</label>
-        <input
-          {...register("lastname", { required: true })}
-          className="form-control"
-          id="lastname"
-          placeholder="Mustermann"
-        />
-      </div>
+        <div className="form-group">
+          <label>Nachname</label>
+          <input
+            {...register("lastname", { required: true })}
+            className="form-control"
+            id="lastname"
+            placeholder="Mustermann"
+          />
+        </div>
 
-      <div className="form-group">
-        <label htmlFor="email">E-Mail-Adresse</label>
-        <input
-          {...register("eMail", { required: true })}
-          type="email"
-          className="form-control"
-          id="email"
-          aria-describedby="emailHelp"
-          placeholder="max.mustermann@mail.com"
-        />
-        <small id="emailHelp" className="form-text text-muted">
-          Wir werden deine E-Mail-Adresse nicht weitergeben.
-        </small>
-      </div>
+        <div className="form-group">
+          <label htmlFor="email">E-Mail-Adresse</label>
+          <input
+            {...register("eMail", { required: true })}
+            type="email"
+            className="form-control"
+            id="email"
+            aria-describedby="emailHelp"
+            placeholder="max.mustermann@mail.com"
+          />
+          <small id="emailHelp" className="form-text text-muted">
+            Wir werden deine E-Mail-Adresse nicht weitergeben.
+          </small>
+        </div>
 
-      <div className="form-group">
-        <label htmlFor="password">Passwort</label>
-        <input
-          {...register("password", { required: true })}
-          type="password"
-          className="form-control"
-          id="password"
-          placeholder="●●●●●●●●●●"
-        />
-      </div>
+        <div className="form-group">
+          <label htmlFor="password">Passwort</label>
+          <input
+            {...register("password", { required: true })}
+            type="password"
+            className="form-control"
+            id="password"
+            placeholder="●●●●●●●●●●"
+          />
+        </div>
 
-      <div id="register">
-        <button
-          type="submit"
-          className="btn btn-primary"
-          disabled={!formState.isValid}
-        >
-          Registrieren
-        </button>
-      </div>
-    </form>
+        <div id="register">
+          <br></br>
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={!formState.isValid}
+          >
+            Registrieren
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
