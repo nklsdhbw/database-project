@@ -517,6 +517,8 @@ function Overview() {
           showSearchAuthorButton={showSearchAuthorButton}
           showSearchManagerButton={showSearchManagerButton}
           hidePublisherButton={hidePublisherButton}
+          showSearchZipButton={showSearchZipButton}
+          showSearchCurrencyButton={showSearchCurrencyButton}
           setShowModal={setShowModal}
           setFormData={setFormData}
           setUpdateData={setUpdateData}
@@ -525,8 +527,6 @@ function Overview() {
           showSearch={showSearch}
           api={api}
           selectedTable={selectedTable}
-          showSearchZipButton={showSearchZipButton}
-          showSearchCurrencyButton={showSearchCurrencyButton}
         />
       </div>
       <div>
@@ -542,6 +542,14 @@ function Overview() {
           selectedTable={selectedTable}
           api={api}
           rowUniqueID={rowUniqueID}
+          showSearchBookButton={showSearchBookButton}
+          showSearchAuthorButton={showSearchAuthorButton}
+          showSearchManagerButton={showSearchManagerButton}
+          hidePublisherButton={hidePublisherButton}
+          showSearchZipButton={showSearchZipButton}
+          showSearchCurrencyButton={showSearchCurrencyButton}
+          setshowSearch={setshowSearch}
+          showSearch={showSearch}
         />
       </div>
       <div>
