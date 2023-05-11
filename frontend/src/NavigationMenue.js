@@ -26,7 +26,7 @@ const NavigationMenue = () => {
         'SELECT "libraryOrderID" AS "Library Order ID", "libraryOrderAuthorID" AS "Author" FROM "LibraryOrders"',
       formQuery:
         'SELECT "libraryOrderID", "libraryOrderAuthorID" FROM "LibraryOrders"',
-      img: orderHistory,
+      img: orderManagement,
       allowedRoles: ["manager", "employee"],
     },
     {
