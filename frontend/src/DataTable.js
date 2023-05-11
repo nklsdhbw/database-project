@@ -180,6 +180,75 @@ function DataTable(props) {
       setEditData(editData);
       setShowEditModal(!showEditModal);
     }
+
+    if (selectedTable == "LibraryOrders") {
+      let dataWithIDs = resultsWithIDs.filter((el) => {
+        return el[0] == data[0];
+      });
+      let loanID = data[0];
+
+      setRowUniqueID(loanID);
+      console.log(dataWithIDs, "DATAWITHIDS");
+      dataWithIDs = dataWithIDs.flat();
+      console.log(resultsWithIDs);
+
+      let libraryOrderAll = resultsWithIDs.filter((el) => {
+        return el[0] == loanID;
+      });
+      let libraryOrder = Array.from(libraryOrderAll[0]);
+
+      console.log(libraryOrder, "LIBRARYORDER");
+      let newColumns = Array.from(columns);
+      newColumns.push("authorID", "currencyID", "librarianID");
+      console.log(newColumns, "COLUMNSWITHOUTIDS");
+      let deleteColumns = ["Author", "Currency", "Manager"];
+      deleteColumns.map((element) => {
+        delete libraryOrder[newColumns.indexOf(element)];
+        delete newColumns[newColumns.indexOf(element)];
+      });
+
+      // Filter out any remaining undefined elements from both arrays
+      newColumns = newColumns.filter((el) => el !== undefined);
+      libraryOrder = libraryOrder.filter((el) => {
+        return el !== undefined;
+      });
+      console.log(libraryOrder, newColumns);
+      let test = [
+        "libraryOrderID",
+        "libraryOrderBookTitle",
+        "libraryOrderISBN",
+        "libraryOrderAmount",
+        "libraryOrderCost",
+        "libraryOrderDateOrdered",
+        "libraryOrderDeliveryDate",
+        "libraryOrderStatusOrder",
+        "libraryOrderAuthorID",
+        "libraryOrderCurrencyID",
+        "libraryOrderManagerLibrarianID",
+        "libraryOrderPublisherID",
+      ];
+      let keys = Object.keys(editData);
+      let cols = test;
+      let vals = libraryOrder;
+      vals = vals.splice(1);
+      cols = cols.splice(1);
+      console.log(editData);
+      vals.map((element, index) => {
+        let placeholder = element;
+        console.log(cols[index], editData[cols[index]]);
+        if (editData[cols[index]]["type"] == "date") {
+          placeholder = new Date(element).toISOString().slice(0, 10);
+          editData[cols[index]]["placeholder"] = placeholder;
+          console.log("DATE");
+        } else {
+          editData[cols[index]]["placeholder"] = placeholder;
+          console.log(cols[index]);
+        }
+      });
+      setEditData(editData);
+
+      setShowEditModal(!showEditModal);
+    }
   }
 
   return (
@@ -194,7 +263,18 @@ function DataTable(props) {
         {results.map((data) => (
           <tr>
             {data.map((entry) => (
-              <td>{typeof entry == "boolean" ? entry.toString() : entry}</td>
+              <td>
+                {typeof entry === "boolean"
+                  ? entry.toString()
+                  : typeof entry === "string" &&
+                    /^[\w]{3}, \d{2} [\w]{3} \d{4} \d{2}:\d{2}:\d{2} GMT$/.test(
+                      entry
+                    )
+                  ? new Date(entry).toLocaleDateString()
+                  : typeof entry === "number"
+                  ? entry
+                  : entry}
+              </td>
             ))}
             <td>
               <Button

@@ -41,7 +41,7 @@ function Views() {
       `;
 
     axios
-      .post("http://localhost:5000/run-query", {
+      .post(api, {
         query,
       })
       .then((tables) => {
@@ -88,7 +88,7 @@ function Views() {
       if (selectedView == "myLoans") {
         let view = sessionStorage.getItem("view");
         axios
-          .post("http://localhost:5000/run-query", { query })
+          .post(api, { query })
           .then((response) => {
             setResults(response.data);
           })
@@ -97,7 +97,7 @@ function Views() {
           });
 
         axios
-          .post("http://localhost:5000/run-query", {
+          .post(api, {
             query: `SELECT column_name FROM information_schema.columns  WHERE table_name = '${view}' AND table_schema = 'public'`,
           })
           .then((columns) => {
@@ -110,7 +110,7 @@ function Views() {
         console.log("NEUE QUERY");
         console.log(query);
         axios
-          .post("http://localhost:5000/run-query", { query })
+          .post(api, { query })
           .then((response) => {
             setResults(response.data);
           })
@@ -119,7 +119,7 @@ function Views() {
           });
 
         axios
-          .post("http://localhost:5000/run-query", {
+          .post(api, {
             query: `SELECT column_name FROM information_schema.columns  WHERE table_name = '${selectedView}' AND table_schema = 'public'`,
           })
           .then((columns) => {

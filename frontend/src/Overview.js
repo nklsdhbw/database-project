@@ -18,7 +18,6 @@ function Overview() {
     "publisherID",
     "libraryOrderID",
     "readerID",
-    "libraryOrderStatusOrder",
     "categoryID",
     "zipID",
     "currencyID",
@@ -72,7 +71,7 @@ function Overview() {
   const amountIDColumns = {
     Loans: 3,
     Publishers: 0,
-    LibraryOrders: 0,
+    LibraryOrders: 3,
     Readers: 0,
   };
 
@@ -152,7 +151,7 @@ function Overview() {
 
     // set datatypes
     axios
-      .post("http://localhost:5000/run-query", {
+      .post(api, {
         query: `SELECT data_type, column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
       })
       .then((datatypes) => {
@@ -162,8 +161,10 @@ function Overview() {
           let element = datatypesData[index];
           let type = element[0];
           let columnName = element[1];
+          console.log(columnName, type);
           if (type.startsWith("character") || type.startsWith("char")) {
             datatypesData[index] = "text";
+            console.log(columnName);
           }
           if (
             type.startsWith("big") ||
@@ -191,12 +192,15 @@ function Overview() {
         }
 
         const filteredArr = datatypesData.filter((value) => value != null);
+        console.log(filteredArr.length, "length", datatypesData.length);
+
         setDatatypes(filteredArr);
+        console.log(filteredArr);
 
         // set formData/editData
         datatypes = filteredArr;
         axios
-          .post("http://localhost:5000/run-query", {
+          .post(api, {
             query: sessionStorage.getItem("tableQuery"),
           })
           .then((results) => {
@@ -220,7 +224,7 @@ function Overview() {
             setColumns(columnswithoutID);
 
             axios
-              .post("http://localhost:5000/run-query", {
+              .post(api, {
                 query: sessionStorage.getItem("formQuery"),
               })
               .then((results) => {
@@ -265,6 +269,7 @@ function Overview() {
                   }
                 });
                 setFormData(newFormData);
+                console.log(newFormData);
                 setEditData(newFormData);
               });
           })
@@ -397,7 +402,6 @@ function Overview() {
         "libraryOrderDateOrdered",
         "libraryOrderDeliveryDate",
         "libraryOrderCost",
-        "libraryOrderStatusOrder",
         "libraryOrderManagerID",
         "libraryOrderManagerLibrarianID",
         "libraryOrderCurrencyID",
@@ -517,6 +521,8 @@ function Overview() {
           showSearchAuthorButton={showSearchAuthorButton}
           showSearchManagerButton={showSearchManagerButton}
           hidePublisherButton={hidePublisherButton}
+          showSearchZipButton={showSearchZipButton}
+          showSearchCurrencyButton={showSearchCurrencyButton}
           setShowModal={setShowModal}
           setFormData={setFormData}
           setUpdateData={setUpdateData}
@@ -525,8 +531,6 @@ function Overview() {
           showSearch={showSearch}
           api={api}
           selectedTable={selectedTable}
-          showSearchZipButton={showSearchZipButton}
-          showSearchCurrencyButton={showSearchCurrencyButton}
         />
       </div>
       <div>
@@ -542,6 +546,14 @@ function Overview() {
           selectedTable={selectedTable}
           api={api}
           rowUniqueID={rowUniqueID}
+          showSearchBookButton={showSearchBookButton}
+          showSearchAuthorButton={showSearchAuthorButton}
+          showSearchManagerButton={showSearchManagerButton}
+          hidePublisherButton={hidePublisherButton}
+          showSearchZipButton={showSearchZipButton}
+          showSearchCurrencyButton={showSearchCurrencyButton}
+          setshowSearch={setshowSearch}
+          showSearch={showSearch}
         />
       </div>
       <div>

@@ -7,6 +7,8 @@ import useFetch from "react-fetch-hook";
 import "bootstrap/dist/css/bootstrap.min.css";
 import bcrypt from "bcryptjs";
 import axios from "axios";
+import loginBackground from "./img/login_background.svg";
+import "./Login.css";
 
 // import required css
 //import 'bootstrap/dist/css/bootstrap.min.css';
@@ -15,6 +17,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, formState } = useForm();
   const [results, setResults] = useState([]);
+  const api = "http://localhost:5000/run-query";
 
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
   console.log("LoginStatus", loginStatus);
@@ -27,7 +30,7 @@ const Login = () => {
   useEffect(() => {
     let query = 'SELECT * FROM public."Readers"';
     axios
-      .post("http://localhost:5000/run-query", { query })
+      .post(api, { query })
       .then((response) => {
         setResults(response.data[1]);
       })
@@ -67,50 +70,58 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <h1>Anmelden</h1>
-      <div className="form-group">
-        <label htmlFor="email">E-Mail-Adresse</label>
-        <input
-          {...register("username", { required: true })}
-          type="email"
-          className="form-control"
-          id="email"
-          aria-describedby="emailHelp"
-          placeholder="example@mail.com"
-        />
-        <small id="emailHelp" className="form-text text-muted">
-          Wir werden deine E-Mail-Adresse nicht weitergeben.
-        </small>
-      </div>
+    <div
+      className="login-container"
+      style={{
+        backgroundImage: `url(${loginBackground})`,
+      }}
+    >
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <h1>Anmelden</h1>
+        <div className="form-group">
+          <label htmlFor="email">E-Mail-Adresse</label>
+          <input
+            {...register("username", { required: true })}
+            type="email"
+            className="form-control"
+            id="email"
+            aria-describedby="emailHelp"
+            placeholder="example@mail.com"
+          />
+          <small id="emailHelp" className="form-text text-muted">
+            Wir werden deine E-Mail-Adresse nicht weitergeben.
+          </small>
+        </div>
 
-      <div className="form-group">
-        <label htmlFor="password">Passwort</label>
-        <input
-          {...register("password", { required: true })}
-          type="password"
-          className="form-control"
-          id="password"
-          placeholder="●●●●●●●●●"
-        />
-      </div>
+        <div className="form-group">
+          <label htmlFor="password">Passwort</label>
+          <input
+            {...register("password", { required: true })}
+            type="password"
+            className="form-control"
+            id="password"
+            placeholder="●●●●●●●●●"
+          />
+        </div>
 
-      <div>
-        <button
-          type="submit"
-          className="btn btn-primary"
-          disabled={!formState.isValid}
-        >
-          Anmelden
-        </button>
-      </div>
+        <div>
+          <br></br>
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={!formState.isValid}
+          >
+            Anmelden
+          </button>
+        </div>
 
-      <div>
-        <span>
-          oder registriere dich <NavLink to="/Register">hier</NavLink>
-        </span>
-      </div>
-    </form>
+        <div>
+          <span>
+            oder registriere dich <NavLink to="/Register">hier</NavLink>
+          </span>
+        </div>
+      </form>
+    </div>
   );
 };
 //  }
