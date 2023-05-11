@@ -10,9 +10,8 @@ import bcrypt from "bcryptjs";
 import axios from "axios";
 import Overview from "./Overview";
 import loansMmanagement from "./img/loans_management.svg";
-import orderHistory from "./img/order_history.svg";
+import orderManagement from "./img/order_management.svg";
 import personalInformation from "./img/personal_information.svg";
-import placeOrder from "./img/place_order.svg";
 import supplierManagement from "./img/supplier_management.svg";
 
 // import required css
@@ -87,7 +86,7 @@ const NavigationMenue = () => {
   JOIN "Authors" a ON lo."libraryOrderAuthorID" = a."authorID"
   JOIN "Currencies" c ON lo."libraryOrderCurrencyID" = c."currencyID"
   JOIN "Librarians" l ON lo."libraryOrderManagerLibrarianID" = l."librarianID";`,
-      img: placeOrder,
+      img: orderManagement,
       allowedRoles: ["manager", "admin"],
     },
     {
