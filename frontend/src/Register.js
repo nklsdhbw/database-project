@@ -3,7 +3,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import bcrypt from "bcryptjs";
 import axios from "axios";
 import "./Login.css";
@@ -11,6 +11,7 @@ import loginBackground from "./img/login_background.svg";
 // import required css
 
 import "bootstrap/dist/css/bootstrap.min.css";
+import PasswordChecklist from "react-password-checklist";
 
 const Register = () => {
   // fetch loginData from /api/login
@@ -22,12 +23,15 @@ const Register = () => {
   const [existingUsers, setExistingUsers] = useState([]);
   const [userExists, setUserExists] = useState(false);
   const api = "http://localhost:5000/run-query";
+  const [password, setPassword] = useState("");
+  const [passwordAgain, setPasswordAgain] = useState("");
+  const [formStateValid, setFormStateValid] = useState(false);
 
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
   console.log("LoginStatus", loginStatus);
-  if (loginStatus != "true") {
+  if (!loginStatus) {
   } else {
-    navigate("/Overview");
+    navigate("/NavigationMenue");
   }
   // check if user already exists
   useEffect(() => {
@@ -45,7 +49,7 @@ const Register = () => {
   // continue when data is fully loaded
 
   const onSubmit = async (registerData) => {
-    const password = registerData.password;
+    //const password = registerData.password;
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const fullName = registerData.firstname + " " + registerData.lastname;
@@ -103,6 +107,7 @@ const Register = () => {
   // return form with input fields for registrating a new user
   // disable the "register" button if inputValidation is false,
   // for example empty input fields or not an input with eMail format in email input field
+
   return (
     <div
       className="login-container"
@@ -110,40 +115,41 @@ const Register = () => {
         backgroundImage: `url(${loginBackground})`,
       }}
     >
-      <form novalidate onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <h1>Registrieren</h1>
-        </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <h1>Anmelden</h1>
 
         <div className="form-group">
-          <label>Vorname</label>
+          <label htmlFor="firstname">Firstname</label>
           <input
             {...register("firstname", { required: true })}
+            type="text"
             className="form-control"
             id="firstname"
             placeholder="Max"
           />
         </div>
-
         <div className="form-group">
-          <label>Nachname</label>
+          <label htmlFor="lastname">Lastname</label>
           <input
             {...register("lastname", { required: true })}
+            type="text"
             className="form-control"
             id="lastname"
             placeholder="Mustermann"
           />
         </div>
-
         <div className="form-group">
           <label htmlFor="email">E-Mail-Adresse</label>
           <input
-            {...register("eMail", { required: true })}
+            {...register("username", {
+              required: true,
+              pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            })}
             type="email"
             className="form-control"
             id="email"
             aria-describedby="emailHelp"
-            placeholder="max.mustermann@mail.com"
+            placeholder="example@mail.com"
           />
           <small id="emailHelp" className="form-text text-muted">
             Wir werden deine E-Mail-Adresse nicht weitergeben.
@@ -151,24 +157,41 @@ const Register = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="password">Passwort</label>
+          <label htmlFor="password">Password:</label>
           <input
-            {...register("password", { required: true })}
             type="password"
             className="form-control"
-            id="password"
-            placeholder="●●●●●●●●●●"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <br></br>
+          <label htmlFor="password">Password again:</label>
+          <input
+            type="password"
+            className="form-control"
+            onChange={(e) => setPasswordAgain(e.target.value)}
+          />
+          <br></br>
+          <PasswordChecklist
+            rules={["minLength", "specialChar", "number", "capital", "match"]}
+            minLength={5}
+            value={password}
+            valueAgain={passwordAgain}
+            onChange={(isValid) => {
+              console.log(isValid);
+              setFormStateValid(isValid);
+            }}
           />
         </div>
-
-        <div id="register">
+        <div>
           <br></br>
           <button
             type="submit"
             className="btn btn-primary"
-            disabled={!formState.isValid}
+            disabled={!formState.isValid || !formStateValid}
+            id="registerButton"
           >
-            Registrieren
+            Register
           </button>
         </div>
       </form>
