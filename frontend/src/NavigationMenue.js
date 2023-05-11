@@ -28,6 +28,7 @@ const NavigationMenue = () => {
       formQuery:
         'SELECT "libraryOrderID", "libraryOrderAuthorID" FROM "LibraryOrders"',
       img: orderHistory,
+      allowedRoles: ["manager", "employee"],
     },
     {
       label: "Manage all Loans",
@@ -35,6 +36,7 @@ const NavigationMenue = () => {
       entryQuery: 'SELECT * FROM "allLoans"',
       formQuery: 'SELECT * FROM "Loans"',
       img: loansMmanagement,
+      allowedRoles: ["manager", "employee"],
     },
     {
       label: "Manage my Loans",
@@ -46,6 +48,7 @@ const NavigationMenue = () => {
         "readerID"
       )}`,
       img: loansMmanagement,
+      allowedRoles: ["manager", "employee"],
     },
     {
       label: "Manage personal data",
@@ -57,6 +60,7 @@ const NavigationMenue = () => {
         "readerID"
       )}`,
       img: personalInformation,
+      allowedRoles: ["manager", "employee", "admin"],
     },
     {
       label: "Manage library orders",
@@ -84,6 +88,7 @@ const NavigationMenue = () => {
   JOIN "Currencies" c ON lo."libraryOrderCurrencyID" = c."currencyID"
   JOIN "Librarians" l ON lo."libraryOrderManagerLibrarianID" = l."librarianID";`,
       img: placeOrder,
+      allowedRoles: ["manager", "admin"],
     },
     {
       label: "Manage publishers",
@@ -114,7 +119,14 @@ const NavigationMenue = () => {
         publisherPhone: "Phone",
       },
       img: supplierManagement,
+      allowedRoles: ["employee"],
+      //allowedRoles: ['manager'] for creating objects
     },
+    // add employee mngmg
+    //allowedRoles: ['manager', 'employee', 'admin']
+    // add my team: allowedRoles: ['manager', 'employee']
+    //  { title: 'Book Management', img: bookManagement, allowedRoles: ['manager', 'employee'] },
+    //{ title: 'New Hire', img: newHire, allowedRoles: ['manager', 'admin'] },
   ];
 
   const navigate = useNavigate();
