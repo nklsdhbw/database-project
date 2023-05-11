@@ -18,7 +18,6 @@ function Overview() {
     "publisherID",
     "libraryOrderID",
     "readerID",
-    "libraryOrderStatusOrder",
     "categoryID",
     "zipID",
     "currencyID",
@@ -72,7 +71,7 @@ function Overview() {
   const amountIDColumns = {
     Loans: 3,
     Publishers: 0,
-    LibraryOrders: 0,
+    LibraryOrders: 3,
     Readers: 0,
   };
 
@@ -162,8 +161,10 @@ function Overview() {
           let element = datatypesData[index];
           let type = element[0];
           let columnName = element[1];
+          console.log(columnName, type);
           if (type.startsWith("character") || type.startsWith("char")) {
             datatypesData[index] = "text";
+            console.log(columnName);
           }
           if (
             type.startsWith("big") ||
@@ -191,7 +192,10 @@ function Overview() {
         }
 
         const filteredArr = datatypesData.filter((value) => value != null);
+        console.log(filteredArr.length, "length", datatypesData.length);
+
         setDatatypes(filteredArr);
+        console.log(filteredArr);
 
         // set formData/editData
         datatypes = filteredArr;
@@ -265,6 +269,7 @@ function Overview() {
                   }
                 });
                 setFormData(newFormData);
+                console.log(newFormData);
                 setEditData(newFormData);
               });
           })
@@ -397,7 +402,6 @@ function Overview() {
         "libraryOrderDateOrdered",
         "libraryOrderDeliveryDate",
         "libraryOrderCost",
-        "libraryOrderStatusOrder",
         "libraryOrderManagerID",
         "libraryOrderManagerLibrarianID",
         "libraryOrderCurrencyID",

@@ -12,7 +12,7 @@ CREATE TABLE "LibraryOrders" (
 "libraryOrderAuthorID" INTEGER,
 "libraryOrderStatusOrder" varchar(255) DEFAULT 'order',
 "libraryOrderManagerLibrarianID" INTEGER, 
-"libraryOrderCurrencyID" INTEGER, 
+"libraryOrderCurrencyID" INTEGER,
 
 	CONSTRAINT fk_libraryOrderPublisherID
       FOREIGN KEY("libraryOrderPublisherID") 

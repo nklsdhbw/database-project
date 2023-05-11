@@ -72,7 +72,11 @@ const NavigationMenue = () => {
       "libraryOrderDateOrdered" AS "Order date",
       "libraryOrderDeliveryDate" AS "Delivery Date",
       "libraryOrderStatusOrder" AS "Order status",
-      concat(l."librarianFirstName", ' ', l."librarianLastName") AS "Manager"
+      concat(l."librarianFirstName", ' ', l."librarianLastName") AS "Manager",
+      "authorID" AS "Author ID",
+      "currencyID" AS "Currency ID",
+      "libraryOrderManagerLibrarianID" AS "Librarian ID",
+      "libraryOrderPublisherID" AS "Publisher ID"
       
       
   FROM "LibraryOrders" lo
