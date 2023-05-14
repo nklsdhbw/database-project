@@ -17,7 +17,7 @@ def run_query():
 
     conn = psycopg2.connect(
         host="localhost",
-        port=5432,
+        port=5438   ,
         database="postgres",
         user="postgres",
         password="0609"
