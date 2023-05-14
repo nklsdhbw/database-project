@@ -1,8 +1,8 @@
 version: "3.8"
 services:
   reactApp:
-    build: ../frontend/
-    dockerfile: Dockerfile
+    build:
+      context: ../frontend/
     container_name: reactApp
     ports:
       - "3000:3000"
