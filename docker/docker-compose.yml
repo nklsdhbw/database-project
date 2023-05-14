@@ -1,5 +1,12 @@
-version: "3.7"
+version: "3.8"
 services:
+  reactApp:
+    build: ../frontend/
+    dockerfile: Dockerfile
+    container_name: reactApp
+    ports:
+      - "3000:3000"
+    stdin_open: true
   postgres:
     image: postgres:10.5
     restart: always
