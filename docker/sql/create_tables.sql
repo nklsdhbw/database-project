@@ -229,8 +229,9 @@ JOIN "Authors" a ON b."bookAuthorID" = a."authorID"
 JOIN "Publishers" p ON b."bookPublisherID" = p."publisherID"
 JOIN "Currencies" c ON c."currencyID" = l."loanCurrencyID";
 
-DROP FUNCTION IF EXISTS updateBookAvailability() CASCADE;
-CREATE FUNCTION updateBookAvailability()
+
+DROP FUNCTION IF EXISTS "updateBookAvailability"() CASCADE;
+CREATE FUNCTION "updateBookAvailability"()
 RETURNS TRIGGER AS $$
 DECLARE
     book_avail_amount INTEGER;
@@ -244,10 +245,11 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS updateBookAvailabilityTrigger ON "Loans";
-CREATE TRIGGER updateBookAvailabilityTrigger
+DROP TRIGGER IF EXISTS "updateBookAvailabilityTrigger" ON "Loans";
+CREATE TRIGGER "updateBookAvailabilityTrigger"
 AFTER INSERT ON "Loans"
 FOR EACH ROW
-EXECUTE FUNCTION updateBookAvailability();
+EXECUTE FUNCTION "updateBookAvailability"();
+
 
 
