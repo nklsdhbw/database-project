@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  reactApp:
+  reactapp:
     build:
       context: ../frontend/
     container_name: reactApp
