@@ -140,6 +140,9 @@ function Overview() {
     let uniqueColumn = selectedTable.slice(0, selectedTable.length - 1);
     uniqueColumn = uniqueColumn.toLowerCase();
     uniqueColumn = uniqueColumn + "ID"; //e.g. loanID
+    if (selectedTable == "LibraryOrders") {
+      uniqueColumn = "libraryOrderID";
+    }
     setUniqueColumn(uniqueColumn);
     console.log(selectedTable, "selectedTable");
 

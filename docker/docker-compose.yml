@@ -16,5 +16,3 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
       - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
       - ./sql/fill_tables.sql:/docker-entrypoint-initdb.d/fill_tables.sql
-      - ./sql/create_views.sql:/docker-entrypoint-initdb.d/create_views.sql
-      - ./sql/create_stored_functions.sql:/docker-entrypoint-initdb.d/create_stored_functions.sql
