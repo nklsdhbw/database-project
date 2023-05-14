@@ -249,7 +249,7 @@ DROP TRIGGER IF EXISTS "updateBookAvailabilityTrigger" ON "Loans";
 CREATE TRIGGER "updateBookAvailabilityTrigger"
 AFTER INSERT ON "Loans"
 FOR EACH ROW
-EXECUTE FUNCTION "updateBookAvailability"();
+EXECUTE PROCEDURE "updateBookAvailability"();
 
 
 
