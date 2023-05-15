@@ -13,6 +13,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=0609
+      - POSTGRES_DB=postgres
     logging:
       options:
         max-size: 10m
