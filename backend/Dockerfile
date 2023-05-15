@@ -1,6 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.9-slim-buster
-
+FROM python
 # Set the working directory to /app
 WORKDIR /app
 
@@ -8,7 +7,7 @@ WORKDIR /app
 COPY Pipfile Pipfile.lock ./
 
 # Install dependencies
-RUN pip install pipenv && pipenv install --system --deploy --ignore-pipfile
+RUN pip install pipenv && pipenv install --system --deploy 
 
 # Copy the rest of the application files to the container
 COPY . .
