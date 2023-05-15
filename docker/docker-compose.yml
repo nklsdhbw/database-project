@@ -23,3 +23,20 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
       - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
       - ./sql/fill_tables.sql:/docker-entrypoint-initdb.d/fill_tables.sql
+  flaskapp:
+    build:
+      context: ../backend/
+    container_name: flaskApp
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+      - DB_NAME=database
+      - DB_USER=postgres
+      - DB_PASSWORD=0609
+      - DB_HOST=postgres
+      - DB_PORT=5432
+    depends_on:
+      - postgres
