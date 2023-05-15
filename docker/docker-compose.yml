@@ -24,8 +24,7 @@ services:
       - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
       - ./sql/fill_tables.sql:/docker-entrypoint-initdb.d/fill_tables.sql
   flaskapp:
-    build:
-      context: ../backend/
+    image: nklsdhbw/flask-server:1.1
     container_name: flaskApp
     restart: always
     ports:
