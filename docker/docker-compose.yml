@@ -29,13 +29,5 @@ services:
     restart: always
     ports:
       - "5000:5000"
-    environment:
-      - FLASK_APP=app.py
-      - FLASK_ENV=development
-      - DB_NAME=database
-      - DB_USER=postgres
-      - DB_PASSWORD=0609
-      - DB_HOST=postgres
-      - DB_PORT=5432
     depends_on:
       - postgres
