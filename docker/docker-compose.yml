@@ -1,5 +1,8 @@
 version: "3.8"
 
+networks:
+  mynetwork:
+
 services:
   reactapp:
     image: nklsdhbw/database-project:1.1
@@ -41,6 +44,3 @@ services:
       - postgres
     networks:
       - mynetwork
-
-networks:
-  mynetwork:
