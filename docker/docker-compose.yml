@@ -23,6 +23,7 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
       - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
       - ./sql/fill_tables.sql:/docker-entrypoint-initdb.d/fill_tables.sql
+
   flaskapp:
     image: nklsdhbw/flask-server:1.1
     container_name: flaskApp
