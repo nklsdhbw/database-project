@@ -1,8 +1,8 @@
 version: "3.8"
 services:
   reactapp:
-    build:
-      context: ../frontend/
+    image: nklsdhbw/database-project:1.1
+    restart: always
     container_name: reactApp
     ports:
       - "3000:3000"
