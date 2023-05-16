@@ -20,22 +20,12 @@ import supplierManagement from "./img/supplier_management.svg";
 const NavigationMenue = () => {
   const Actions = [
     {
-      label: "Order overview",
-      table: "LibraryOrders",
-      entryQuery:
-        'SELECT "libraryOrderID" AS "Library Order ID", "libraryOrderAuthorID" AS "Author" FROM "LibraryOrders"',
-      formQuery:
-        'SELECT "libraryOrderID", "libraryOrderAuthorID" FROM "LibraryOrders"',
-      img: orderManagement,
-      allowedRoles: ["manager", "employee"],
-    },
-    {
       label: "Manage all Loans",
       table: "Loans",
       entryQuery: 'SELECT * FROM "allLoans"',
       formQuery: 'SELECT * FROM "Loans"',
       img: loansMmanagement,
-      allowedRoles: ["manager", "employee"],
+      read: ["Manager", "Librarian"],
     },
     {
       label: "Manage my Loans",
@@ -47,7 +37,7 @@ const NavigationMenue = () => {
         "readerID"
       )}`,
       img: loansMmanagement,
-      allowedRoles: ["manager", "employee"],
+      read: ["Manager", "Librarian", "Reader"],
     },
     {
       label: "Manage personal data",
@@ -59,7 +49,7 @@ const NavigationMenue = () => {
         "readerID"
       )}`,
       img: personalInformation,
-      allowedRoles: ["manager", "employee", "admin"],
+      read: ["Manager", "Librarian", "Admin", "Reader"],
     },
     {
       label: "Manage library orders",
@@ -87,7 +77,8 @@ const NavigationMenue = () => {
   JOIN "Currencies" c ON lo."libraryOrderCurrencyID" = c."currencyID"
   JOIN "Librarians" l ON lo."libraryOrderManagerLibrarianID" = l."librarianID";`,
       img: orderManagement,
-      allowedRoles: ["manager", "admin"],
+      read: ["Manager", "admin", "Librarian"],
+      write: ["Manager", "admin"],
     },
     {
       label: "Manage publishers",
@@ -118,14 +109,15 @@ const NavigationMenue = () => {
         publisherPhone: "Phone",
       },
       img: supplierManagement,
-      allowedRoles: ["employee"],
-      //allowedRoles: ['manager'] for creating objects
+      read: ["Librarian"],
+      write: ["Manager", "admin"],
+      //read: ['manager'] for creating objects
     },
     // add employee mngmg
-    //allowedRoles: ['manager', 'employee', 'admin']
-    // add my team: allowedRoles: ['manager', 'employee']
-    //  { title: 'Book Management', img: bookManagement, allowedRoles: ['manager', 'employee'] },
-    //{ title: 'New Hire', img: newHire, allowedRoles: ['manager', 'admin'] },
+    //read: ['manager', 'employee', 'admin']
+    // add my team: read: ['manager', 'employee']
+    //  { title: 'Book Management', img: bookManagement, read: ['manager', 'employee'] },
+    //{ title: 'New Hire', img: newHire, read: ['manager', 'admin'] },
   ];
 
   const navigate = useNavigate();
@@ -137,6 +129,9 @@ const NavigationMenue = () => {
   } else {
     //navigate("/Overview");
   }
+  const filteredActions = Actions.filter((action) =>
+    action.read.includes(sessionStorage.getItem("role"))
+  );
 
   function handleClick(option) {
     navigate("/Overview");
@@ -159,7 +154,7 @@ const NavigationMenue = () => {
 
   return (
     <div>
-      {Actions.map((option) => (
+      {filteredActions.map((option) => (
         <Button key={option.label} onClick={() => handleClick(option)}>
           {option.label}
           <img key={option.label} src={option.img} alt={option.img} />

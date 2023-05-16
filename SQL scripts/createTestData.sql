@@ -137,10 +137,10 @@ INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (3, 1);
 INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (4, 1);
 INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (5, 2);
 INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (6, 2);
-INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (7, 3);
-INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (8, 4);
-INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (9, 5);
-INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (10, 6);
+--INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (7, 3);
+--INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (8, 4);
+--INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (9, 5);
+--INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (10, 6);
 
 INSERT INTO "LibraryOrders" ("libraryOrderCost", "libraryOrderDeliveryDate", "libraryOrderAmount", "libraryOrderDateOrdered", "libraryOrderPublisherID", "libraryOrderBookTitle", "libraryOrderISBN", "libraryOrderAuthorID", "libraryOrderStatusOrder", "libraryOrderManagerLibrarianID", "libraryOrderCurrencyID") 
 VALUES (24.99, '2023-05-05', 10, '2023-04-30', 1, 'The Great Gatsby', '978-1-718-26007-0', 1, 'order', 1, 1);

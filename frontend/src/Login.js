@@ -30,7 +30,12 @@ const Login = () => {
   useEffect(() => {
     let query = `SELECT "readerID" AS id, "readerEmail" AS username, 'Reader' AS role, "readerPassword" AS password FROM "Readers"
     UNION
-    SELECT "librarianID" AS id, "librarianEmail" AS username, 'Librarian' AS role, "librarianPassword" AS password FROM "Librarians";
+    SELECT "librarianID" AS id, "librarianEmail" AS username,
+        CASE
+            WHEN "librarianID" IN (SELECT "managerLibrarianID" FROM "Managers") THEN 'Manager'
+            ELSE 'Librarian'
+        END AS role,
+        "librarianPassword" AS password FROM "Librarians";
     `;
     axios
       .post(api, { query })
