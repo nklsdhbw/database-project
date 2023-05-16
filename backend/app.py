@@ -16,7 +16,7 @@ def run_query():
     query = request.json['query']
 
     conn = psycopg2.connect(
-        host="postgres",
+        host="localhost",
         port=5432   ,
         database="postgres",
         user="postgres",
