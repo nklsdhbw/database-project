@@ -65,17 +65,17 @@ VALUES
 ('Norwegian krone', 'NOK');
 
 
-INSERT INTO "Librarians" ("librarianFirstName", "librarianLastName", "librarianEmail", "librarianPhone", "librarianBirthDate")
-VALUES ('John', 'Doe', 'johndoe@example.com', '1234567890', '1990-01-01'),
-       ('Jane', 'Doe', 'janedoe@example.com', '1234567891', '1991-02-02'),
-       ('Bob', 'Smith', 'bobsmith@example.com', '1234567892', '1992-03-03'),
-       ('Alice', 'Smith', 'alicesmith@example.com', '1234567893', '1993-04-04'),
-       ('Mark', 'Johnson', 'markjohnson@example.com', '1234567894', '1994-05-05'),
-       ('Mary', 'Johnson', 'maryjohnson@example.com', '1234567895', '1995-06-06'),
-       ('Tom', 'Wilson', 'tomwilson@example.com', '1234567896', '1996-07-07'),
-       ('Emily', 'Wilson', 'emilywilson@example.com', '1234567897', '1997-08-08'),
-       ('David', 'Brown', 'davidbrown@example.com', '1234567898', '1998-09-09'),
-       ('Sarah', 'Brown', 'sarahbrown@example.com', '1234567899', '1999-10-10');
+INSERT INTO "Librarians" ("librarianFirstName", "librarianLastName", "librarianEmail", "librarianPhone", "librarianBirthDate", "librarianPassword")
+VALUES ('John', 'Doe', 'johndoe@example.com', '1234567890', '1990-01-01', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('Jane', 'Doe', 'janedoe@example.com', '1234567891', '1991-02-02', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('Bob', 'Smith', 'bobsmith@example.com', '1234567892', '1992-03-03', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('Alice', 'Smith', 'alicesmith@example.com', '1234567893', '1993-04-04', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('Mark', 'Johnson', 'markjohnson@example.com', '1234567894', '1994-05-05', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('Mary', 'Johnson', 'maryjohnson@example.com', '1234567895', '1995-06-06', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('Tom', 'Wilson', 'tomwilson@example.com', '1234567896', '1996-07-07', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('Emily', 'Wilson', 'emilywilson@example.com', '1234567897', '1997-08-08', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('David', 'Brown', 'davidbrown@example.com', '1234567898', '1998-09-09', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('Sarah', 'Brown', 'sarahbrown@example.com', '1234567899', '1999-10-10', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS');
 
 
 INSERT INTO "Publishers" ("publisherName", "publisherZipID", "publisherStreetName", "publisherHouseNumber", "publisherCountry", "publisherEmail", "publisherPhone")

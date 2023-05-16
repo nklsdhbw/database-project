@@ -55,7 +55,8 @@ CREATE TABLE "Librarians" (
     "librarianLastName" varchar(255),
     "librarianEmail" varchar(255),
     "librarianPhone" varchar(255),
-    "librarianBirthDate" DATE
+    "librarianBirthDate" DATE,
+    "librarianPassword" varchar(255)
 );
 
 
