@@ -26,6 +26,7 @@ const NavigationMenue = () => {
       formQuery: 'SELECT * FROM "Loans"',
       img: loansMmanagement,
       read: ["Manager", "Librarian"],
+      write: ["Manager", "Librarian"],
     },
     {
       label: "Manage my Loans",
@@ -38,6 +39,7 @@ const NavigationMenue = () => {
       )}`,
       img: loansMmanagement,
       read: ["Manager", "Librarian", "Reader"],
+      write: ["Manager", "Librarian"],
     },
     {
       label: "Manage personal data",
@@ -50,6 +52,7 @@ const NavigationMenue = () => {
       )}`,
       img: personalInformation,
       read: ["Manager", "Librarian", "Admin", "Reader"],
+      write: ["Manager", "Librarian", "Admin", "Reader"],
     },
     {
       label: "Manage library orders",
@@ -143,12 +146,17 @@ const NavigationMenue = () => {
     console.log(filteredActions[0]);
     const entryQuery = filteredActions[0].entryQuery;
     const formQuery = filteredActions[0].formQuery;
+    const createRecordPermission = filteredActions[0].write;
     console.log(entryQuery, "entryQuery");
     sessionStorage.setItem("tableQuery", entryQuery);
     sessionStorage.setItem("formQuery", formQuery);
     sessionStorage.setItem(
       "columnMapping",
       JSON.stringify(filteredActions[0].columnMapping)
+    );
+    sessionStorage.setItem(
+      "createRecordPermission",
+      createRecordPermission.includes(sessionStorage.getItem("role"))
     );
   }
 

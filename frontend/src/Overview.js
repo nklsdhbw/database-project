@@ -512,7 +512,10 @@ function Overview() {
         resultsWithIDs={resultsWithIDs}
       />
       <div>
-        <Button onClick={() => handleCreate() /*setShowModal(!showModal)}>*/}>
+        <Button
+          hidden={sessionStorage.getItem("createRecordPermission")}
+          onClick={() => handleCreate() /*setShowModal(!showModal)}>*/}
+        >
           Create New Record
         </Button>
         <CreateRecordModal
