@@ -307,14 +307,18 @@ function DataTable(props) {
                   : entry}
               </td>
             ))}
-            <td>
-              <Button
-                className="w-100 btn btn-lg btn-primary"
-                onClick={() => handleEdit(data)}
-              >
-                Edit
-              </Button>
-            </td>
+            {sessionStorage.getItem("hideEditButton") === "true"
+              ? true
+              : false && (
+                  <td>
+                    <Button
+                      className="w-100 btn btn-lg btn-primary"
+                      onClick={() => handleEdit(data)}
+                    >
+                      Edit
+                    </Button>
+                  </td>
+                )}
             <td>
               <Button
                 className="w-100 btn btn-lg btn-primary"

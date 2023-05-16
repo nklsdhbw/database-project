@@ -144,7 +144,7 @@ const NavigationMenue = () => {
       write: ["Manager", "Admin"],
     },
     {
-      label: "My Team",
+      label: "My team",
       table: "Teams",
       entryQuery: `SELECT 
       "librarianID" AS "ID", 
@@ -203,9 +203,15 @@ const NavigationMenue = () => {
     let entryQuery = filteredActions[0].entryQuery;
     let formQuery = filteredActions[0].formQuery;
     const createRecordPermission = filteredActions[0].write;
+    let hideEditButtonActions = ["Manage librarians", "My team"];
     if (option.label == "Manage personal data") {
       entryQuery = entryQuery[sessionStorage.getItem("role")];
       formQuery = formQuery[sessionStorage.getItem("role")];
+    }
+    if (hideEditButtonActions.includes(option.label)) {
+      sessionStorage.setItem("hideEditButton", true);
+    } else {
+      sessionStorage.setItem("hideEditButton", false);
     }
 
     console.log(entryQuery, "entryQuery");
