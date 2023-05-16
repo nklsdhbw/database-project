@@ -159,20 +159,14 @@ function CreateRecordModal(props) {
 
     let managerOrEmployeeQuery =
       data["Role"] == "Manager"
-        ? `UPDATE "Managers"
-  SET "managerTeamID" = ${data["employeeTeamID"].placeholder}
-  WHERE "managerLibrarianID" = (
-    SELECT "librarianID"
-    FROM "Librarians"
-    WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}'
-  );`
-        : `UPDATE "Employees"
-  SET "employeeTeamID" = ${data["employeeTeamID"].placeholder}
-  WHERE "employeeLibrarianID" = (
-    SELECT "librarianID"
-    FROM "Librarians"
-    WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}'
-  );`;
+        ? `INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID")
+        SELECT "librarianID", ${data["employeeTeamID"].placeholder}
+        FROM "Librarians"
+        WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}';`
+        : `INSERT INTO "Employees" ("employeeLibrarianID", "employeeTeamID")
+        SELECT "librarianID", ${data["employeeTeamID"].placeholder}
+        FROM "Librarians"
+        WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}';`;
 
     axios
       .post(api, {
