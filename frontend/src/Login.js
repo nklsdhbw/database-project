@@ -53,7 +53,7 @@ const Login = () => {
     let loginMail = formData.username;
     sessionStorage.setItem("loggedIn", JSON.stringify(false));
     let hashedPassword;
-    let readerID;
+    let userID;
     let role;
 
     //get readerID and hashePassword from User and store readerID in session storage
@@ -61,11 +61,12 @@ const Login = () => {
       console.log(element[1], formData.username);
       if (element[1] == formData.username) {
         hashedPassword = element[3];
-        readerID = element[0];
+        userID = element[0];
         role = element[2];
         if (element[2] == "Reader") {
-          sessionStorage.setItem("readerID", readerID);
+          sessionStorage.setItem("readerID", userID);
         }
+        sessionStorage.setItem("userID", userID);
       }
     });
 

@@ -73,6 +73,7 @@ function Overview() {
     Publishers: 0,
     LibraryOrders: 3,
     Readers: 0,
+    Librarians: 0,
   };
 
   //* Callback function //
@@ -207,6 +208,7 @@ function Overview() {
             query: sessionStorage.getItem("tableQuery"),
           })
           .then((results) => {
+            console.log(results.data[1], "results.data[1]");
             setResultsWithIDs(results.data[1]);
             let resultsWithoutIDs = Array.from(results.data[1]);
             resultsWithoutIDs.forEach((element, index) => {

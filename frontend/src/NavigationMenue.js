@@ -44,12 +44,30 @@ const NavigationMenue = () => {
     {
       label: "Manage personal data",
       table: "Readers",
-      entryQuery: `SELECT "readerID" AS "ID", "readerFirstName" AS "Firstname", "readerLastName" AS "Lastname", "readerEmail" AS "Email", "readerPassword" AS "Password" FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
-        "readerID"
-      )}`,
-      formQuery: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
-        "readerID"
-      )}`,
+      entryQuery: {
+        [`${sessionStorage.getItem(
+          "role"
+        )}`]: `SELECT "readerID" AS "ID", "readerFirstName" AS "Firstname", "readerLastName" AS "Lastname", "readerEmail" AS "Email", "readerPassword" AS "Password" FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
+          "readerID"
+        )}`,
+        [`${sessionStorage.getItem(
+          "role"
+        )}`]: `SELECT "librarianID" AS "ID", "librarianFirstName" AS "Firstname", "librarianLastName" AS "Lastname", "librarianEmail" AS "Email", "librarianPhone" AS "Phone", "librarianBirthDate" AS "Birth date", "librarianPassword" AS "Password" FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+          "userID"
+        )}`,
+      },
+      formQuery: {
+        [`${sessionStorage.getItem(
+          "role"
+        )}`]: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
+          "userID"
+        )}`,
+        [`${sessionStorage.getItem(
+          "role"
+        )}`]: `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+          "userID"
+        )}`,
+      },
       img: personalInformation,
       read: ["Manager", "Librarian", "Admin", "Reader"],
       write: ["Manager", "Librarian", "Admin", "Reader"],
@@ -140,16 +158,25 @@ const NavigationMenue = () => {
     navigate("/Overview");
     console.log(option);
     sessionStorage.setItem("table", option.table);
+    if (option.label == "Manage personal data") {
+      sessionStorage.setItem("table", sessionStorage.getItem("role") + "s");
+    }
     const filteredActions = Actions.filter(
       (action) => action.label === option.label
     );
     console.log(filteredActions[0]);
-    const entryQuery = filteredActions[0].entryQuery;
-    const formQuery = filteredActions[0].formQuery;
+    let entryQuery = filteredActions[0].entryQuery;
+    let formQuery = filteredActions[0].formQuery;
     const createRecordPermission = filteredActions[0].write;
+    if (option.label == "Manage personal data") {
+      entryQuery = entryQuery[sessionStorage.getItem("role")];
+      formQuery = formQuery[sessionStorage.getItem("role")];
+    }
+
     console.log(entryQuery, "entryQuery");
     sessionStorage.setItem("tableQuery", entryQuery);
     sessionStorage.setItem("formQuery", formQuery);
+
     sessionStorage.setItem(
       "columnMapping",
       JSON.stringify(filteredActions[0].columnMapping)
