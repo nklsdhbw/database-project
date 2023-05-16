@@ -158,3 +158,7 @@ INSERT INTO "LibraryOrders" ("libraryOrderCost", "libraryOrderDeliveryDate", "li
 VALUES (29.99, '2023-05-20', 3, '2023-04-30', 5, '1984', '978-0-14-118776-1', 5, 'order', 5, 1);
 
 
+INSERT INTO "Employees" ("employeeLibrarianID", "employeeTeamID") VALUES (7, 1);
+INSERT INTO "Employees" ("employeeLibrarianID", "employeeTeamID") VALUES (8, 1);
+INSERT INTO "Employees" ("employeeLibrarianID", "employeeTeamID") VALUES (9, 2);
+INSERT INTO "Employees" ("employeeLibrarianID", "employeeTeamID") VALUES (10, 2);

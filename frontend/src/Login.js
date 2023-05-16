@@ -28,14 +28,46 @@ const Login = () => {
 
   //let { isLoading, data } = useFetch("/api/login");
   useEffect(() => {
-    let query = `SELECT "readerID" AS id, "readerEmail" AS username, 'Reader' AS role, "readerPassword" AS password FROM "Readers"
+    let query = `SELECT
+    "id",
+    "username",
+    "role",
+    "password",
+    "teamID" AS "Team ID"
+  FROM (
+    SELECT
+      "readerID" AS id,
+      "readerEmail" AS username,
+      'Reader' AS role,
+      "readerPassword" AS password,
+      NULL AS "teamID"
+    FROM
+      "Readers"
     UNION
-    SELECT "librarianID" AS id, "librarianEmail" AS username,
-        CASE
-            WHEN "librarianID" IN (SELECT "managerLibrarianID" FROM "Managers") THEN 'Manager'
-            ELSE 'Librarian'
-        END AS role,
-        "librarianPassword" AS password FROM "Librarians";
+    SELECT
+      "librarianID" AS id,
+      "librarianEmail" AS username,
+      CASE
+        WHEN "librarianID" IN (SELECT "managerLibrarianID" FROM "Managers") THEN 'Manager'
+        WHEN "librarianID" IN (SELECT "employeeLibrarianID" FROM "Employees") THEN 'Employee'
+        ELSE 'Librarian'
+      END AS role,
+      "librarianPassword" AS password,
+      CASE
+        WHEN "librarianID" IN (SELECT "managerLibrarianID" FROM "Managers") THEN (
+          SELECT "managerTeamID" FROM "Managers" WHERE "managerLibrarianID" = "Librarians"."librarianID"
+        )
+        WHEN "librarianID" IN (SELECT "employeeLibrarianID" FROM "Employees") THEN (
+          SELECT "employeeTeamID" FROM "Employees" WHERE "employeeLibrarianID" = "Librarians"."librarianID"
+        )
+        ELSE NULL
+      END AS "teamID"
+    FROM
+      "Librarians"
+    ) AS users
+  ORDER BY
+    id;
+  
     `;
     axios
       .post(api, { query })
@@ -55,6 +87,7 @@ const Login = () => {
     let hashedPassword;
     let userID;
     let role;
+    let teamID;
 
     //get readerID and hashePassword from User and store readerID in session storage
     results.forEach((element) => {
@@ -63,6 +96,7 @@ const Login = () => {
         hashedPassword = element[3];
         userID = element[0];
         role = element[2];
+        teamID = element[4];
         if (element[2] == "Reader") {
           sessionStorage.setItem("readerID", userID);
         }
@@ -77,6 +111,7 @@ const Login = () => {
       sessionStorage.setItem("loggedIn", JSON.stringify(true));
       sessionStorage.setItem("loginMail", loginMail);
       sessionStorage.setItem("role", role);
+      sessionStorage.setItem("teamID", teamID);
       navigate("/NavigationMenue");
     } else {
       window.alert("Wrong password or username. Please try again.");

@@ -7,5 +7,5 @@ CREATE TABLE "Librarians" (
     "librarianEmail" varchar(255),
     "librarianPhone" varchar(255),
     "librarianBirthDate" DATE,
-    "librarianPassword" varchar(255)
+    "librarianPassword" varchar(255),
 )

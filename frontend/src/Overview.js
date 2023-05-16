@@ -74,6 +74,7 @@ function Overview() {
     LibraryOrders: 3,
     Readers: 0,
     Librarians: 0,
+    Teams: 0,
   };
 
   //* Callback function //
@@ -344,16 +345,29 @@ function Overview() {
   }, []);
 
   function deleteEntry(rowID) {
-    axios
-      .post(api, {
-        query: `DELETE FROM public."${selectedTable}" WHERE "${uniqueColumn}" = ${rowID}`,
-      })
-      .then((response) => {
-        setUpdateData(!updateData);
-      })
-      .catch((error) => {
-        console.log("ERROR : ", error);
-      });
+    if (selectedTable == "Teams") {
+      axios
+        .post(api, {
+          query: `UPDATE public."Employees" SET "employeeTeamID" = NULL WHERE "employeeLibrarianID" = ${rowID}`,
+        })
+        .then((response) => {
+          setUpdateData(!updateData);
+        })
+        .catch((error) => {
+          console.log("ERROR : ", error);
+        });
+    } else {
+      axios
+        .post(api, {
+          query: `DELETE FROM public."${selectedTable}" WHERE "${uniqueColumn}" = ${rowID}`,
+        })
+        .then((response) => {
+          setUpdateData(!updateData);
+        })
+        .catch((error) => {
+          console.log("ERROR : ", error);
+        });
+    }
   }
 
   function convertIntoBook(header, data) {

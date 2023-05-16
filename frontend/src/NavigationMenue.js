@@ -26,8 +26,8 @@ const NavigationMenue = () => {
       entryQuery: 'SELECT * FROM "allLoans"',
       formQuery: 'SELECT * FROM "Loans"',
       img: loansMmanagement,
-      read: ["Manager", "Librarian"],
-      write: ["Manager", "Librarian"],
+      read: ["Manager", "Employee"],
+      write: ["Manager", "Employee"],
     },
     {
       label: "Manage my Loans",
@@ -39,8 +39,8 @@ const NavigationMenue = () => {
         "readerID"
       )}`,
       img: loansMmanagement,
-      read: ["Manager", "Librarian", "Reader"],
-      write: ["Manager", "Librarian"],
+      read: ["Manager", "Employee", "Reader"],
+      write: ["Manager", "Employee"],
     },
     {
       label: "Manage personal data",
@@ -70,8 +70,8 @@ const NavigationMenue = () => {
         )}`,
       },
       img: personalInformation,
-      read: ["Manager", "Librarian", "Admin", "Reader"],
-      write: ["Manager", "Librarian", "Admin", "Reader"],
+      read: ["Manager", "Employee", "Admin", "Reader"],
+      write: ["Manager", "Employee", "Admin", "Reader"],
     },
     {
       label: "Manage library orders",
@@ -99,7 +99,7 @@ const NavigationMenue = () => {
   JOIN "Currencies" c ON lo."libraryOrderCurrencyID" = c."currencyID"
   JOIN "Librarians" l ON lo."libraryOrderManagerLibrarianID" = l."librarianID";`,
       img: orderManagement,
-      read: ["Manager", "admin", "Librarian"],
+      read: ["Manager", "admin", "Employee"],
       write: ["Manager", "admin"],
     },
     {
@@ -131,7 +131,7 @@ const NavigationMenue = () => {
         publisherPhone: "Phone",
       },
       img: supplierManagement,
-      read: ["Librarian"],
+      read: ["Employee", "Manager"],
       write: ["Manager", "admin"],
     },
     {
@@ -140,7 +140,29 @@ const NavigationMenue = () => {
       entryQuery: `SELECT "librarianID" AS "ID", "librarianFirstName" AS "Firstname", "librarianLastName" AS "Lastname", "librarianEmail" AS "Email", "librarianPhone" AS "Phone", "librarianBirthDate" AS "Birth date" FROM "Librarians" `,
       formQuery: `SELECT "librarianID", "librarianFirstName", "librarianLastName", "librarianEmail", "librarianPhone", "librarianBirthDate" FROM "Librarians"`,
       img: employeeManagement,
-      read: ["Manager", "Librarian", "Reader", "Admin"],
+      read: ["Manager", "Employee", "Reader", "Admin"],
+      write: ["Manager", "Admin"],
+    },
+    {
+      label: "My Team",
+      table: "Teams",
+      entryQuery: `SELECT 
+      "librarianID" AS "ID", 
+      "librarianFirstName" AS "Firstname", 
+      "librarianLastName" AS "Lastname", 
+      "librarianEmail" AS "Email", 
+      "librarianPhone" AS "Phone", 
+      "librarianBirthDate" AS "Birth date",
+      "employeeTeamID" AS "Team ID"
+    FROM 
+      "Teams" t
+    JOIN "Employees" e ON e."employeeTeamID" = t."teamID"
+    JOIN "Librarians" l ON "employeeLibrarianID" = l."librarianID"
+    WHERE "teamID" = ${sessionStorage.getItem("teamID")};
+    `,
+      formQuery: `SELECT * FROM "Teams"`,
+      img: employeeManagement,
+      read: ["Manager", "Employee", "Reader", "Admin"],
       write: ["Manager", "Admin"],
     },
     // add employee mngmg
@@ -168,7 +190,11 @@ const NavigationMenue = () => {
     console.log(option);
     sessionStorage.setItem("table", option.table);
     if (option.label == "Manage personal data") {
-      sessionStorage.setItem("table", sessionStorage.getItem("role") + "s");
+      if (sessionStorage.getItem("role") == "Reader") {
+        sessionStorage.setItem("table", sessionStorage.getItem("role") + "s");
+      } else {
+        sessionStorage.setItem("table", "Librarians");
+      }
     }
     const filteredActions = Actions.filter(
       (action) => action.label === option.label
