@@ -43,6 +43,8 @@ function CreateRecordModal(props) {
     console.log(formData);
     if (selectedTable == "Teams") {
       addTeamMember(formData);
+    } else if (selectedTable == "Librarians") {
+      createNewEmployee(formData);
     } else {
       if (formData.librarianPassword) {
         // Hash the password using bcryptjs
@@ -121,6 +123,79 @@ function CreateRecordModal(props) {
       });
   }
 
+  function createNewEmployee(data) {
+    // Hash the password using bcryptjs
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(data.librarianPassword.placeholder, salt, (err, hash) => {
+        // Update the formData with the hashed password
+        data.librarianPassword.placeholder = hash;
+      });
+    });
+
+    function sliceObjectByIndex(obj, n) {
+      const keys = Object.keys(obj);
+      const slicedKeys = keys.slice(0, n);
+      return Object.fromEntries(slicedKeys.map((key) => [key, obj[key]]));
+    }
+    const slicedObject = sliceObjectByIndex(data, 6);
+
+    let valuesString = "VALUES(";
+    let columnsString = "";
+
+    let values = Object.entries(slicedObject).map(
+      ([key, value]) =>
+        (valuesString = valuesString + `'${value.placeholder}',`)
+    );
+    let columns = Object.entries(slicedObject).map(
+      ([key, value]) => (columnsString = columnsString + `"${key}",`)
+    );
+    console.log(valuesString, columnsString);
+    let librariansQuery =
+      `INSERT INTO public."${selectedTable}" (${columnsString.slice(
+        0,
+        columnsString.length - 1
+      )})` + `${valuesString.slice(0, valuesString.length - 1)}) `;
+    console.log(data);
+
+    let managerOrEmployeeQuery =
+      data["Role"] == "Manager"
+        ? `UPDATE "Managers"
+  SET "managerTeamID" = ${data["employeeTeamID"].placeholder}
+  WHERE "managerLibrarianID" = (
+    SELECT "librarianID"
+    FROM "Librarians"
+    WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}'
+  );`
+        : `UPDATE "Employees"
+  SET "employeeTeamID" = ${data["employeeTeamID"].placeholder}
+  WHERE "employeeLibrarianID" = (
+    SELECT "librarianID"
+    FROM "Librarians"
+    WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}'
+  );`;
+
+    axios
+      .post(api, {
+        query: librariansQuery,
+      })
+      .then((response) => {
+        axios
+          .post(api, {
+            query: managerOrEmployeeQuery,
+          })
+          .then((response) => {
+            setUpdateData(!updateData);
+            setShowModal(!showModal);
+          })
+          .catch((error) => {
+            console.log("ERROR : ", error);
+          });
+      })
+      .catch((error) => {
+        console.log("ERROR : ", error);
+      });
+  }
+
   function addEntry(data) {
     let valuesString = "VALUES(";
     let columnsString = "";
@@ -158,18 +233,31 @@ function CreateRecordModal(props) {
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
           {Object.entries(formData).map(([key, value], index) => (
-            <Form.Group controlId={`${String(key)}`} key={index}>
-              <Form.Label>{`${String(key)}`}</Form.Label>
-
-              <Form.Control
-                name={key}
-                value={formData[key]["placeholder"]}
-                onChange={handleInputChange}
-                required
-                type={datatypes[index]}
-              />
+            <Form.Group controlId={String(key)} key={index}>
+              <Form.Label>{String(key)}</Form.Label>
+              {datatypes[index] === "option" ? (
+                <Form.Control
+                  as="select"
+                  name={key}
+                  value={value.placeholder}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="Manager">Manager</option>
+                  <option value="Employee">Employee</option>
+                </Form.Control>
+              ) : (
+                <Form.Control
+                  name={key}
+                  value={value.placeholder}
+                  onChange={handleInputChange}
+                  required
+                  type={datatypes[index]}
+                />
+              )}
             </Form.Group>
           ))}
+
           <Button type="submit">Create</Button>
           {showSearchBookButton && (
             <Button onClick={handleBook}>Search Book</Button>
@@ -192,6 +280,7 @@ function CreateRecordModal(props) {
           {showSearchEmployeeButton && (
             <Button onClick={handleEmployee}>Search Employee</Button>
           )}
+
           <Button hidden={hidePublisherButton} onClick={handlePublisher}>
             Search Publisher
           </Button>

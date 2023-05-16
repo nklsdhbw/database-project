@@ -223,7 +223,7 @@ function Overview() {
 
         // set formData/editData
         datatypes = filteredArr;
-
+        console.log(sessionStorage.getItem("tableQuery"));
         axios
           .post(api, {
             query: sessionStorage.getItem("tableQuery"),
@@ -258,6 +258,7 @@ function Overview() {
                 let cols = results.data[0];
                 const newFormData = {};
                 // columns without id row
+                console.log(cols, "cols");
                 cols = cols.slice(1, cols.length);
                 console.log("COLS", cols);
                 let prefillDateColumns = [
@@ -312,6 +313,24 @@ function Overview() {
                   console.log(teamsFormData);
                   setEditData(teamsFormData);
                   setDatatypes(["number", "number"]);
+                } else if (selectedTable == "Librarians") {
+                  newFormData["employeeTeamID"] = {
+                    type: "number",
+                    required: true,
+                    placeholder: undefined,
+                  };
+                  newFormData["Role"] = {
+                    type: "option",
+                    required: true,
+                    placeholder: undefined,
+                  };
+
+                  setFormData(newFormData);
+                  console.log(newFormData);
+                  setEditData(newFormData);
+                  let tempDatatypes = Array.from(datatypes);
+                  tempDatatypes.push("number", "option");
+                  setDatatypes(tempDatatypes);
                 } else {
                   setFormData(newFormData);
                   console.log(newFormData);
@@ -360,6 +379,9 @@ function Overview() {
     if (selectedTable == "Teams") {
       setShowSearchTeamButton(true);
       setShowSearchEmployeeButton(true);
+    }
+    if (selectedTable == "Librarians") {
+      setShowSearchTeamButton(true);
     }
     setShowConvertOrderIntoBookButton(
       selectedTable == "LibraryOrders" ? true : false
