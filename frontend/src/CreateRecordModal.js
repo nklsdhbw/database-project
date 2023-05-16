@@ -1,6 +1,7 @@
 import React from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
+import bcrypt from "bcryptjs";
 
 function CreateRecordModal(props) {
   const {
@@ -33,12 +34,41 @@ function CreateRecordModal(props) {
     });
   };
 
+  const bcrypt = require("bcryptjs");
+
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(formData);
-    addEntry(formData);
-    setUpdateData(!updateData);
-    setShowModal(!showModal);
+
+    if (formData.librarianPassword) {
+      // Hash the password using bcryptjs
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(
+          formData.librarianPassword.placeholder,
+          salt,
+          (err, hash) => {
+            // Update the formData with the hashed password
+            const updatedFormData = {
+              ...formData,
+              librarianPassword: {
+                ...formData.librarianPassword,
+                placeholder: hash,
+              },
+            };
+
+            // Call addEntry with the updated formData
+            addEntry(updatedFormData);
+            setUpdateData(!updateData);
+            setShowModal(!showModal);
+          }
+        );
+      });
+    } else {
+      // Call addEntry with the original formData
+      addEntry(formData);
+      setUpdateData(!updateData);
+      setShowModal(!showModal);
+    }
   };
 
   function handlePublisher() {

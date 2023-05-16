@@ -515,7 +515,7 @@ function Overview() {
       />
       <div>
         <Button
-          hidden={sessionStorage.getItem("createRecordPermission")}
+          hidden={!sessionStorage.getItem("createRecordPermission")}
           onClick={() => handleCreate() /*setShowModal(!showModal)}>*/}
         >
           Create New Record

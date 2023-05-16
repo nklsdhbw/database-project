@@ -13,6 +13,7 @@ import loansMmanagement from "./img/loans_management.svg";
 import orderManagement from "./img/order_management.svg";
 import personalInformation from "./img/personal_information.svg";
 import supplierManagement from "./img/supplier_management.svg";
+import employeeManagement from "./img/employee_management.svg";
 
 // import required css
 //import 'bootstrap/dist/css/bootstrap.min.css';
@@ -132,7 +133,15 @@ const NavigationMenue = () => {
       img: supplierManagement,
       read: ["Librarian"],
       write: ["Manager", "admin"],
-      //read: ['manager'] for creating objects
+    },
+    {
+      label: "Manage librarians",
+      table: "Librarians",
+      entryQuery: `SELECT "librarianID" AS "ID", "librarianFirstName" AS "Firstname", "librarianLastName" AS "Lastname", "librarianEmail" AS "Email", "librarianPhone" AS "Phone", "librarianBirthDate" AS "Birth date" FROM "Librarians" `,
+      formQuery: `SELECT "librarianID", "librarianFirstName", "librarianLastName", "librarianEmail", "librarianPhone", "librarianBirthDate" FROM "Librarians"`,
+      img: employeeManagement,
+      read: ["Manager", "Librarian", "Reader", "Admin"],
+      write: ["Manager", "Admin"],
     },
     // add employee mngmg
     //read: ['manager', 'employee', 'admin']
