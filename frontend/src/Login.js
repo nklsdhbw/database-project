@@ -28,7 +28,10 @@ const Login = () => {
 
   //let { isLoading, data } = useFetch("/api/login");
   useEffect(() => {
-    let query = 'SELECT * FROM public."Readers"';
+    let query = `SELECT "readerID" AS id, "readerEmail" AS username, 'Reader' AS role, "readerPassword" AS password FROM "Readers"
+    UNION
+    SELECT "librarianID" AS id, "librarianEmail" AS username, 'Librarian' AS role, "librarianPassword" AS password FROM "Librarians";
+    `;
     axios
       .post(api, { query })
       .then((response) => {
@@ -46,14 +49,18 @@ const Login = () => {
     sessionStorage.setItem("loggedIn", JSON.stringify(false));
     let hashedPassword;
     let readerID;
+    let role;
 
     //get readerID and hashePassword from User and store readerID in session storage
     results.forEach((element) => {
-      console.log(element[3], formData.username);
-      if (element[3] == formData.username) {
-        hashedPassword = element[4];
+      console.log(element[1], formData.username);
+      if (element[1] == formData.username) {
+        hashedPassword = element[3];
         readerID = element[0];
-        sessionStorage.setItem("readerID", readerID);
+        role = element[2];
+        if (element[2] == "Reader") {
+          sessionStorage.setItem("readerID", readerID);
+        }
       }
     });
 
@@ -63,6 +70,7 @@ const Login = () => {
     if (passwordsMatch) {
       sessionStorage.setItem("loggedIn", JSON.stringify(true));
       sessionStorage.setItem("loginMail", loginMail);
+      sessionStorage.setItem("role", role);
       navigate("/NavigationMenue");
     } else {
       window.alert("Wrong password or username. Please try again.");
