@@ -11,28 +11,35 @@ const fetchUsers = async () => {
   let inputColumns;
   let data;
   let table = sessionStorage.getItem("searchTable");
+  let dataQuery = `SELECT * FROM public."${table}"`;
+  if (table == "Employees") {
+    dataQuery = `SELECT 
+    "librarianID", 
+    "librarianFirstName", 
+    "librarianLastName", 
+    "librarianEmail", 
+    "librarianPhone", 
+    "librarianBirthDate"
+     FROM public."Librarians" 
+    JOIN "Employees" ON "employeeLibrarianID" = "librarianID"
+    WHERE "employeeTeamID" IS NULL`;
+  }
+
+  console.log(dataQuery);
+
   console.log("SEARCH TABLE", table);
   const api = "http://localhost:5000/run-query";
   //if (sessionStorage.getItem("showPublisher") == "true") {
   //  table = "Publishers";
   //}
   console.log("FETCH USERS");
-  await axios
-    .post(api, {
-      query: `SELECT column_name FROM information_schema.columns  WHERE table_name = '${table}' AND table_schema = 'public'`,
-    })
-    .then((columns) => {
-      inputColumns = columns.data[1].flat();
-    })
-    .catch((error) => {
-      console.log(error);
-    });
 
   await axios
     .post("http://localhost:5000/run-query", {
-      query: `SELECT * FROM public."${table}"`,
+      query: dataQuery,
     })
     .then((response) => {
+      inputColumns = response.data[0];
       console.log(response.data);
       let data2 = response.data[1];
       console.log(data2);

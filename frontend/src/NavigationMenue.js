@@ -160,7 +160,7 @@ const NavigationMenue = () => {
     JOIN "Librarians" l ON "employeeLibrarianID" = l."librarianID"
     WHERE "teamID" = ${sessionStorage.getItem("teamID")};
     `,
-      formQuery: `SELECT * FROM "Teams"`,
+      formQuery: `SELECT 'dummy', "employeeTeamID", "employeeLibrarianID", 'dummy2' FROM "Employees"`,
       img: employeeManagement,
       read: ["Manager", "Employee", "Reader", "Admin"],
       write: ["Manager", "Admin"],

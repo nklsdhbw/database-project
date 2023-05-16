@@ -23,6 +23,8 @@ function CreateRecordModal(props) {
     selectedTable,
     showSearchZipButton,
     showSearchCurrencyButton,
+    showSearchTeamButton,
+    showSearchEmployeeButton,
   } = props;
 
   // event handler
@@ -39,35 +41,38 @@ function CreateRecordModal(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(formData);
-
-    if (formData.librarianPassword) {
-      // Hash the password using bcryptjs
-      bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(
-          formData.librarianPassword.placeholder,
-          salt,
-          (err, hash) => {
-            // Update the formData with the hashed password
-            const updatedFormData = {
-              ...formData,
-              librarianPassword: {
-                ...formData.librarianPassword,
-                placeholder: hash,
-              },
-            };
-
-            // Call addEntry with the updated formData
-            addEntry(updatedFormData);
-            setUpdateData(!updateData);
-            setShowModal(!showModal);
-          }
-        );
-      });
+    if (selectedTable == "Teams") {
+      addTeamMember(formData);
     } else {
-      // Call addEntry with the original formData
-      addEntry(formData);
-      setUpdateData(!updateData);
-      setShowModal(!showModal);
+      if (formData.librarianPassword) {
+        // Hash the password using bcryptjs
+        bcrypt.genSalt(10, (err, salt) => {
+          bcrypt.hash(
+            formData.librarianPassword.placeholder,
+            salt,
+            (err, hash) => {
+              // Update the formData with the hashed password
+              const updatedFormData = {
+                ...formData,
+                librarianPassword: {
+                  ...formData.librarianPassword,
+                  placeholder: hash,
+                },
+              };
+
+              // Call addEntry with the updated formData
+              addEntry(updatedFormData);
+              setUpdateData(!updateData);
+              setShowModal(!showModal);
+            }
+          );
+        });
+      } else {
+        // Call addEntry with the original formData
+        addEntry(formData);
+        setUpdateData(!updateData);
+        setShowModal(!showModal);
+      }
     }
   };
 
@@ -96,6 +101,24 @@ function CreateRecordModal(props) {
   function handleCurrency() {
     sessionStorage.setItem("searchTable", "Currencies");
     setshowSearch(!showSearch);
+  }
+  function handleTeam() {
+    sessionStorage.setItem("searchTable", "Teams");
+    setshowSearch(!showSearch);
+  }
+  function handleEmployee() {
+    sessionStorage.setItem("searchTable", "Employees");
+    setshowSearch(!showSearch);
+  }
+
+  function addTeamMember(data) {
+    axios
+      .post(api, {
+        query: `UPDATE "Employees" SET "employeeTeamID" = ${data["employeeTeamID"].placeholder} WHERE "employeeLibrarianID" = ${data["employeeLibrarianID"].placeholder}`,
+      })
+      .then((response) => {
+        setUpdateData(!updateData);
+      });
   }
 
   function addEntry(data) {
@@ -162,6 +185,12 @@ function CreateRecordModal(props) {
           )}
           {showSearchCurrencyButton && (
             <Button onClick={handleCurrency}>Search Currency</Button>
+          )}
+          {showSearchTeamButton && (
+            <Button onClick={handleTeam}>Search Team</Button>
+          )}
+          {showSearchEmployeeButton && (
+            <Button onClick={handleEmployee}>Search Employee</Button>
           )}
           <Button hidden={hidePublisherButton} onClick={handlePublisher}>
             Search Publisher

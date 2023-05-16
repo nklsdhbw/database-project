@@ -45,6 +45,9 @@ function Overview() {
   const [showSearchBookButton, setShowSearchBookButton] = useState(false);
   const [showSearchManagerButton, setShowSearchManagerButton] = useState(false);
   const [showSearchZipButton, setShowSearchZipButton] = useState(false);
+  const [showSearchTeamButton, setShowSearchTeamButton] = useState(false);
+  const [showSearchEmployeeButton, setShowSearchEmployeeButton] =
+    useState(false);
   const [showSearchCurrencyButton, setShowSearchCurrencyButton] =
     useState(false);
   const [showConvertOrderIntoBookButton, setShowConvertOrderIntoBookButton] =
@@ -119,6 +122,22 @@ function Overview() {
         }
         if (key == "currencyID" && selectedTable == "LibraryOrders") {
           formDataKey = "libraryOrderCurrencyID";
+        }
+        if (key == "currencyID" && selectedTable == "LibraryOrders") {
+          formDataKey = "libraryOrderCurrencyID";
+        }
+
+        if (
+          key == "librarianID" &&
+          sessionStorage.getItem("searchTable") == "Employees"
+        ) {
+          formDataKey = "employeeLibrarianID";
+        }
+        if (
+          key == "teamID" &&
+          sessionStorage.getItem("searchTable") == "Teams"
+        ) {
+          formDataKey = "employeeTeamID";
         }
 
         if (
@@ -204,6 +223,7 @@ function Overview() {
 
         // set formData/editData
         datatypes = filteredArr;
+
         axios
           .post(api, {
             query: sessionStorage.getItem("tableQuery"),
@@ -274,9 +294,29 @@ function Overview() {
                     };
                   }
                 });
-                setFormData(newFormData);
-                console.log(newFormData);
-                setEditData(newFormData);
+
+                if (selectedTable == "Teams") {
+                  let teamsFormData = {
+                    employeeTeamID: {
+                      type: "number",
+                      required: true,
+                      placeholder: undefined,
+                    },
+                    employeeLibrarianID: {
+                      type: "number",
+                      required: true,
+                      placeholder: undefined,
+                    },
+                  };
+                  setFormData(teamsFormData);
+                  console.log(teamsFormData);
+                  setEditData(teamsFormData);
+                  setDatatypes(["number", "number"]);
+                } else {
+                  setFormData(newFormData);
+                  console.log(newFormData);
+                  setEditData(newFormData);
+                }
               });
           })
           .catch((error) => {
@@ -293,6 +333,9 @@ function Overview() {
     setHidePublisherButton(true);
     setShowSearchManagerButton(false);
     setShowSearchZipButton(false);
+    setShowSearchTeamButton(false);
+    setShowSearchCurrencyButton(false);
+    setShowSearchEmployeeButton(false);
     if (selectedTable == "Books") {
       setShowSearchAuthorButton(true);
       setHidePublisherButton(false);
@@ -313,6 +356,10 @@ function Overview() {
     }
     if (selectedTable == "Publishers") {
       setShowSearchZipButton(true);
+    }
+    if (selectedTable == "Teams") {
+      setShowSearchTeamButton(true);
+      setShowSearchEmployeeButton(true);
     }
     setShowConvertOrderIntoBookButton(
       selectedTable == "LibraryOrders" ? true : false
@@ -544,6 +591,8 @@ function Overview() {
           showSearchManagerButton={showSearchManagerButton}
           hidePublisherButton={hidePublisherButton}
           showSearchZipButton={showSearchZipButton}
+          showSearchTeamButton={showSearchTeamButton}
+          showSearchEmployeeButton={showSearchEmployeeButton}
           showSearchCurrencyButton={showSearchCurrencyButton}
           setShowModal={setShowModal}
           setFormData={setFormData}
