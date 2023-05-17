@@ -1,7 +1,6 @@
 import React from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
-import bcrypt from "bcryptjs";
 
 function CreateRecordModal(props) {
   const {
@@ -41,9 +40,9 @@ function CreateRecordModal(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(formData);
-    if (selectedTable == "Teams") {
+    if (selectedTable === "Teams") {
       addTeamMember(formData);
-    } else if (selectedTable == "Librarians") {
+    } else if (selectedTable === "Librarians") {
       createNewEmployee(formData);
     } else {
       if (formData.librarianPassword) {

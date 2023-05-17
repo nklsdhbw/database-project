@@ -3,7 +3,6 @@ import * as React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import useFetch from "react-fetch-hook";
 import "bootstrap/dist/css/bootstrap.min.css";
 import bcrypt from "bcryptjs";
 import axios from "axios";
@@ -92,12 +91,12 @@ const Login = () => {
     //get readerID and hashePassword from User and store readerID in session storage
     results.forEach((element) => {
       console.log(element[1], formData.username);
-      if (element[1] == formData.username) {
+      if (element[1] === formData.username) {
         hashedPassword = element[3];
         userID = element[0];
         role = element[2];
         teamID = element[4];
-        if (element[2] == "Reader") {
+        if (element[2] === "Reader") {
           sessionStorage.setItem("readerID", userID);
         }
         sessionStorage.setItem("userID", userID);

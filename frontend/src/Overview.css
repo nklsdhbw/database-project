@@ -1,0 +1,26 @@
+/* styles.css */
+.table-container {
+    margin: 0 auto;
+    max-width: calc(100% - 1cm);
+    border-radius: 7px;
+    overflow: hidden;
+  }
+  
+  .delete-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+  
+  .add-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+  
+  .edit-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+  
