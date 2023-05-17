@@ -1,20 +1,13 @@
 // import libraries
 import * as React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import useFetch from "react-fetch-hook";
-import { Modal, Form, Button, ModalBody } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import bcrypt from "bcryptjs";
-import axios from "axios";
-import Overview from "./Overview";
 import loansMmanagement from "./img/loans_management.svg";
 import orderManagement from "./img/order_management.svg";
 import personalInformation from "./img/personal_information.svg";
 import supplierManagement from "./img/supplier_management.svg";
 import employeeManagement from "./img/employee_management.svg";
-import './dashboard.css'
+import "./dashboard.css";
 
 // import required css
 //import 'bootstrap/dist/css/bootstrap.min.css';
@@ -208,8 +201,8 @@ const NavigationMenue = () => {
     navigate("/Overview");
     console.log(option);
     sessionStorage.setItem("table", option.table);
-    if (option.label == "Manage personal data") {
-      if (sessionStorage.getItem("role") == "Reader") {
+    if (option.label === "Manage personal data") {
+      if (sessionStorage.getItem("role") === "Reader") {
         sessionStorage.setItem("table", sessionStorage.getItem("role") + "s");
       } else {
         sessionStorage.setItem("table", "Librarians");
@@ -223,7 +216,7 @@ const NavigationMenue = () => {
     let formQuery = filteredActions[0].formQuery;
     const createRecordPermission = filteredActions[0].write;
     let hideEditButtonActions = ["Manage librarians", "My team"];
-    if (option.label == "Manage personal data") {
+    if (option.label === "Manage personal data") {
       entryQuery = entryQuery[sessionStorage.getItem("role")];
       formQuery = formQuery[sessionStorage.getItem("role")];
     }
@@ -252,17 +245,24 @@ const NavigationMenue = () => {
       <h1>My Dashboard</h1>
       <div className="container">
         {filteredActions.map((option) => (
-          <button className="button" key={option.label} onClick={() => handleClick(option)}>
+          <button
+            className="button"
+            key={option.label}
+            onClick={() => handleClick(option)}
+          >
             <img key={option.label} src={option.img} alt={option.label} />
             {option.label}
           </button>
         ))}
       </div>
       <footer>
-      <p>This website was developed as a project at the DHBW Mannheim by Niklas, Luca, and Aref.</p>
-    </footer>
+        <p>
+          This website was developed as a project at the DHBW Mannheim by
+          Niklas, Luca, and Aref.
+        </p>
+      </footer>
     </div>
-  )
-};  // Schließende Klammer fehlte hier
+  );
+}; // Schließende Klammer fehlte hier
 
 export default NavigationMenue;

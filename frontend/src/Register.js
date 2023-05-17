@@ -2,8 +2,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Form from "react-bootstrap/Form";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import bcrypt from "bcryptjs";
 import axios from "axios";
 import "./Login.css";
@@ -52,7 +51,6 @@ const Register = () => {
     //const password = registerData.password;
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const fullName = registerData.firstname + " " + registerData.lastname;
     const email = registerData.eMail;
     console.log(existingUsers);
     for (let i = 0; i < existingUsers.length; i++) {
@@ -87,7 +85,7 @@ const Register = () => {
               //get readerID from User and save it in sessionStorage
               console.log(results);
               results.forEach((element) => {
-                if (element[3] == registerData.eMail) {
+                if (element[3] === registerData.eMail) {
                   let readerID = element[0];
                   sessionStorage.setItem("readerID", readerID);
                   navigate("/NavigationMenue");

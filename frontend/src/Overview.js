@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
-import { Modal, Form, Button, ModalBody } from "react-bootstrap";
+import { Modal, ModalBody } from "react-bootstrap";
 import axios from "axios";
-import Table from "react-bootstrap/Table";
 import { useNavigate } from "react-router-dom";
 import TableSearch from "./TableSearch";
-import bcrypt from "bcryptjs";
 import DataTable from "./DataTable.js";
 import CreateRecordModal from "./CreateRecordModal";
 import EditRecordModal from "./EditRecordModal";
@@ -23,7 +21,6 @@ function Overview() {
     "zipID",
     "currencyID",
   ];
-  const BUTTON_TABLES = ["Loans", "Books", "LibraryOrders"];
   const navigate = useNavigate();
   // general variables
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
@@ -84,59 +81,59 @@ function Overview() {
   //* Callback function //
   const callThisFromChildComponent = (data) => {
     console.log("Data from Child component:", data);
-    if (data == "closePanel") {
+    if (data === "closePanel") {
       setshowSearch(!showSearch);
     } else {
       let input = data;
       const updatedFormData = { ...formData };
       Object.keys(input).forEach((key) => {
         let formDataKey = key;
-        if (key == "bookID") {
+        if (key === "bookID") {
           formDataKey = "loanBookID";
         }
-        if (key == "authorID" && selectedTable == "Books") {
+        if (key === "authorID" && selectedTable === "Books") {
           formDataKey = "bookAuthorID";
         }
-        if (key == "authorName") {
+        if (key === "authorName") {
           formDataKey = "bookAuthor";
         }
-        if (key == "publisherID" && selectedTable == "Books") {
+        if (key === "publisherID" && selectedTable === "Books") {
           formDataKey = "bookPublisherID";
         }
-        if (key == "publisherName") {
+        if (key === "publisherName") {
           formDataKey = "bookPublisherName";
         }
-        if (key == "publisherID" && selectedTable == "LibraryOrders") {
+        if (key === "publisherID" && selectedTable === "LibraryOrders") {
           formDataKey = "libraryOrderPublisherID";
         }
-        if (key == "authorID" && selectedTable == "LibraryOrders") {
+        if (key === "authorID" && selectedTable === "LibraryOrders") {
           formDataKey = "libraryOrderAuthorID";
         }
-        if (key == "managerID" && selectedTable == "LibraryOrders") {
+        if (key === "managerID" && selectedTable === "LibraryOrders") {
           formDataKey = "libraryOrderManagerLibrarianID";
         }
-        if (key == "zipID" && selectedTable == "Publishers") {
+        if (key === "zipID" && selectedTable === "Publishers") {
           formDataKey = "publisherZipID";
         }
-        if (key == "currencyID" && selectedTable == "Loans") {
+        if (key === "currencyID" && selectedTable === "Loans") {
           formDataKey = "loanCurrencyID";
         }
-        if (key == "currencyID" && selectedTable == "LibraryOrders") {
+        if (key === "currencyID" && selectedTable === "LibraryOrders") {
           formDataKey = "libraryOrderCurrencyID";
         }
-        if (key == "currencyID" && selectedTable == "LibraryOrders") {
+        if (key === "currencyID" && selectedTable === "LibraryOrders") {
           formDataKey = "libraryOrderCurrencyID";
         }
 
         if (
-          key == "librarianID" &&
-          sessionStorage.getItem("searchTable") == "Employees"
+          key === "librarianID" &&
+          sessionStorage.getItem("searchTable") === "Employees"
         ) {
           formDataKey = "employeeLibrarianID";
         }
         if (
-          key == "teamID" &&
-          sessionStorage.getItem("searchTable") == "Teams"
+          key === "teamID" &&
+          sessionStorage.getItem("searchTable") === "Teams"
         ) {
           formDataKey = "employeeTeamID";
         }
@@ -162,14 +159,14 @@ function Overview() {
     let uniqueColumn = selectedTable.slice(0, selectedTable.length - 1);
     uniqueColumn = uniqueColumn.toLowerCase();
     uniqueColumn = uniqueColumn + "ID"; //e.g. loanID
-    if (selectedTable == "LibraryOrders") {
+    if (selectedTable === "LibraryOrders") {
       uniqueColumn = "libraryOrderID";
     }
     setUniqueColumn(uniqueColumn);
     console.log(selectedTable, "selectedTable");
 
     setHidePublisherButton(
-      selectedTable == "Books" || selectedTable == "LibraryOrders"
+      selectedTable === "Books" || selectedTable === "LibraryOrders"
         ? false
         : true
     );
@@ -268,23 +265,23 @@ function Overview() {
                 ];
                 cols.map((column, index) => {
                   let placeholder = "";
-                  if (column == "loanReaderEmail") {
+                  if (column === "loanReaderEmail") {
                     placeholder = sessionStorage.getItem("loginMail");
                   }
                   if (prefillDateColumns.includes(column)) {
                     placeholder = new Date().toISOString().slice(0, 10);
                   }
-                  if (column == "loanRenewals") {
+                  if (column === "loanRenewals") {
                     placeholder = 0;
                   }
-                  if (column == "loanOverdue") {
+                  if (column === "loanOverdue") {
                     placeholder = false;
                   }
-                  if (column == "loanFine") {
+                  if (column === "loanFine") {
                     placeholder = 0;
                   }
                   //prefill loanReaderID
-                  if (column == "loanReaderID") {
+                  if (column === "loanReaderID") {
                     placeholder = sessionStorage.getItem("readerID");
                   }
                   if (notFilledColumns.includes(column[0])) {
@@ -297,7 +294,7 @@ function Overview() {
                   }
                 });
 
-                if (selectedTable == "Teams") {
+                if (selectedTable === "Teams") {
                   let teamsFormData = {
                     employeeTeamID: {
                       type: "number",
@@ -314,7 +311,7 @@ function Overview() {
                   console.log(teamsFormData);
                   setEditData(teamsFormData);
                   setDatatypes(["number", "number"]);
-                } else if (selectedTable == "Librarians") {
+                } else if (selectedTable === "Librarians") {
                   newFormData["employeeTeamID"] = {
                     type: "number",
                     required: true,
@@ -356,17 +353,17 @@ function Overview() {
     setShowSearchTeamButton(false);
     setShowSearchCurrencyButton(false);
     setShowSearchEmployeeButton(false);
-    if (selectedTable == "Books") {
+    if (selectedTable === "Books") {
       setShowSearchAuthorButton(true);
       setHidePublisherButton(false);
     }
 
-    if (selectedTable == "Loans") {
+    if (selectedTable === "Loans") {
       sessionStorage.setItem("searchTable", "Books");
       setShowSearchBookButton(true);
       setShowSearchCurrencyButton(true);
     }
-    if (selectedTable == "LibraryOrders") {
+    if (selectedTable === "LibraryOrders") {
       sessionStorage.setItem("searchTable", "Authors");
       setHidePublisherButton(false);
       setShowSearchBookButton(false);
@@ -374,18 +371,18 @@ function Overview() {
       setShowSearchManagerButton(true);
       setShowSearchCurrencyButton(true);
     }
-    if (selectedTable == "Publishers") {
+    if (selectedTable === "Publishers") {
       setShowSearchZipButton(true);
     }
-    if (selectedTable == "Teams") {
+    if (selectedTable === "Teams") {
       setShowSearchTeamButton(true);
       setShowSearchEmployeeButton(true);
     }
-    if (selectedTable == "Librarians") {
+    if (selectedTable === "Librarians") {
       setShowSearchTeamButton(true);
     }
     setShowConvertOrderIntoBookButton(
-      selectedTable == "LibraryOrders" ? true : false
+      selectedTable === "LibraryOrders" ? true : false
     );
 
     // update boookISBNs
@@ -415,7 +412,7 @@ function Overview() {
   }, []);
 
   function deleteEntry(rowID) {
-    if (selectedTable == "Teams") {
+    if (selectedTable === "Teams") {
       axios
         .post(api, {
           query: `UPDATE public."Employees" SET "employeeTeamID" = NULL WHERE "employeeLibrarianID" = ${rowID}`,
@@ -498,7 +495,7 @@ function Overview() {
       header.forEach((column) => {
         if (
           notFilledColumns.includes(column) &&
-          column != "libraryOrderStatusOrder"
+          column !== "libraryOrderStatusOrder"
         ) {
           indexID = header.indexOf(column);
         } else {
@@ -528,7 +525,7 @@ function Overview() {
               default:
                 break;
             }
-            if (column == "bookAmount") {
+            if (column === "bookAmount") {
               insertColumns = insertColumns + `"${column}", `;
               insertData =
                 insertData + `'${data[header.indexOf(oldColumn)]}', `;
