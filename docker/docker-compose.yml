@@ -16,7 +16,7 @@ services:
       - mynetwork
 
   postgres:
-    image: postgres:10.5
+    image: postgres:latest
     restart: always
     environment:
       - POSTGRES_USER=postgres
