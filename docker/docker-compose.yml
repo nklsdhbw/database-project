@@ -36,7 +36,7 @@ services:
       - mynetwork
 
   flaskapp:
-    image: nklsdhbw/flask-server:2.0
+    image: nklsdhbw/flask-server:latest
     container_name: flaskApp
     restart: always
     ports:
