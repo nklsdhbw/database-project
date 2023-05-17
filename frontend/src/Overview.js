@@ -8,6 +8,7 @@ import bcrypt from "bcryptjs";
 import DataTable from "./DataTable.js";
 import CreateRecordModal from "./CreateRecordModal";
 import EditRecordModal from "./EditRecordModal";
+import plusGreenIcon from "./img/plus_green_icon.svg";
 
 function Overview() {
   const notFilledColumns = [
@@ -597,12 +598,12 @@ function Overview() {
         resultsWithIDs={resultsWithIDs}
       />
       <div>
-        <Button
-          hidden={!sessionStorage.getItem("createRecordPermission")}
-          onClick={() => handleCreate() /*setShowModal(!showModal)}>*/}
-        >
-          Create New Record
-        </Button>
+        <img
+          src={plusGreenIcon}
+          alt="Create New Record"
+          onClick={() => handleCreate()}
+          style={{ cursor: "pointer" }}
+        />
         <CreateRecordModal
           showModal={showModal}
           handleCreate={handleCreate}
