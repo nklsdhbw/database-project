@@ -12,7 +12,7 @@ const fetchUsers = async () => {
   let data;
   let table = sessionStorage.getItem("searchTable");
   let dataQuery = `SELECT * FROM public."${table}"`;
-  if (table == "Employees") {
+  if (table === "Employees") {
     dataQuery = `SELECT 
     "librarianID", 
     "librarianFirstName", 
@@ -28,8 +28,8 @@ const fetchUsers = async () => {
   console.log(dataQuery);
 
   console.log("SEARCH TABLE", table);
-  const api = "http://localhost:5000/run-query";
-  //if (sessionStorage.getItem("showPublisher") == "true") {
+
+  //if (sessionStorage.getItem("showPublisher") === "true") {
   //  table = "Publishers";
   //}
   console.log("FETCH USERS");
@@ -103,7 +103,9 @@ export default function TableSearch({ callback }) {
                     <td key={key}>
                       <div>
                         <div>
-                          {typeof value == "boolean" ? value.toString() : value}
+                          {typeof value === "boolean"
+                            ? value.toString()
+                            : value}
                         </div>
                       </div>
                     </td>
@@ -113,16 +115,16 @@ export default function TableSearch({ callback }) {
                       className="w-100 btn btn-lg btn-primary"
                       onClick={() => callback(row)}
                       disabled={
-                        sessionStorage.getItem("searchTable") == "Books" &&
+                        sessionStorage.getItem("searchTable") === "Books" &&
                         row["bookAvailableAmount"] > 0
                           ? false
                           : true
                       }
                       hidden={
-                        !(sessionStorage.getItem("searchTable") == "Books")
+                        !(sessionStorage.getItem("searchTable") === "Books")
                       }
                     >
-                      {sessionStorage.getItem("searchTable") == "Books" &&
+                      {sessionStorage.getItem("searchTable") === "Books" &&
                       row["bookAvailableAmount"] > 0
                         ? "Choose"
                         : "Not available"}
@@ -130,7 +132,7 @@ export default function TableSearch({ callback }) {
                     <button
                       className="w-100 btn btn-lg btn-primary"
                       onClick={() => callback(row)}
-                      hidden={sessionStorage.getItem("searchTable") == "Books"}
+                      hidden={sessionStorage.getItem("searchTable") === "Books"}
                     >
                       Choose
                     </button>

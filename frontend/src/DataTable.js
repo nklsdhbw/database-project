@@ -19,7 +19,7 @@ function DataTable(props) {
   } = props;
 
   function handleEdit(data) {
-    if (selectedTable == "Publishers") {
+    if (selectedTable === "Publishers") {
       let mappedColumns = Object.keys(
         JSON.parse(sessionStorage.getItem("columnMapping"))
       );
@@ -62,7 +62,7 @@ function DataTable(props) {
             let placeholder = element;
             console.log("COLUMN", mappedColumns[index], "value", element);
             console.log(mappedColumns[index]);
-            if (editData[mappedColumns[index]]["type"] == "date") {
+            if (editData[mappedColumns[index]]["type"] === "date") {
               placeholder = new Date(element).toISOString().slice(0, 10);
               console.log("DATE");
             } else {
@@ -76,7 +76,7 @@ function DataTable(props) {
           console.log("ERROR : ", error);
         });
     }
-    if (selectedTable == "Librarians") {
+    if (selectedTable === "Librarians") {
       let dbColumns = [
         "librarianID",
         "librarianFirstName",
@@ -96,7 +96,7 @@ function DataTable(props) {
       vals.map((element, index) => {
         let placeholder = element;
         console.log(element, "ELEMENT");
-        if (editData[dbColumns[index]]["type"] == "date") {
+        if (editData[dbColumns[index]]["type"] === "date") {
           placeholder = new Date(element).toISOString().slice(0, 10);
           editData[dbColumns[index]]["placeholder"] = placeholder;
         } else {
@@ -107,7 +107,7 @@ function DataTable(props) {
       setEditData(editData);
       setShowEditModal(!showEditModal);
     }
-    if (selectedTable == "Readers") {
+    if (selectedTable === "Readers") {
       let dbColumns = [
         "readerID",
         "readerFirstName",
@@ -123,7 +123,7 @@ function DataTable(props) {
       vals.map((element, index) => {
         let placeholder = element;
 
-        if (editData[dbColumns[index]]["type"] == "date") {
+        if (editData[dbColumns[index]]["type"] === "date") {
           placeholder = new Date(element).toISOString().slice(0, 10);
           editData[dbColumns[index]]["placeholder"] = placeholder;
         } else {
@@ -134,9 +134,9 @@ function DataTable(props) {
       setShowEditModal(!showEditModal);
     }
 
-    if (selectedTable == "Loans") {
+    if (selectedTable === "Loans") {
       let dataWithIDs = resultsWithIDs.filter((el) => {
-        return el[0] == data[0];
+        return el[0] === data[0];
       });
       let loanID = data[0];
 
@@ -189,7 +189,7 @@ function DataTable(props) {
 
       let keys = Object.keys(editData);
       obj = Object.fromEntries(
-        Object.entries(obj).filter(([_, value]) => value !== undefined)
+        Object.entries(obj).filter(([_, value]) => value != undefined)
       );
       console.log(obj, "OBJ");
       let cols = Object.keys(obj);
@@ -239,9 +239,9 @@ function DataTable(props) {
       });
 
       // Filter out any remaining undefined elements from both arrays
-      newColumns = newColumns.filter((el) => el !== undefined);
+      newColumns = newColumns.filter((el) => el != undefined);
       libraryOrder = libraryOrder.filter((el) => {
-        return el !== undefined;
+        return el != undefined;
       });
       console.log(libraryOrder, newColumns);
       let test = [
