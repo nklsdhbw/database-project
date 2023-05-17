@@ -5,7 +5,15 @@ networks:
     name: mynetwork
 
 services:
-
+  reactapp:
+    image: nklsdhbw/database-project:latest
+    restart: always
+    container_name: reactApp
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    networks:
+      - mynetwork
 
   postgres:
     image: postgres:latest
@@ -27,4 +35,13 @@ services:
     networks:
       - mynetwork
 
-  
+  flaskapp:
+    image: nklsdhbw/flask-server:latest
+    container_name: flaskApp
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    networks:
+      - mynetwork
