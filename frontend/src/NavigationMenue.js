@@ -13,6 +13,7 @@ import loansMmanagement from "./img/loans_management.svg";
 import orderManagement from "./img/order_management.svg";
 import personalInformation from "./img/personal_information.svg";
 import supplierManagement from "./img/supplier_management.svg";
+import employeeManagement from "./img/employee_management.svg";
 
 // import required css
 //import 'bootstrap/dist/css/bootstrap.min.css';
@@ -20,22 +21,13 @@ import supplierManagement from "./img/supplier_management.svg";
 const NavigationMenue = () => {
   const Actions = [
     {
-      label: "Order overview",
-      table: "LibraryOrders",
-      entryQuery:
-        'SELECT "libraryOrderID" AS "Library Order ID", "libraryOrderAuthorID" AS "Author" FROM "LibraryOrders"',
-      formQuery:
-        'SELECT "libraryOrderID", "libraryOrderAuthorID" FROM "LibraryOrders"',
-      img: orderManagement,
-      allowedRoles: ["manager", "employee"],
-    },
-    {
       label: "Manage all Loans",
       table: "Loans",
       entryQuery: 'SELECT * FROM "allLoans"',
       formQuery: 'SELECT * FROM "Loans"',
       img: loansMmanagement,
-      allowedRoles: ["manager", "employee"],
+      read: ["Manager", "Employee"],
+      write: ["Manager", "Employee"],
     },
     {
       label: "Manage my Loans",
@@ -47,19 +39,39 @@ const NavigationMenue = () => {
         "readerID"
       )}`,
       img: loansMmanagement,
-      allowedRoles: ["manager", "employee"],
+      read: ["Manager", "Employee", "Reader"],
+      write: ["Manager", "Employee"],
     },
     {
       label: "Manage personal data",
       table: "Readers",
-      entryQuery: `SELECT "readerID" AS "ID", "readerFirstName" AS "Firstname", "readerLastName" AS "Lastname", "readerEmail" AS "Email", "readerPassword" AS "Password" FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
-        "readerID"
-      )}`,
-      formQuery: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
-        "readerID"
-      )}`,
+      entryQuery: {
+        [`${sessionStorage.getItem(
+          "role"
+        )}`]: `SELECT "readerID" AS "ID", "readerFirstName" AS "Firstname", "readerLastName" AS "Lastname", "readerEmail" AS "Email", "readerPassword" AS "Password" FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
+          "readerID"
+        )}`,
+        [`${sessionStorage.getItem(
+          "role"
+        )}`]: `SELECT "librarianID" AS "ID", "librarianFirstName" AS "Firstname", "librarianLastName" AS "Lastname", "librarianEmail" AS "Email", "librarianPhone" AS "Phone", "librarianBirthDate" AS "Birth date", "librarianPassword" AS "Password" FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+          "userID"
+        )}`,
+      },
+      formQuery: {
+        [`${sessionStorage.getItem(
+          "role"
+        )}`]: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
+          "userID"
+        )}`,
+        [`${sessionStorage.getItem(
+          "role"
+        )}`]: `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+          "userID"
+        )}`,
+      },
       img: personalInformation,
-      allowedRoles: ["manager", "employee", "admin"],
+      read: ["Manager", "Employee", "Admin", "Reader"],
+      write: ["Manager", "Employee", "Admin", "Reader"],
     },
     {
       label: "Manage library orders",
@@ -87,7 +99,8 @@ const NavigationMenue = () => {
   JOIN "Currencies" c ON lo."libraryOrderCurrencyID" = c."currencyID"
   JOIN "Librarians" l ON lo."libraryOrderManagerLibrarianID" = l."librarianID";`,
       img: orderManagement,
-      allowedRoles: ["manager", "admin"],
+      read: ["Manager", "admin", "Employee"],
+      write: ["Manager", "admin"],
     },
     {
       label: "Manage publishers",
@@ -118,14 +131,63 @@ const NavigationMenue = () => {
         publisherPhone: "Phone",
       },
       img: supplierManagement,
-      allowedRoles: ["employee"],
-      //allowedRoles: ['manager'] for creating objects
+      read: ["Employee", "Manager"],
+      write: ["Manager", "admin"],
+    },
+    {
+      label: "Manage librarians",
+      table: "Librarians",
+      entryQuery: `SELECT "librarianID" AS "ID", 
+      "librarianFirstName" AS "Firstname", 
+      "librarianLastName" AS "Lastname", 
+      "librarianEmail" AS "Email", 
+      "librarianPhone" AS "Phone", 
+      "librarianBirthDate" AS "Birth date",
+        "teamID" AS "Team ID",
+        
+        CASE
+            WHEN "librarianID" IN (SELECT "managerLibrarianID" FROM "Managers") THEN 'Manager'
+            WHEN "librarianID" IN (SELECT "employeeLibrarianID" FROM "Employees") THEN 'Employee'
+            ELSE 'Librarian'
+        END AS "Role"
+        
+    
+    FROM "Librarians" l
+    LEFT JOIN "Employees" e ON e."employeeLibrarianID" = l."librarianID"
+    LEFT JOIN "Managers" m ON m."managerLibrarianID" = l."librarianID"
+    LEFT JOIN "Teams" t ON "teamID" = e."employeeTeamID" OR "teamID" = m."managerTeamID"`,
+      formQuery: `SELECT * FROM "Librarians"`,
+      img: employeeManagement,
+      read: ["Manager", "Employee", "Reader", "Admin"],
+      write: ["Manager", "Admin"],
+    },
+    {
+      label: "My team",
+      table: "Teams",
+      entryQuery: `SELECT 
+      "librarianID" AS "ID", 
+      "librarianFirstName" AS "Firstname", 
+      "librarianLastName" AS "Lastname", 
+      "librarianEmail" AS "Email", 
+      "librarianPhone" AS "Phone", 
+      "librarianBirthDate" AS "Birth date",
+      "employeeTeamID" AS "Team ID"
+    FROM 
+      "Teams" t
+    JOIN "Employees" e ON e."employeeTeamID" = t."teamID"
+    JOIN "Librarians" l ON "employeeLibrarianID" = l."librarianID"
+    WHERE "teamID" = ${sessionStorage.getItem("teamID")};
+    `,
+      formQuery: `SELECT 'dummy', "employeeTeamID", "employeeLibrarianID", 'dummy2' FROM "Employees"`,
+      img: employeeManagement,
+      read: ["Manager", "Employee", "Reader", "Admin"],
+      write: ["Manager", "Admin"],
     },
     // add employee mngmg
-    //allowedRoles: ['manager', 'employee', 'admin']
-    // add my team: allowedRoles: ['manager', 'employee']
-    //  { title: 'Book Management', img: bookManagement, allowedRoles: ['manager', 'employee'] },
-    //{ title: 'New Hire', img: newHire, allowedRoles: ['manager', 'admin'] },
+    //read: ['manager', 'employee', 'admin']
+    // add my team: read: ['manager', 'employee']
+    //  { title: 'Book Management', img: bookManagement, read: ['manager', 'employee'] },
+    //{ title: 'New Hire', img: newHire, read: ['manager', 'admin'] },
   ];
 
   const navigate = useNavigate();
@@ -137,29 +199,56 @@ const NavigationMenue = () => {
   } else {
     //navigate("/Overview");
   }
+  const filteredActions = Actions.filter((action) =>
+    action.read.includes(sessionStorage.getItem("role"))
+  );
 
   function handleClick(option) {
     navigate("/Overview");
     console.log(option);
     sessionStorage.setItem("table", option.table);
+    if (option.label == "Manage personal data") {
+      if (sessionStorage.getItem("role") == "Reader") {
+        sessionStorage.setItem("table", sessionStorage.getItem("role") + "s");
+      } else {
+        sessionStorage.setItem("table", "Librarians");
+      }
+    }
     const filteredActions = Actions.filter(
       (action) => action.label === option.label
     );
     console.log(filteredActions[0]);
-    const entryQuery = filteredActions[0].entryQuery;
-    const formQuery = filteredActions[0].formQuery;
+    let entryQuery = filteredActions[0].entryQuery;
+    let formQuery = filteredActions[0].formQuery;
+    const createRecordPermission = filteredActions[0].write;
+    let hideEditButtonActions = ["Manage librarians", "My team"];
+    if (option.label == "Manage personal data") {
+      entryQuery = entryQuery[sessionStorage.getItem("role")];
+      formQuery = formQuery[sessionStorage.getItem("role")];
+    }
+    if (hideEditButtonActions.includes(option.label)) {
+      sessionStorage.setItem("hideEditButton", true);
+    } else {
+      sessionStorage.setItem("hideEditButton", false);
+    }
+
     console.log(entryQuery, "entryQuery");
     sessionStorage.setItem("tableQuery", entryQuery);
     sessionStorage.setItem("formQuery", formQuery);
+
     sessionStorage.setItem(
       "columnMapping",
       JSON.stringify(filteredActions[0].columnMapping)
+    );
+    sessionStorage.setItem(
+      "createRecordPermission",
+      createRecordPermission.includes(sessionStorage.getItem("role"))
     );
   }
 
   return (
     <div>
-      {Actions.map((option) => (
+      {filteredActions.map((option) => (
         <Button key={option.label} onClick={() => handleClick(option)}>
           {option.label}
           <img key={option.label} src={option.img} alt={option.img} />

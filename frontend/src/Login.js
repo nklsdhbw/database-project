@@ -28,7 +28,47 @@ const Login = () => {
 
   //let { isLoading, data } = useFetch("/api/login");
   useEffect(() => {
-    let query = 'SELECT * FROM public."Readers"';
+    let query = `SELECT
+    "id",
+    "username",
+    "role",
+    "password",
+    "teamID" AS "Team ID"
+  FROM (
+    SELECT
+      "readerID" AS id,
+      "readerEmail" AS username,
+      'Reader' AS role,
+      "readerPassword" AS password,
+      NULL AS "teamID"
+    FROM
+      "Readers"
+    UNION
+    SELECT
+      "librarianID" AS id,
+      "librarianEmail" AS username,
+      CASE
+        WHEN "librarianID" IN (SELECT "managerLibrarianID" FROM "Managers") THEN 'Manager'
+        WHEN "librarianID" IN (SELECT "employeeLibrarianID" FROM "Employees") THEN 'Employee'
+        ELSE 'Librarian'
+      END AS role,
+      "librarianPassword" AS password,
+      CASE
+        WHEN "librarianID" IN (SELECT "managerLibrarianID" FROM "Managers") THEN (
+          SELECT "managerTeamID" FROM "Managers" WHERE "managerLibrarianID" = "Librarians"."librarianID"
+        )
+        WHEN "librarianID" IN (SELECT "employeeLibrarianID" FROM "Employees") THEN (
+          SELECT "employeeTeamID" FROM "Employees" WHERE "employeeLibrarianID" = "Librarians"."librarianID"
+        )
+        ELSE NULL
+      END AS "teamID"
+    FROM
+      "Librarians"
+    ) AS users
+  ORDER BY
+    id;
+  
+    `;
     axios
       .post(api, { query })
       .then((response) => {
@@ -45,15 +85,22 @@ const Login = () => {
     let loginMail = formData.username;
     sessionStorage.setItem("loggedIn", JSON.stringify(false));
     let hashedPassword;
-    let readerID;
+    let userID;
+    let role;
+    let teamID;
 
     //get readerID and hashePassword from User and store readerID in session storage
     results.forEach((element) => {
-      console.log(element[3], formData.username);
-      if (element[3] == formData.username) {
-        hashedPassword = element[4];
-        readerID = element[0];
-        sessionStorage.setItem("readerID", readerID);
+      console.log(element[1], formData.username);
+      if (element[1] == formData.username) {
+        hashedPassword = element[3];
+        userID = element[0];
+        role = element[2];
+        teamID = element[4];
+        if (element[2] == "Reader") {
+          sessionStorage.setItem("readerID", userID);
+        }
+        sessionStorage.setItem("userID", userID);
       }
     });
 
@@ -63,6 +110,8 @@ const Login = () => {
     if (passwordsMatch) {
       sessionStorage.setItem("loggedIn", JSON.stringify(true));
       sessionStorage.setItem("loginMail", loginMail);
+      sessionStorage.setItem("role", role);
+      sessionStorage.setItem("teamID", teamID);
       navigate("/NavigationMenue");
     } else {
       window.alert("Wrong password or username. Please try again.");

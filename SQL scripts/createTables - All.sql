@@ -55,7 +55,8 @@ CREATE TABLE "Librarians" (
     "librarianLastName" varchar(255),
     "librarianEmail" varchar(255),
     "librarianPhone" varchar(255),
-    "librarianBirthDate" DATE
+    "librarianBirthDate" DATE,
+    "librarianPassword" varchar(255)
 );
 
 
@@ -204,4 +205,20 @@ CREATE TABLE "LibraryOrders" (
 	  REFERENCES "Currencies"("currencyID")
 	  ON DELETE CASCADE
 
+);
+
+DROP TABLE IF EXISTS "Employees" CASCADE;
+
+CREATE TABLE "Employees" (
+    "employeeLibrarianID" INTEGER,
+    "employeeTeamID" INTEGER,
+
+    CONSTRAINT fk_employeeLibrarianID
+      FOREIGN KEY("employeeLibrarianID") 
+	  REFERENCES "Librarians"("librarianID")
+	  ON DELETE CASCADE,
+    CONSTRAINT fk_employeeTeamID
+      FOREIGN KEY("employeeTeamID") 
+	  REFERENCES "Teams"("teamID")
+	  ON DELETE CASCADE
 );

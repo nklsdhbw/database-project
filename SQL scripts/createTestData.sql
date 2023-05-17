@@ -65,17 +65,17 @@ VALUES
 ('Norwegian krone', 'NOK');
 
 
-INSERT INTO "Librarians" ("librarianFirstName", "librarianLastName", "librarianEmail", "librarianPhone", "librarianBirthDate")
-VALUES ('John', 'Doe', 'johndoe@example.com', '1234567890', '1990-01-01'),
-       ('Jane', 'Doe', 'janedoe@example.com', '1234567891', '1991-02-02'),
-       ('Bob', 'Smith', 'bobsmith@example.com', '1234567892', '1992-03-03'),
-       ('Alice', 'Smith', 'alicesmith@example.com', '1234567893', '1993-04-04'),
-       ('Mark', 'Johnson', 'markjohnson@example.com', '1234567894', '1994-05-05'),
-       ('Mary', 'Johnson', 'maryjohnson@example.com', '1234567895', '1995-06-06'),
-       ('Tom', 'Wilson', 'tomwilson@example.com', '1234567896', '1996-07-07'),
-       ('Emily', 'Wilson', 'emilywilson@example.com', '1234567897', '1997-08-08'),
-       ('David', 'Brown', 'davidbrown@example.com', '1234567898', '1998-09-09'),
-       ('Sarah', 'Brown', 'sarahbrown@example.com', '1234567899', '1999-10-10');
+INSERT INTO "Librarians" ("librarianFirstName", "librarianLastName", "librarianEmail", "librarianPhone", "librarianBirthDate", "librarianPassword")
+VALUES ('John', 'Doe', 'johndoe@example.com', '1234567890', '1990-01-01', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('Jane', 'Doe', 'janedoe@example.com', '1234567891', '1991-02-02', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('Bob', 'Smith', 'bobsmith@example.com', '1234567892', '1992-03-03', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('Alice', 'Smith', 'alicesmith@example.com', '1234567893', '1993-04-04', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('Mark', 'Johnson', 'markjohnson@example.com', '1234567894', '1994-05-05', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('Mary', 'Johnson', 'maryjohnson@example.com', '1234567895', '1995-06-06', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('Tom', 'Wilson', 'tomwilson@example.com', '1234567896', '1996-07-07', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('Emily', 'Wilson', 'emilywilson@example.com', '1234567897', '1997-08-08', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('David', 'Brown', 'davidbrown@example.com', '1234567898', '1998-09-09', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'),
+       ('Sarah', 'Brown', 'sarahbrown@example.com', '1234567899', '1999-10-10', '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS');
 
 
 INSERT INTO "Publishers" ("publisherName", "publisherZipID", "publisherStreetName", "publisherHouseNumber", "publisherCountry", "publisherEmail", "publisherPhone")
@@ -137,10 +137,10 @@ INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (3, 1);
 INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (4, 1);
 INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (5, 2);
 INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (6, 2);
-INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (7, 3);
-INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (8, 4);
-INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (9, 5);
-INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (10, 6);
+--INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (7, 3);
+--INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (8, 4);
+--INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (9, 5);
+--INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (10, 6);
 
 INSERT INTO "LibraryOrders" ("libraryOrderCost", "libraryOrderDeliveryDate", "libraryOrderAmount", "libraryOrderDateOrdered", "libraryOrderPublisherID", "libraryOrderBookTitle", "libraryOrderISBN", "libraryOrderAuthorID", "libraryOrderStatusOrder", "libraryOrderManagerLibrarianID", "libraryOrderCurrencyID") 
 VALUES (24.99, '2023-05-05', 10, '2023-04-30', 1, 'The Great Gatsby', '978-1-718-26007-0', 1, 'order', 1, 1);
@@ -158,3 +158,7 @@ INSERT INTO "LibraryOrders" ("libraryOrderCost", "libraryOrderDeliveryDate", "li
 VALUES (29.99, '2023-05-20', 3, '2023-04-30', 5, '1984', '978-0-14-118776-1', 5, 'order', 5, 1);
 
 
+INSERT INTO "Employees" ("employeeLibrarianID", "employeeTeamID") VALUES (7, 1);
+INSERT INTO "Employees" ("employeeLibrarianID", "employeeTeamID") VALUES (8, 1);
+INSERT INTO "Employees" ("employeeLibrarianID", "employeeTeamID") VALUES (9, 2);
+INSERT INTO "Employees" ("employeeLibrarianID", "employeeTeamID") VALUES (10, 2);

@@ -45,6 +45,9 @@ function Overview() {
   const [showSearchBookButton, setShowSearchBookButton] = useState(false);
   const [showSearchManagerButton, setShowSearchManagerButton] = useState(false);
   const [showSearchZipButton, setShowSearchZipButton] = useState(false);
+  const [showSearchTeamButton, setShowSearchTeamButton] = useState(false);
+  const [showSearchEmployeeButton, setShowSearchEmployeeButton] =
+    useState(false);
   const [showSearchCurrencyButton, setShowSearchCurrencyButton] =
     useState(false);
   const [showConvertOrderIntoBookButton, setShowConvertOrderIntoBookButton] =
@@ -73,6 +76,8 @@ function Overview() {
     Publishers: 0,
     LibraryOrders: 3,
     Readers: 0,
+    Librarians: 0,
+    Teams: 0,
   };
 
   //* Callback function //
@@ -117,6 +122,22 @@ function Overview() {
         }
         if (key == "currencyID" && selectedTable == "LibraryOrders") {
           formDataKey = "libraryOrderCurrencyID";
+        }
+        if (key == "currencyID" && selectedTable == "LibraryOrders") {
+          formDataKey = "libraryOrderCurrencyID";
+        }
+
+        if (
+          key == "librarianID" &&
+          sessionStorage.getItem("searchTable") == "Employees"
+        ) {
+          formDataKey = "employeeLibrarianID";
+        }
+        if (
+          key == "teamID" &&
+          sessionStorage.getItem("searchTable") == "Teams"
+        ) {
+          formDataKey = "employeeTeamID";
         }
 
         if (
@@ -202,11 +223,13 @@ function Overview() {
 
         // set formData/editData
         datatypes = filteredArr;
+        console.log(sessionStorage.getItem("tableQuery"));
         axios
           .post(api, {
             query: sessionStorage.getItem("tableQuery"),
           })
           .then((results) => {
+            console.log(results.data[1], "results.data[1]");
             setResultsWithIDs(results.data[1]);
             let resultsWithoutIDs = Array.from(results.data[1]);
             resultsWithoutIDs.forEach((element, index) => {
@@ -235,6 +258,7 @@ function Overview() {
                 let cols = results.data[0];
                 const newFormData = {};
                 // columns without id row
+                console.log(cols, "cols");
                 cols = cols.slice(1, cols.length);
                 console.log("COLS", cols);
                 let prefillDateColumns = [
@@ -271,9 +295,47 @@ function Overview() {
                     };
                   }
                 });
-                setFormData(newFormData);
-                console.log(newFormData);
-                setEditData(newFormData);
+
+                if (selectedTable == "Teams") {
+                  let teamsFormData = {
+                    employeeTeamID: {
+                      type: "number",
+                      required: true,
+                      placeholder: undefined,
+                    },
+                    employeeLibrarianID: {
+                      type: "number",
+                      required: true,
+                      placeholder: undefined,
+                    },
+                  };
+                  setFormData(teamsFormData);
+                  console.log(teamsFormData);
+                  setEditData(teamsFormData);
+                  setDatatypes(["number", "number"]);
+                } else if (selectedTable == "Librarians") {
+                  newFormData["employeeTeamID"] = {
+                    type: "number",
+                    required: true,
+                    placeholder: undefined,
+                  };
+                  newFormData["Role"] = {
+                    type: "option",
+                    required: true,
+                    placeholder: undefined,
+                  };
+
+                  setFormData(newFormData);
+                  console.log(newFormData);
+                  setEditData(newFormData);
+                  let tempDatatypes = Array.from(datatypes);
+                  tempDatatypes.push("number", "option");
+                  setDatatypes(tempDatatypes);
+                } else {
+                  setFormData(newFormData);
+                  console.log(newFormData);
+                  setEditData(newFormData);
+                }
               });
           })
           .catch((error) => {
@@ -290,6 +352,9 @@ function Overview() {
     setHidePublisherButton(true);
     setShowSearchManagerButton(false);
     setShowSearchZipButton(false);
+    setShowSearchTeamButton(false);
+    setShowSearchCurrencyButton(false);
+    setShowSearchEmployeeButton(false);
     if (selectedTable == "Books") {
       setShowSearchAuthorButton(true);
       setHidePublisherButton(false);
@@ -310,6 +375,13 @@ function Overview() {
     }
     if (selectedTable == "Publishers") {
       setShowSearchZipButton(true);
+    }
+    if (selectedTable == "Teams") {
+      setShowSearchTeamButton(true);
+      setShowSearchEmployeeButton(true);
+    }
+    if (selectedTable == "Librarians") {
+      setShowSearchTeamButton(true);
     }
     setShowConvertOrderIntoBookButton(
       selectedTable == "LibraryOrders" ? true : false
@@ -342,16 +414,29 @@ function Overview() {
   }, []);
 
   function deleteEntry(rowID) {
-    axios
-      .post(api, {
-        query: `DELETE FROM public."${selectedTable}" WHERE "${uniqueColumn}" = ${rowID}`,
-      })
-      .then((response) => {
-        setUpdateData(!updateData);
-      })
-      .catch((error) => {
-        console.log("ERROR : ", error);
-      });
+    if (selectedTable == "Teams") {
+      axios
+        .post(api, {
+          query: `UPDATE public."Employees" SET "employeeTeamID" = NULL WHERE "employeeLibrarianID" = ${rowID}`,
+        })
+        .then((response) => {
+          setUpdateData(!updateData);
+        })
+        .catch((error) => {
+          console.log("ERROR : ", error);
+        });
+    } else {
+      axios
+        .post(api, {
+          query: `DELETE FROM public."${selectedTable}" WHERE "${uniqueColumn}" = ${rowID}`,
+        })
+        .then((response) => {
+          setUpdateData(!updateData);
+        })
+        .catch((error) => {
+          console.log("ERROR : ", error);
+        });
+    }
   }
 
   function convertIntoBook(header, data) {
@@ -512,7 +597,10 @@ function Overview() {
         resultsWithIDs={resultsWithIDs}
       />
       <div>
-        <Button onClick={() => handleCreate() /*setShowModal(!showModal)}>*/}>
+        <Button
+          hidden={!sessionStorage.getItem("createRecordPermission")}
+          onClick={() => handleCreate() /*setShowModal(!showModal)}>*/}
+        >
           Create New Record
         </Button>
         <CreateRecordModal
@@ -525,6 +613,8 @@ function Overview() {
           showSearchManagerButton={showSearchManagerButton}
           hidePublisherButton={hidePublisherButton}
           showSearchZipButton={showSearchZipButton}
+          showSearchTeamButton={showSearchTeamButton}
+          showSearchEmployeeButton={showSearchEmployeeButton}
           showSearchCurrencyButton={showSearchCurrencyButton}
           setShowModal={setShowModal}
           setFormData={setFormData}
