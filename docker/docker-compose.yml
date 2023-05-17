@@ -6,7 +6,7 @@ networks:
 
 services:
   reactapp:
-    image: nklsdhbw/database-project:1.1
+    image: nklsdhbw/database-project:latest
     restart: always
     container_name: reactApp
     ports:
