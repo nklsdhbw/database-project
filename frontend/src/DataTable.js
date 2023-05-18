@@ -1,6 +1,9 @@
 import React from "react";
 import { Table, Button } from "react-bootstrap";
 import axios from "axios";
+import { useState } from "react";
+import { Input } from "antd";
+
 function DataTable(props) {
   const {
     columns,
@@ -17,6 +20,13 @@ function DataTable(props) {
     showEditModal,
     resultsWithIDs,
   } = props;
+  // Inside the DataTable component
+  const [searchTerm, setSearchTerm] = useState("");
+  const Search = Input.Search;
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
 
   function handleEdit(data) {
     if (selectedTable === "Publishers") {
@@ -73,7 +83,7 @@ function DataTable(props) {
           setEditData(editData);
         })
         .catch((error) => {
-          console.log("ERROR : ", error);
+          console.log("ERROR: ", error);
         });
     }
     if (selectedTable === "Librarians") {
@@ -283,33 +293,53 @@ function DataTable(props) {
   }
 
   return (
-    <Table striped bordered hover className="table mx-auto">
-      <thead>
-        {columns.map((column) => (
-          <th>{column}</th>
-        ))}
-        <th className="col"></th>
-      </thead>
-      <tbody>
-        {results.map((data) => (
-          <tr>
-            {data.map((entry) => (
-              <td>
-                {typeof entry === "boolean"
-                  ? entry.toString()
-                  : typeof entry === "string" &&
-                    /^[\w]{3}, \d{2} [\w]{3} \d{4} \d{2}:\d{2}:\d{2} GMT$/.test(
-                      entry
-                    )
-                  ? new Date(entry).toLocaleDateString()
-                  : typeof entry === "number"
-                  ? entry
-                  : entry}
-              </td>
-            ))}
-            {sessionStorage.getItem("hideEditButton") === "true"
-              ? true
-              : false && (
+    // Above the table
+    <>
+      <Search
+        onChange={handleSearch}
+        placeholder="Search"
+        enterButton
+        style={{ position: "sticky", top: "0", left: "0" }}
+      />
+      <br /> <br />
+      <Table striped bordered hover className="table mx-auto">
+        <thead>
+          {columns.map((column) => (
+            <th key={column}>{column}</th>
+          ))}
+          <th className="col"></th>
+        </thead>
+        <tbody>
+          {results
+            .filter((data) =>
+              data.some(
+                (entry) =>
+                  entry &&
+                  entry
+                    .toString()
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase())
+              )
+            )
+            .map((data, index) => (
+              <tr key={index}>
+                {data.map((entry, entryIndex) => (
+                  <td key={entryIndex}>
+                    {typeof entry === "boolean"
+                      ? entry.toString()
+                      : typeof entry === "string" &&
+                        /^[\w]{3}, \d{2} [\w]{3} \d{4} \d{2}:\d{2}:\d{2} GMT$/.test(
+                          entry
+                        )
+                      ? new Date(entry).toLocaleDateString()
+                      : typeof entry === "number"
+                      ? entry
+                      : entry}
+                  </td>
+                ))}
+                {sessionStorage.getItem("hideEditButton") === "true" ? (
+                  <></>
+                ) : (
                   <td>
                     <Button
                       className="w-100 btn btn-lg btn-primary"
@@ -319,32 +349,30 @@ function DataTable(props) {
                     </Button>
                   </td>
                 )}
-            <td>
-              <Button
-                className="w-100 btn btn-lg btn-primary"
-                onClick={() => deleteEntry(data[0])}
-              >
-                Delete
-              </Button>
-            </td>
-            {showConvertOrderIntoBookButton ? (
-              <td>
-                <Button
-                  disabled={data[9] == "done" ? true : false}
-                  onClick={() => convertIntoBook(columns, data)}
-                >
-                  {data[9] == "done"
-                    ? "Already converted"
-                    : "Convert into Book"}
-                </Button>
-              </td>
-            ) : (
-              <></>
-            )}
-          </tr>
-        ))}
-      </tbody>
-    </Table>
+                <td>
+                  <Button
+                    className="w-100 btn btn-lg btn-primary"
+                    onClick={() => deleteEntry(data[0])}
+                  >
+                    Delete
+                  </Button>
+                </td>
+                {showConvertOrderIntoBookButton && (
+                  <td>
+                    <Button
+                      className="w-100 btn btn-lg btn-primary"
+                      onClick={() => convertIntoBook(data)}
+                    >
+                      Convert into Book
+                    </Button>
+                  </td>
+                )}
+              </tr>
+            ))}
+        </tbody>
+      </Table>
+    </>
   );
 }
+
 export default DataTable;
