@@ -76,6 +76,9 @@ function Overview() {
     Readers: 0,
     Librarians: 0,
     Teams: 0,
+    Books: 0,
+    Employees: 0,
+    Managers: 0,
   };
 
   //* Callback function //
@@ -602,11 +605,17 @@ function Overview() {
         resultsWithIDs={resultsWithIDs}
       />
       <div>
+        {/* Create Record Button*/}
         <img
           src={plusGreenIcon}
           alt="Create New Record"
           onClick={() => handleCreate()}
           style={{ cursor: "pointer" }}
+          hidden={
+            sessionStorage.getItem("createRecordPermission") === "true"
+              ? false
+              : true
+          }
         />
         <CreateRecordModal
           showModal={showModal}
