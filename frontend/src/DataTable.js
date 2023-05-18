@@ -357,16 +357,26 @@ function DataTable(props) {
                     Delete
                   </Button>
                 </td>
-                {showConvertOrderIntoBookButton && (
-                  <td>
-                    <Button
-                      className="w-100 btn btn-lg btn-primary"
-                      onClick={() => convertIntoBook(data)}
-                    >
-                      Convert into Book
-                    </Button>
-                  </td>
-                )}
+                {showConvertOrderIntoBookButton &&
+                  (data[columns.indexOf("Order status")] != "done" ? (
+                    <td>
+                      <Button
+                        className="w-100 btn btn-lg btn-primary"
+                        onClick={() => convertIntoBook(columns, data)}
+                      >
+                        Convert into Book
+                      </Button>
+                    </td>
+                  ) : (
+                    <td>
+                      <Button
+                        className="w-100 btn btn-lg btn-primary"
+                        disabled={true}
+                      >
+                        Already converted
+                      </Button>
+                    </td>
+                  ))}
               </tr>
             ))}
         </tbody>
