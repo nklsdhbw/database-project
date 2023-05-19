@@ -48,6 +48,14 @@ function EditRecordModal(props) {
   );
   const formRef = useRef(null);
 
+  let disabledColumns = [];
+  let dbColumns = Object.keys(editData);
+  for (let i = 0; i < dbColumns.length; i++) {
+    if (dbColumns[i].endsWith("ID")) {
+      disabledColumns.push(dbColumns[i]);
+    }
+  }
+
   const handleEditInputChange = (event) => {
     const { name, value } = event.target;
     setEditData({
@@ -181,6 +189,7 @@ function EditRecordModal(props) {
                   }
                   onChange={handleEditInputChange}
                   readOnly={key == columns[0] ? true : false}
+                  disabled={disabledColumns.includes(key)}
                 />
               ) : (
                 <Form.Control
@@ -194,6 +203,7 @@ function EditRecordModal(props) {
                   onChange={handleEditInputChange}
                   readOnly={key == columns[0] ? true : false}
                   required
+                  disabled={disabledColumns.includes(key)}
                 />
               )}
             </Form.Group>

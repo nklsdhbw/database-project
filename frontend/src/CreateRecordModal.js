@@ -44,6 +44,14 @@ function CreateRecordModal(props) {
   const [formValid, setFormValid] = useState(false);
   const formRef = useRef(null);
 
+  let disabledColumns = [];
+  let columns = Object.keys(formData);
+  for (let i = 0; i < columns.length; i++) {
+    if (columns[i].endsWith("ID")) {
+      disabledColumns.push(columns[i]);
+    }
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(formData);
@@ -258,6 +266,7 @@ function CreateRecordModal(props) {
                   value={value.placeholder}
                   onChange={handleInputChange}
                   required
+                  disabled={disabledColumns.includes(key)}
                 >
                   <option value="Manager">Manager</option>
                   <option value="Employee">Employee</option>
@@ -268,6 +277,7 @@ function CreateRecordModal(props) {
                   value={value.placeholder}
                   onChange={handleInputChange}
                   type={datatypes[index]}
+                  disabled={disabledColumns.includes(key)}
                 />
               ) : (
                 <Form.Control
@@ -276,6 +286,7 @@ function CreateRecordModal(props) {
                   onChange={handleInputChange}
                   required
                   type={datatypes[index]}
+                  disabled={disabledColumns.includes(key)}
                 />
               )}
             </Form.Group>
