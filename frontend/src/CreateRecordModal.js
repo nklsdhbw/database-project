@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
 
@@ -33,9 +33,16 @@ function CreateRecordModal(props) {
       ...formData,
       [name]: { ...formData[name], placeholder: value },
     });
+    if (formRef.current.checkValidity()) {
+      setFormValid(true);
+    } else {
+      setFormValid(false);
+    }
   };
 
   const bcrypt = require("bcryptjs");
+  const [formValid, setFormValid] = useState(false);
+  const formRef = useRef(null);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -224,7 +231,7 @@ function CreateRecordModal(props) {
         </Button>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} ref={formRef}>
           {Object.entries(formData).map(([key, value], index) => (
             <Form.Group controlId={String(key)} key={index}>
               <Form.Label>{String(key)}</Form.Label>
@@ -251,7 +258,9 @@ function CreateRecordModal(props) {
             </Form.Group>
           ))}
 
-          <Button type="submit">Create</Button>
+          <Button type="submit" disabled={!formValid}>
+            Create
+          </Button>
           {showSearchBookButton && (
             <Button onClick={handleBook}>Search Book</Button>
           )}
