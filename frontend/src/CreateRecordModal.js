@@ -199,6 +199,20 @@ function CreateRecordModal(props) {
   function addEntry(data) {
     let valuesString = "VALUES(";
     let columnsString = "";
+
+    // remove columns that are not filled
+    // atm this can only be true for loanReturnDate as it is the
+    // only optional column, all the other ones are required and therefore
+    // cant be empty
+    data = Object.fromEntries(
+      Object.entries(data).filter(
+        ([key, value]) =>
+          value.placeholder !== undefined &&
+          value.placeholder !== null &&
+          value.placeholder !== ""
+      )
+    );
+
     let values = Object.entries(data).map(
       ([key, value]) =>
         (valuesString = valuesString + `'${value.placeholder}',`)
@@ -206,13 +220,15 @@ function CreateRecordModal(props) {
     let columns = Object.entries(data).map(
       ([key, value]) => (columnsString = columnsString + `"${key}",`)
     );
+    let insqertQuery =
+      `INSERT INTO public."${selectedTable}" (${columnsString.slice(
+        0,
+        columnsString.length - 1
+      )})` + `${valuesString.slice(0, valuesString.length - 1)}) `;
+    console.log(insqertQuery, "insqertQuery");
     axios
       .post(api, {
-        query:
-          `INSERT INTO public."${selectedTable}" (${columnsString.slice(
-            0,
-            columnsString.length - 1
-          )})` + `${valuesString.slice(0, valuesString.length - 1)}) `,
+        query: insqertQuery,
       })
       .then((response) => {
         //stored function is executed in the background that updates bookAvailability and bookAvailabilityAmount
@@ -246,6 +262,13 @@ function CreateRecordModal(props) {
                   <option value="Manager">Manager</option>
                   <option value="Employee">Employee</option>
                 </Form.Control>
+              ) : key === "loanReturnDate" ? (
+                <Form.Control
+                  name={key}
+                  value={value.placeholder}
+                  onChange={handleInputChange}
+                  type={datatypes[index]}
+                />
               ) : (
                 <Form.Control
                   name={key}
