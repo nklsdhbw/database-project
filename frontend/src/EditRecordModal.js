@@ -62,6 +62,19 @@ function EditRecordModal(props) {
   };
 
   async function editEntry(data) {
+    // remove columns that are not filled
+    // atm this can only be true for loanReturnDate as it is the
+    // only optional column, all the other ones are required and therefore
+    // cant be empty
+    data = Object.fromEntries(
+      Object.entries(data).filter(
+        ([key, value]) =>
+          value.placeholder !== undefined &&
+          value.placeholder !== null &&
+          value.placeholder !== ""
+      )
+    );
+
     let columnsString = "";
     let query = "SET ";
     let rowID = selectedTable.slice(0, selectedTable.length - 1);
