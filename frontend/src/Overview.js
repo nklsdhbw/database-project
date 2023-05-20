@@ -283,6 +283,9 @@ function Overview() {
                   if (column === "loanFine") {
                     placeholder = 0;
                   }
+                  if (column === "loanStatus") {
+                    placeholder = "open";
+                  }
                   //prefill loanReaderID
                   if (column === "loanReaderID") {
                     placeholder = sessionStorage.getItem("readerID");

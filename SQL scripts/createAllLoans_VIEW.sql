@@ -5,6 +5,7 @@ SELECT "loanID" AS "Loan ID", b."bookTitle" AS "Book title", b."bookISBN" AS "IS
 	   p."publisherName" AS "Publisher",
 	   l."loanLoanDate" AS "Loan date", l."loanDueDate" AS "Due date", 
 	   l."loanReturnDate" AS "Return date",
+	   "loanStatus" AS "Status",
 	   r."readerEmail" as "User",
 	   "loanRenewals" AS "Renewals",
 	   "loanOverdue" AS "Overdue",

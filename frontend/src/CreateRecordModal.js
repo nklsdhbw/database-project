@@ -44,7 +44,7 @@ function CreateRecordModal(props) {
   const [formValid, setFormValid] = useState(false);
   const formRef = useRef(null);
 
-  let disabledColumns = [];
+  let disabledColumns = ["loanStatus"];
   let columns = Object.keys(formData);
   for (let i = 0; i < columns.length; i++) {
     if (columns[i].endsWith("ID")) {

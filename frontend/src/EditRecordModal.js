@@ -48,7 +48,7 @@ function EditRecordModal(props) {
   );
   const formRef = useRef(null);
 
-  let disabledColumns = [];
+  let disabledColumns = ["loanStatus"];
   let dbColumns = Object.keys(editData);
   for (let i = 0; i < dbColumns.length; i++) {
     if (dbColumns[i].endsWith("ID")) {

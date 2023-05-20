@@ -199,6 +199,7 @@ function DataTable(props) {
         "loanLoanDate",
         "loanDueDate",
         "loanReturnDate",
+        "loanStatus",
         "User",
         "loanRenewals",
         "loanOverdue",
@@ -214,6 +215,7 @@ function DataTable(props) {
         "loanLoanDate",
         "loanDueDate",
         "loanReturnDate",
+        "loanStatus",
         "loanRenewals",
       ];
       let columnsWithoutIDS = newColumns.filter((el) => {
