@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS "Loans";
+DROP TABLE IF EXISTS "Loans" CASCADE;
 
 CREATE TABLE "Loans" (
     "loanID" SERIAL PRIMARY KEY,
@@ -7,6 +7,7 @@ CREATE TABLE "Loans" (
     "loanLoanDate" DATE,
     "loanDueDate" DATE,
     "loanReturnDate" DATE,
+    "loanStatus" varchar(255),
     "loanRenewals" INTEGER,
     "loanOverdue" BOOLEAN,
     "loanFine" DECIMAL,
@@ -27,4 +28,4 @@ CREATE TABLE "Loans" (
       FOREIGN KEY("loanCurrencyID") 
 	  REFERENCES "Currencies"("currencyID")
 	  ON DELETE CASCADE
-)
+);

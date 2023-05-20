@@ -123,6 +123,7 @@ CREATE TABLE "Loans" (
     "loanLoanDate" DATE,
     "loanDueDate" DATE,
     "loanReturnDate" DATE,
+    "loanStatus" varchar(255),
     "loanRenewals" INTEGER,
     "loanOverdue" BOOLEAN,
     "loanFine" DECIMAL,
@@ -144,6 +145,7 @@ CREATE TABLE "Loans" (
 	  REFERENCES "Currencies"("currencyID")
 	  ON DELETE CASCADE
 );
+
 
 
 DROP TABLE IF EXISTS "Managers" CASCADE;
