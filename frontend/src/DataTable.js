@@ -19,6 +19,8 @@ function DataTable(props) {
     setEditData,
     showEditModal,
     resultsWithIDs,
+    setUpdateData,
+    updateData,
   } = props;
   // Inside the DataTable component
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,6 +29,19 @@ function DataTable(props) {
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
+
+  function handleReturn(data) {
+    axios
+      .post(api, {
+        query: `UPDATE "Loans" SET "loanStatus" = 'returned' WHERE "loanID" = ${data[0]}`,
+      })
+      .then((response) => {
+        setUpdateData(!updateData);
+      })
+      .catch((error) => {
+        console.log("ERROR: ", error);
+      });
+  }
 
   function handleEdit(data) {
     if (selectedTable === "Publishers") {
@@ -374,6 +389,18 @@ function DataTable(props) {
                       : entry}
                   </td>
                 ))}
+
+                <td>
+                  <Button
+                    hidden={selectedTable !== "Loans"}
+                    className="w-100 btn btn-lg btn-primary"
+                    onClick={() => handleReturn(data)}
+                    disabled={data[columns.indexOf("Status")] === "returned"}
+                  >
+                    Return
+                  </Button>
+                </td>
+
                 {sessionStorage.getItem("hideEditButton") === "true" ? (
                   <></>
                 ) : (
@@ -381,6 +408,7 @@ function DataTable(props) {
                     <Button
                       className="w-100 btn btn-lg btn-primary"
                       onClick={() => handleEdit(data)}
+                      disabled={data[columns.indexOf("Status")] === "returned"}
                     >
                       Edit
                     </Button>
