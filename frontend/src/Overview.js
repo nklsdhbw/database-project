@@ -76,6 +76,9 @@ function Overview() {
     Readers: 0,
     Librarians: 0,
     Teams: 0,
+    Books: 0,
+    Employees: 0,
+    Managers: 0,
   };
 
   //* Callback function //
@@ -280,6 +283,9 @@ function Overview() {
                   if (column === "loanFine") {
                     placeholder = 0;
                   }
+                  if (column === "loanStatus") {
+                    placeholder = "open";
+                  }
                   //prefill loanReaderID
                   if (column === "loanReaderID") {
                     placeholder = sessionStorage.getItem("readerID");
@@ -438,13 +444,23 @@ function Overview() {
   }
 
   function convertIntoBook(header, data) {
+    header = header.flat();
+    let libraryOrderISBN = data[header.indexOf("ISBN")];
+    let libraryOrderAmount = data[header.indexOf("Order amount")];
+    let libraryOrderID = data[0];
+    header = header.slice(1);
+    data = data.slice(1);
     console.log(bookISBNs);
 
-    header = header.flat();
-    let libraryOrderISBN = data[header.indexOf("libraryOrderISBN")];
+    console.log(header, "header");
+
     console.log("libraryOrderISBN", libraryOrderISBN);
-    let libraryOrderAmount = data[header.indexOf("libraryOrderAmount")];
+
+    console.log(libraryOrderAmount, "libraryOrderAmount");
+
+    console.log(bookISBNs.includes(libraryOrderISBN));
     if (bookISBNs.includes(libraryOrderISBN)) {
+      console.log("Book already exists");
       if (
         window.confirm(
           "A book with this ISBN already exists. The order amount will be added to the existing book if you press confirm. Otherwise press cancel to abort the order."
@@ -459,7 +475,7 @@ function Overview() {
           })
           .then((response) => {
             setUpdateData(!updateData);
-            let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${data[0]}'`;
+            let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${libraryOrderID}'`;
             // successfull insert -> now update libraryOrderStatusOrder to done
             axios
               .post(api, {
@@ -483,42 +499,39 @@ function Overview() {
       let insertData = "";
       let oldColumn;
       let notNeccessaryColumns = [
-        "libraryOrderAuthor",
-        "libraryOrderPublisher",
-        "libraryOrderDateOrdered",
-        "libraryOrderDeliveryDate",
-        "libraryOrderCost",
-        "libraryOrderManagerID",
-        "libraryOrderManagerLibrarianID",
-        "libraryOrderCurrencyID",
+        "Author",
+        "Publisher",
+        "Order date",
+        "Delivery Date",
+        "Cost",
+        "Manager",
+        "Currency",
+        "Order status",
       ];
       header.forEach((column) => {
-        if (
-          notFilledColumns.includes(column) &&
-          column !== "libraryOrderStatusOrder"
-        ) {
+        if (notFilledColumns.includes(column) && column !== "Order status") {
           indexID = header.indexOf(column);
         } else {
           if (notNeccessaryColumns.includes(column)) {
           } else {
             switch (column) {
-              case "libraryOrderBookTitle":
+              case "Book title":
                 oldColumn = column;
                 column = "bookTitle";
                 break;
-              case "libraryOrderAuthorID":
+              case "Author ID":
                 oldColumn = column;
                 column = "bookAuthorID";
                 break;
-              case "libraryOrderAmount":
+              case "Order amount":
                 oldColumn = column;
                 column = "bookAmount";
                 break;
-              case "libraryOrderISBN":
+              case "ISBN":
                 oldColumn = column;
                 column = "bookISBN";
                 break;
-              case "libraryOrderPublisherID":
+              case "Publisher ID":
                 oldColumn = column;
                 column = "bookPublisherID";
                 break;
@@ -548,7 +561,7 @@ function Overview() {
       insertQuery =
         insertQuery + insertData.slice(0, insertData.length - 2) + ")";
       console.log(insertQuery);
-      let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${data[indexID]}'`;
+      let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${libraryOrderID}'`;
 
       axios
         .post(api, {
@@ -595,11 +608,17 @@ function Overview() {
         resultsWithIDs={resultsWithIDs}
       />
       <div>
+        {/* Create Record Button*/}
         <img
           src={plusGreenIcon}
           alt="Create New Record"
           onClick={() => handleCreate()}
           style={{ cursor: "pointer" }}
+          hidden={
+            sessionStorage.getItem("createRecordPermission") === "true"
+              ? false
+              : true
+          }
         />
         <CreateRecordModal
           showModal={showModal}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
 import bcrypt from "bcryptjs";
@@ -26,15 +26,63 @@ function EditRecordModal(props) {
     showSearch,
   } = props;
 
+  const isLoanReturnDateUndefinedNullEmptyAndNoOtherEmpty =
+    Object.entries(editData).every(([key, value]) =>
+      key === "loanReturnDate"
+        ? value.placeholder === undefined ||
+          value.placeholder === null ||
+          value.placeholder === ""
+        : value.placeholder !== undefined &&
+          value.placeholder !== null &&
+          value.placeholder !== ""
+    ) &&
+    Object.values(editData).some(
+      (value) =>
+        value.placeholder === undefined ||
+        value.placeholder === null ||
+        value.placeholder === ""
+    );
+
+  const [formValid, setFormValid] = useState(
+    isLoanReturnDateUndefinedNullEmptyAndNoOtherEmpty
+  );
+  const formRef = useRef(null);
+
+  let disabledColumns = ["loanStatus"];
+  let dbColumns = Object.keys(editData);
+  for (let i = 0; i < dbColumns.length; i++) {
+    if (dbColumns[i].endsWith("ID")) {
+      disabledColumns.push(dbColumns[i]);
+    }
+  }
+
   const handleEditInputChange = (event) => {
     const { name, value } = event.target;
     setEditData({
       ...editData,
       [name]: { ...editData[name], placeholder: value },
     });
+    if (formRef.current.checkValidity()) {
+      setFormValid(true);
+    } else {
+      setFormValid(false);
+    }
   };
 
   async function editEntry(data) {
+    // remove columns that are not filled
+    // atm this can only be true for loanReturnDate as it is the
+    // only optional column, all the other ones are required and therefore
+    // cant be empty
+    data = Object.fromEntries(
+      Object.entries(data).filter(
+        ([key, value]) =>
+          value.placeholder !== undefined &&
+          value.placeholder !== null &&
+          value.placeholder !== ""
+      )
+    );
+
     let columnsString = "";
     let query = "SET ";
     let rowID = selectedTable.slice(0, selectedTable.length - 1);
@@ -126,26 +174,43 @@ function EditRecordModal(props) {
         </Button>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={handleEditSubmit}>
+        <Form onSubmit={handleEditSubmit} ref={formRef}>
           {Object.entries(editData).map(([key, value], index) => (
             <Form.Group controlId={`${String(key)}`}>
               <Form.Label>{`${String(key)}`}</Form.Label>
-              <Form.Control
-                type={datatypes[index]} //`${String(value.type)}`}
-                name={`${String(key)}`}
-                value={
-                  value.type == "date" && !isNaN(new Date(value.placeholder))
-                    ? new Date(value.placeholder).toISOString().slice(0, 10)
-                    : `${value.placeholder}`
-                }
-                //{`${value.placeholder}`}
-                onChange={handleEditInputChange}
-                required
-                readOnly={key == columns[0] ? true : false}
-              />
+              {key === "loanReturnDate" ? (
+                <Form.Control
+                  type={datatypes[index]} //`${String(value.type)}`}
+                  name={`${String(key)}`}
+                  value={
+                    value.type == "date" && !isNaN(new Date(value.placeholder))
+                      ? new Date(value.placeholder).toISOString().slice(0, 10)
+                      : `${value.placeholder}`
+                  }
+                  onChange={handleEditInputChange}
+                  readOnly={key == columns[0] ? true : false}
+                  disabled={disabledColumns.includes(key)}
+                />
+              ) : (
+                <Form.Control
+                  type={datatypes[index]} //`${String(value.type)}`}
+                  name={`${String(key)}`}
+                  value={
+                    value.type == "date" && !isNaN(new Date(value.placeholder))
+                      ? new Date(value.placeholder).toISOString().slice(0, 10)
+                      : `${value.placeholder}`
+                  }
+                  onChange={handleEditInputChange}
+                  readOnly={key == columns[0] ? true : false}
+                  required
+                  disabled={disabledColumns.includes(key)}
+                />
+              )}
             </Form.Group>
           ))}
-          <Button type="submit">Submit Edit</Button>
+          <Button disabled={!formValid} type="submit">
+            Submit Edit
+          </Button>
           {showSearchBookButton && (
             <Button onClick={handleBook}>Search Book</Button>
           )}

@@ -117,18 +117,18 @@ INSERT INTO "Teams" DEFAULT VALUES;
 INSERT INTO "Teams" DEFAULT VALUES;
 INSERT INTO "Teams" DEFAULT VALUES;
 
-INSERT INTO "Loans" ("loanBookID", "loanReaderID", "loanLoanDate", "loanDueDate", "loanReturnDate", "loanRenewals", "loanOverdue", "loanFine", "loanCurrencyID") 
+INSERT INTO "Loans" ("loanBookID", "loanReaderID", "loanLoanDate", "loanDueDate", "loanReturnDate", "loanStatus","loanRenewals", "loanOverdue", "loanFine", "loanCurrencyID") 
 VALUES 
-(1, 1, '2023-05-01', '2023-05-15', NULL, 0, false, 0.0, 1),
-(2, 1, '2023-05-02', '2023-05-16', NULL, 0, false, 0.0, 1),
-(3, 2, '2023-05-03', '2023-05-17', NULL, 0, false, 0.0, 1),
-(4, 2, '2023-05-04', '2023-05-18', NULL, 0, false, 0.0, 1),
-(5, 3, '2023-05-05', '2023-05-19', NULL, 0, false, 0.0, 1),
-(6, 3, '2023-05-06', '2023-05-20', NULL, 0, false, 0.0, 1),
-(7, 4, '2023-05-07', '2023-05-21', NULL, 0, false, 0.0, 1),
-(8, 4, '2023-05-08', '2023-05-22', NULL, 0, false, 0.0, 1),
-(9, 5, '2023-05-09', '2023-05-23', NULL, 0, false, 0.0, 1),
-(10, 5, '2023-05-10', '2023-05-24', NULL, 0, false, 0.0, 1);
+(2, 1, '2023-05-02', '2023-05-16',  NULL, 'open', 0, false, 0.0, 1),
+(3, 2, '2023-05-03', '2023-05-17',  NULL, 'open', 0, false, 0.0, 1),
+(1, 1, '2023-05-01', '2023-05-15',  NULL, 'open', 0, false, 0.0, 1),
+(4, 2, '2023-05-04', '2023-05-18',  NULL, 'open', 0, false, 0.0, 1),
+(5, 3, '2023-05-05', '2023-05-19',  NULL, 'open', 0, false, 0.0, 1),
+(6, 3, '2023-05-06', '2023-05-20',  NULL, 'open', 0, false, 0.0, 1),
+(7, 4, '2023-05-07', '2023-05-21',  NULL, 'open', 0, false, 0.0, 1),
+(8, 4, '2023-05-08', '2023-05-22',  NULL, 'open', 0, false, 0.0, 1),
+(9, 5, '2023-05-09', '2023-05-23',  NULL, 'open', 0, false, 0.0, 1),
+(10, 5, '2023-05-10', '2023-05-24', NULL, 'open', 0, false, 0.0, 1);
 
 
 INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID") VALUES (1, 1);

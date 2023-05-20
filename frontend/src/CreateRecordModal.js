@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
 
@@ -33,9 +33,24 @@ function CreateRecordModal(props) {
       ...formData,
       [name]: { ...formData[name], placeholder: value },
     });
+    if (formRef.current.checkValidity()) {
+      setFormValid(true);
+    } else {
+      setFormValid(false);
+    }
   };
 
   const bcrypt = require("bcryptjs");
+  const [formValid, setFormValid] = useState(false);
+  const formRef = useRef(null);
+
+  let disabledColumns = ["loanStatus"];
+  let columns = Object.keys(formData);
+  for (let i = 0; i < columns.length; i++) {
+    if (columns[i].endsWith("ID")) {
+      disabledColumns.push(columns[i]);
+    }
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -192,6 +207,20 @@ function CreateRecordModal(props) {
   function addEntry(data) {
     let valuesString = "VALUES(";
     let columnsString = "";
+
+    // remove columns that are not filled
+    // atm this can only be true for loanReturnDate as it is the
+    // only optional column, all the other ones are required and therefore
+    // cant be empty
+    data = Object.fromEntries(
+      Object.entries(data).filter(
+        ([key, value]) =>
+          value.placeholder !== undefined &&
+          value.placeholder !== null &&
+          value.placeholder !== ""
+      )
+    );
+
     let values = Object.entries(data).map(
       ([key, value]) =>
         (valuesString = valuesString + `'${value.placeholder}',`)
@@ -199,13 +228,15 @@ function CreateRecordModal(props) {
     let columns = Object.entries(data).map(
       ([key, value]) => (columnsString = columnsString + `"${key}",`)
     );
+    let insqertQuery =
+      `INSERT INTO public."${selectedTable}" (${columnsString.slice(
+        0,
+        columnsString.length - 1
+      )})` + `${valuesString.slice(0, valuesString.length - 1)}) `;
+    console.log(insqertQuery, "insqertQuery");
     axios
       .post(api, {
-        query:
-          `INSERT INTO public."${selectedTable}" (${columnsString.slice(
-            0,
-            columnsString.length - 1
-          )})` + `${valuesString.slice(0, valuesString.length - 1)}) `,
+        query: insqertQuery,
       })
       .then((response) => {
         //stored function is executed in the background that updates bookAvailability and bookAvailabilityAmount
@@ -224,7 +255,7 @@ function CreateRecordModal(props) {
         </Button>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} ref={formRef}>
           {Object.entries(formData).map(([key, value], index) => (
             <Form.Group controlId={String(key)} key={index}>
               <Form.Label>{String(key)}</Form.Label>
@@ -235,10 +266,19 @@ function CreateRecordModal(props) {
                   value={value.placeholder}
                   onChange={handleInputChange}
                   required
+                  disabled={disabledColumns.includes(key)}
                 >
                   <option value="Manager">Manager</option>
                   <option value="Employee">Employee</option>
                 </Form.Control>
+              ) : key === "loanReturnDate" ? (
+                <Form.Control
+                  name={key}
+                  value={value.placeholder}
+                  onChange={handleInputChange}
+                  type={datatypes[index]}
+                  disabled={disabledColumns.includes(key)}
+                />
               ) : (
                 <Form.Control
                   name={key}
@@ -246,12 +286,15 @@ function CreateRecordModal(props) {
                   onChange={handleInputChange}
                   required
                   type={datatypes[index]}
+                  disabled={disabledColumns.includes(key)}
                 />
               )}
             </Form.Group>
           ))}
 
-          <Button type="submit">Create</Button>
+          <Button type="submit" disabled={!formValid}>
+            Create
+          </Button>
           {showSearchBookButton && (
             <Button onClick={handleBook}>Search Book</Button>
           )}
