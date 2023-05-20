@@ -33,6 +33,7 @@ services:
       - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/1-create_tables.sql
       - ./sql/fill_tables.sql:/docker-entrypoint-initdb.d/2-fill_tables.sql
       - ./sql/create_views.sql:/docker-entrypoint-initdb.d/3-create_views.sql
+      - ./sql/create_stored_functions_and_triggers.sql:/docker-entrypoint-initdb.d/4create_stored_functions_and_triggers.sql
     networks:
       - mynetwork
 
