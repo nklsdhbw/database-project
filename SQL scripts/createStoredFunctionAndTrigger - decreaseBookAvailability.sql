@@ -1,5 +1,5 @@
-DROP FUNCTION IF EXISTS updateBookAvailability() CASCADE;
-CREATE FUNCTION updateBookAvailability()
+DROP FUNCTION IF EXISTS decreaseBookAvailability() CASCADE;
+CREATE FUNCTION decreaseBookAvailability()
 RETURNS TRIGGER AS $$
 DECLARE
     book_avail_amount INTEGER;
@@ -13,8 +13,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS updateBookAvailabilityTrigger ON "Loans";
-CREATE TRIGGER updateBookAvailabilityTrigger
+DROP TRIGGER IF EXISTS decreaseBookAvailabilityTrigger ON "Loans";
+CREATE TRIGGER decreaseBookAvailabilityTrigger
 AFTER INSERT ON "Loans"
 FOR EACH ROW
-EXECUTE FUNCTION updateBookAvailability();
+EXECUTE FUNCTION decreaseBookAvailability();

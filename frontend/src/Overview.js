@@ -606,6 +606,8 @@ function Overview() {
         setEditData={setEditData}
         showEditModal={showEditModal}
         resultsWithIDs={resultsWithIDs}
+        updateData={updateData}
+        setUpdateData={setUpdateData}
       />
       <div>
         {/* Create Record Button*/}
