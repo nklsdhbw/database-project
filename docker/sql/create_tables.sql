@@ -123,6 +123,7 @@ CREATE TABLE "Loans" (
     "loanLoanDate" DATE,
     "loanDueDate" DATE,
     "loanReturnDate" DATE,
+    "loanStatus" varchar(255),
     "loanRenewals" INTEGER,
     "loanOverdue" BOOLEAN,
     "loanFine" DECIMAL,
