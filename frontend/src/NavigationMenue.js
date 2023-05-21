@@ -175,7 +175,7 @@ const NavigationMenue = () => {
     `,
       formQuery: `SELECT 'dummy', "employeeTeamID", "employeeLibrarianID", 'dummy2' FROM "Employees"`,
       img: employeeManagement,
-      read: ["Manager", "Employee", "Reader", "Admin"],
+      read: ["Manager", "Employee", "Admin"],
       write: ["Manager", "Admin"],
     },
     {
