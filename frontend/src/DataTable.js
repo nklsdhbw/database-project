@@ -390,16 +390,22 @@ function DataTable(props) {
                   </td>
                 ))}
 
-                <td>
-                  <Button
-                    hidden={selectedTable !== "Loans"}
-                    className="w-100 btn btn-lg btn-primary"
-                    onClick={() => handleReturn(data)}
-                    disabled={data[columns.indexOf("Status")] === "returned"}
-                  >
-                    Return
-                  </Button>
-                </td>
+                {selectedTable === "Loans" ? (
+                  <td>
+                    <Button
+                      hidden={selectedTable !== "Loans"}
+                      className="w-100 btn btn-lg btn-primary"
+                      onClick={() => handleReturn(data)}
+                      disabled={data[columns.indexOf("Status")] === "returned"}
+                    >
+                      {data[columns.indexOf("Status")] === "returned"
+                        ? "Already returned"
+                        : "Return"}
+                    </Button>
+                  </td>
+                ) : (
+                  <></>
+                )}
 
                 {sessionStorage.getItem("hideEditButton") === "true" ? (
                   <></>
