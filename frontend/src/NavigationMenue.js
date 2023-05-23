@@ -41,32 +41,24 @@ const NavigationMenue = () => {
       label: "Manage personal data",
       table: "Readers",
       entryQuery: {
-        [`${sessionStorage.getItem(
-          "role"
-        )}`]: `SELECT "readerID" AS "ID", "readerFirstName" AS "Firstname", "readerLastName" AS "Lastname", "readerEmail" AS "Email", "readerPassword" AS "Password" FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
+        Reader: `SELECT "readerID" AS "ID", "readerFirstName" AS "Firstname", "readerLastName" AS "Lastname", "readerEmail" AS "Email", "readerPassword" AS "Password" FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
           "readerID"
         )}`,
-        [`${sessionStorage.getItem(
-          "role"
-        )}`]: `SELECT "librarianID" AS "ID", "librarianFirstName" AS "Firstname", "librarianLastName" AS "Lastname", "librarianEmail" AS "Email", "librarianPhone" AS "Phone", "librarianBirthDate" AS "Birth date", "librarianPassword" AS "Password" FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+        Librarian: `SELECT "librarianID" AS "ID", "librarianFirstName" AS "Firstname", "librarianLastName" AS "Lastname", "librarianEmail" AS "Email", "librarianPhone" AS "Phone", "librarianBirthDate" AS "Birth date", "librarianPassword" AS "Password" FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
           "userID"
         )}`,
       },
       formQuery: {
-        [`${sessionStorage.getItem(
-          "role"
-        )}`]: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
+        Reader: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
           "userID"
         )}`,
-        [`${sessionStorage.getItem(
-          "role"
-        )}`]: `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+        Librarian: `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
           "userID"
         )}`,
       },
       img: personalInformation,
       read: ["Manager", "Employee", "Admin", "Reader"],
-      write: ["Manager", "Employee", "Admin", "Reader"],
+      write: [],
     },
     {
       label: "Manage library orders",
