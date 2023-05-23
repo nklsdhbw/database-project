@@ -123,7 +123,16 @@ function EditRecordModal(props) {
           )} ` + `WHERE "${rowID}" = ${keyValue}`,
       })
       .then((response) => {
-        setUpdateData(!updateData);
+        axios
+          .post(api, {
+            query: `CALL markOverdueLoans();`,
+          })
+          .then((response) => {
+            setUpdateData(!updateData);
+          })
+          .catch((error) => {
+            console.log("ERROR : ", error);
+          });
       })
       .catch((error) => {});
   }

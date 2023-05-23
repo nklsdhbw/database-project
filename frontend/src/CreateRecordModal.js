@@ -240,7 +240,18 @@ function CreateRecordModal(props) {
       })
       .then((response) => {
         //stored function is executed in the background that updates bookAvailability and bookAvailabilityAmount
-        setUpdateData(!updateData);
+        axios
+          .post(api, {
+            query: `CALL markOverdueLoans();`,
+          })
+          .then((response) => {
+            console.log("UPDATEDATA", updateData);
+            setUpdateData(!updateData);
+            console.log("UPDATEDATA", updateData);
+          })
+          .catch((error) => {
+            console.log("ERROR : ", error);
+          });
       })
       .catch((error) => {
         console.log("ERROR : ", error);
