@@ -44,7 +44,7 @@ function DataTable(props) {
   }
 
   function handleEdit(data) {
-    setUpdateData(!updateData);
+    //setUpdateData(!updateData);
     if (selectedTable === "Publishers") {
       let mappedColumns = Object.keys(
         JSON.parse(sessionStorage.getItem("columnMapping"))

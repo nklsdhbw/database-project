@@ -67,17 +67,66 @@ const Register = () => {
       // and navigate then to the "overview" page
       sessionStorage.setItem("loggedIn", JSON.stringify(true));
       sessionStorage.setItem("loginMail", registerData.eMail);
+      console.log("registerData", registerData);
+      let registerParameters = [
+        registerData.firstname,
+        registerData.lastname,
+        registerData.username,
+        hashedPassword,
+      ];
       axios
         .post(api, {
-          query: `INSERT INTO public."Readers" ("readerFirstName", "readerLastName", "readerEmail", "readerPassword") Values('${registerData.firstname}', '${registerData.lastname}', '${registerData.eMail}', '${hashedPassword}')`,
+          query: `INSERT INTO public."Readers" ("readerFirstName", "readerLastName", "readerEmail", "readerPassword") Values(%s, %s, %s, %s)`,
+          parameters: registerParameters,
         })
         .then((response) => {
           setResults(response.data);
 
           //get readerData from database
+          let query = `SELECT
+    "id",
+    "username",
+    "role",
+    "password",
+    "teamID" AS "Team ID"
+  FROM (
+    SELECT
+      "readerID" AS id,
+      "readerEmail" AS username,
+      'Reader' AS role,
+      "readerPassword" AS password,
+      NULL AS "teamID"
+    FROM
+      "Readers"
+    UNION
+    SELECT
+      "librarianID" AS id,
+      "librarianEmail" AS username,
+      CASE
+        WHEN "librarianID" IN (SELECT "managerLibrarianID" FROM "Managers") THEN 'Manager'
+        WHEN "librarianID" IN (SELECT "employeeLibrarianID" FROM "Employees") THEN 'Employee'
+        ELSE 'Librarian'
+      END AS role,
+      "librarianPassword" AS password,
+      CASE
+        WHEN "librarianID" IN (SELECT "managerLibrarianID" FROM "Managers") THEN (
+          SELECT "managerTeamID" FROM "Managers" WHERE "managerLibrarianID" = "Librarians"."librarianID"
+        )
+        WHEN "librarianID" IN (SELECT "employeeLibrarianID" FROM "Employees") THEN (
+          SELECT "employeeTeamID" FROM "Employees" WHERE "employeeLibrarianID" = "Librarians"."librarianID"
+        )
+        ELSE NULL
+      END AS "teamID"
+    FROM
+      "Librarians"
+    ) AS users
+  ORDER BY
+    id;
+  
+    `;
           axios
             .post(api, {
-              query: `SELECT * FROM public."Readers"`,
+              query: query,
             })
             .then((response) => {
               setResults(response.data[1]);
@@ -85,12 +134,22 @@ const Register = () => {
               //get readerID from User and save it in sessionStorage
               console.log(results);
               results.forEach((element) => {
-                if (element[3] === registerData.eMail) {
-                  let readerID = element[0];
-                  sessionStorage.setItem("readerID", readerID);
-                  navigate("/NavigationMenue");
+                console.log(element[1], registerData.username);
+                if (element[1] === registerData.username) {
+                  let userID = element[0];
+                  let role = element[2];
+                  let teamID = element[4];
+                  let loginMail = element[1];
+                  sessionStorage.setItem("teamID", teamID);
+                  sessionStorage.setItem("loginMail", loginMail);
+                  sessionStorage.setItem("role", role);
+                  if (element[2] === "Reader") {
+                    sessionStorage.setItem("readerID", userID);
+                  }
+                  sessionStorage.setItem("userID", userID);
                 }
               });
+              navigate("/NavigationMenue");
             })
             .catch((error) => {
               console.log(error);

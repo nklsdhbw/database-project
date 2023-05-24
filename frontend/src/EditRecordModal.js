@@ -92,7 +92,7 @@ function EditRecordModal(props) {
       rowID = "libraryOrderID";
     }
     let keyValue = rowUniqueID;
-
+    let parameters = [];
     let arr = Object.entries(data);
     for (let index = 0; index < arr.length; index++) {
       const column = arr[index][0];
@@ -111,16 +111,21 @@ function EditRecordModal(props) {
         console.log(placeholder);
         placeholder = new Date(placeholder).toISOString().slice(0, 10);
       }
-      query = query + `"${column}" = '${placeholder}',`;
+      query = query + `"${column}" = %s,`;
+      parameters.push(placeholder);
     }
+    query =
+      `UPDATE public."${selectedTable}" ${query.slice(
+        0,
+        columnsString.length - 1
+      )} ` + `WHERE "${rowID}" = ${keyValue}`;
+    console.log("PARAMETERS: ", parameters);
+    console.log("QUERY: ", query);
 
     axios
       .post(api, {
-        query:
-          `UPDATE public."${selectedTable}" ${query.slice(
-            0,
-            columnsString.length - 1
-          )} ` + `WHERE "${rowID}" = ${keyValue}`,
+        query: query,
+        parameters,
       })
       .then((response) => {
         axios
@@ -134,7 +139,9 @@ function EditRecordModal(props) {
             console.log("ERROR : ", error);
           });
       })
-      .catch((error) => {});
+      .catch((error) => {
+        console.log("ERROR : ", error);
+      });
   }
 
   const handleEditSubmit = (event) => {
