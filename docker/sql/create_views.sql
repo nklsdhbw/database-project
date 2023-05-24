@@ -119,4 +119,18 @@ SELECT "librarianID" AS "ID",
     LEFT JOIN "Employees" e ON e."employeeLibrarianID" = l."librarianID"
     LEFT JOIN "Managers" m ON m."managerLibrarianID" = l."librarianID"
     LEFT JOIN "Teams" t ON "teamID" = e."employeeTeamID" OR "teamID" = m."managerTeamID";
+
+CREATE OR REPLACE VIEW "enrichedTeams" AS
+SELECT 
+      "librarianID" AS "ID", 
+      "librarianFirstName" AS "Firstname", 
+      "librarianLastName" AS "Lastname", 
+      "librarianEmail" AS "Email", 
+      "librarianPhone" AS "Phone", 
+      "librarianBirthDate" AS "Birth date",
+      "employeeTeamID" AS "Team ID"
+    FROM 
+      "Teams" t
+    JOIN "Employees" e ON e."employeeTeamID" = t."teamID"
+    JOIN "Librarians" l ON "employeeLibrarianID" = l."librarianID";
 	

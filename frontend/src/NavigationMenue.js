@@ -101,19 +101,8 @@ const NavigationMenue = () => {
     {
       label: "My team",
       table: "Teams",
-      entryQuery: `SELECT 
-      "librarianID" AS "ID", 
-      "librarianFirstName" AS "Firstname", 
-      "librarianLastName" AS "Lastname", 
-      "librarianEmail" AS "Email", 
-      "librarianPhone" AS "Phone", 
-      "librarianBirthDate" AS "Birth date",
-      "employeeTeamID" AS "Team ID"
-    FROM 
-      "Teams" t
-    JOIN "Employees" e ON e."employeeTeamID" = t."teamID"
-    JOIN "Librarians" l ON "employeeLibrarianID" = l."librarianID"
-    WHERE "teamID" = ${sessionStorage.getItem("teamID")};
+      entryQuery: `SELECT * FROM "enrichedTeams"
+          WHERE "teamID" = ${sessionStorage.getItem("teamID")};
     `,
       formQuery: `SELECT 'dummy', "employeeTeamID", "employeeLibrarianID", 'dummy2' FROM "Employees"`,
       img: employeeManagement,
