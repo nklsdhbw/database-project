@@ -9,8 +9,7 @@ import supplierManagement from "./img/supplier_management.svg";
 import employeeManagement from "./img/employee_management.svg";
 import bookManagement from "./img/book_management.svg";
 import "./dashboard.css";
-
-// import required css
+import chapterOneLogo from "./img/ChapterOne_logo.png"; 
 //import 'bootstrap/dist/css/bootstrap.min.css';
 
 const NavigationMenue = () => {
@@ -268,7 +267,13 @@ const NavigationMenue = () => {
   }
 
   return (
+
     <div>
+      <header>
+        <div className="logo-container">
+        <img src={chapterOneLogo} alt="ChapterOne Logo" />
+        </div>
+      </header>
       <h1>My Dashboard</h1>
       <div className="container">
         {filteredActions.map((option) => (
@@ -290,6 +295,5 @@ const NavigationMenue = () => {
       </footer>
     </div>
   );
-}; // Schließende Klammer fehlte hier
-
+}; 
 export default NavigationMenue;

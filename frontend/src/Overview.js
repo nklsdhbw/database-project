@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
-import { Modal, ModalBody } from "react-bootstrap";
+import { Modal, Form, Button, ModalBody } from "react-bootstrap";
 import axios from "axios";
+import Table from "react-bootstrap/Table";
 import { useNavigate } from "react-router-dom";
 import TableSearch from "./TableSearch";
+import bcrypt from "bcryptjs";
 import DataTable from "./DataTable.js";
 import CreateRecordModal from "./CreateRecordModal";
 import EditRecordModal from "./EditRecordModal";
@@ -21,6 +23,7 @@ function Overview() {
     "zipID",
     "currencyID",
   ];
+  const BUTTON_TABLES = ["Loans", "Books", "LibraryOrders"];
   const navigate = useNavigate();
   // general variables
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
@@ -76,67 +79,64 @@ function Overview() {
     Readers: 0,
     Librarians: 0,
     Teams: 0,
-    Books: 0,
-    Employees: 0,
-    Managers: 0,
   };
 
   //* Callback function //
   const callThisFromChildComponent = (data) => {
     console.log("Data from Child component:", data);
-    if (data === "closePanel") {
+    if (data == "closePanel") {
       setshowSearch(!showSearch);
     } else {
       let input = data;
       const updatedFormData = { ...formData };
       Object.keys(input).forEach((key) => {
         let formDataKey = key;
-        if (key === "bookID") {
+        if (key == "bookID") {
           formDataKey = "loanBookID";
         }
-        if (key === "authorID" && selectedTable === "Books") {
+        if (key == "authorID" && selectedTable == "Books") {
           formDataKey = "bookAuthorID";
         }
-        if (key === "authorName") {
+        if (key == "authorName") {
           formDataKey = "bookAuthor";
         }
-        if (key === "publisherID" && selectedTable === "Books") {
+        if (key == "publisherID" && selectedTable == "Books") {
           formDataKey = "bookPublisherID";
         }
-        if (key === "publisherName") {
+        if (key == "publisherName") {
           formDataKey = "bookPublisherName";
         }
-        if (key === "publisherID" && selectedTable === "LibraryOrders") {
+        if (key == "publisherID" && selectedTable == "LibraryOrders") {
           formDataKey = "libraryOrderPublisherID";
         }
-        if (key === "authorID" && selectedTable === "LibraryOrders") {
+        if (key == "authorID" && selectedTable == "LibraryOrders") {
           formDataKey = "libraryOrderAuthorID";
         }
-        if (key === "managerID" && selectedTable === "LibraryOrders") {
+        if (key == "managerID" && selectedTable == "LibraryOrders") {
           formDataKey = "libraryOrderManagerLibrarianID";
         }
-        if (key === "zipID" && selectedTable === "Publishers") {
+        if (key == "zipID" && selectedTable == "Publishers") {
           formDataKey = "publisherZipID";
         }
-        if (key === "currencyID" && selectedTable === "Loans") {
+        if (key == "currencyID" && selectedTable == "Loans") {
           formDataKey = "loanCurrencyID";
         }
-        if (key === "currencyID" && selectedTable === "LibraryOrders") {
+        if (key == "currencyID" && selectedTable == "LibraryOrders") {
           formDataKey = "libraryOrderCurrencyID";
         }
-        if (key === "currencyID" && selectedTable === "LibraryOrders") {
+        if (key == "currencyID" && selectedTable == "LibraryOrders") {
           formDataKey = "libraryOrderCurrencyID";
         }
 
         if (
-          key === "librarianID" &&
-          sessionStorage.getItem("searchTable") === "Employees"
+          key == "librarianID" &&
+          sessionStorage.getItem("searchTable") == "Employees"
         ) {
           formDataKey = "employeeLibrarianID";
         }
         if (
-          key === "teamID" &&
-          sessionStorage.getItem("searchTable") === "Teams"
+          key == "teamID" &&
+          sessionStorage.getItem("searchTable") == "Teams"
         ) {
           formDataKey = "employeeTeamID";
         }
@@ -162,14 +162,14 @@ function Overview() {
     let uniqueColumn = selectedTable.slice(0, selectedTable.length - 1);
     uniqueColumn = uniqueColumn.toLowerCase();
     uniqueColumn = uniqueColumn + "ID"; //e.g. loanID
-    if (selectedTable === "LibraryOrders") {
+    if (selectedTable == "LibraryOrders") {
       uniqueColumn = "libraryOrderID";
     }
     setUniqueColumn(uniqueColumn);
     console.log(selectedTable, "selectedTable");
 
     setHidePublisherButton(
-      selectedTable === "Books" || selectedTable === "LibraryOrders"
+      selectedTable == "Books" || selectedTable == "LibraryOrders"
         ? false
         : true
     );
@@ -268,26 +268,23 @@ function Overview() {
                 ];
                 cols.map((column, index) => {
                   let placeholder = "";
-                  if (column === "loanReaderEmail") {
+                  if (column == "loanReaderEmail") {
                     placeholder = sessionStorage.getItem("loginMail");
                   }
                   if (prefillDateColumns.includes(column)) {
                     placeholder = new Date().toISOString().slice(0, 10);
                   }
-                  if (column === "loanRenewals") {
+                  if (column == "loanRenewals") {
                     placeholder = 0;
                   }
-                  if (column === "loanOverdue") {
+                  if (column == "loanOverdue") {
                     placeholder = false;
                   }
-                  if (column === "loanFine") {
+                  if (column == "loanFine") {
                     placeholder = 0;
                   }
-                  if (column === "loanStatus") {
-                    placeholder = "open";
-                  }
                   //prefill loanReaderID
-                  if (column === "loanReaderID") {
+                  if (column == "loanReaderID") {
                     placeholder = sessionStorage.getItem("readerID");
                   }
                   if (notFilledColumns.includes(column[0])) {
@@ -300,7 +297,7 @@ function Overview() {
                   }
                 });
 
-                if (selectedTable === "Teams") {
+                if (selectedTable == "Teams") {
                   let teamsFormData = {
                     employeeTeamID: {
                       type: "number",
@@ -317,7 +314,7 @@ function Overview() {
                   console.log(teamsFormData);
                   setEditData(teamsFormData);
                   setDatatypes(["number", "number"]);
-                } else if (selectedTable === "Librarians") {
+                } else if (selectedTable == "Librarians") {
                   newFormData["employeeTeamID"] = {
                     type: "number",
                     required: true,
@@ -359,17 +356,17 @@ function Overview() {
     setShowSearchTeamButton(false);
     setShowSearchCurrencyButton(false);
     setShowSearchEmployeeButton(false);
-    if (selectedTable === "Books") {
+    if (selectedTable == "Books") {
       setShowSearchAuthorButton(true);
       setHidePublisherButton(false);
     }
 
-    if (selectedTable === "Loans") {
+    if (selectedTable == "Loans") {
       sessionStorage.setItem("searchTable", "Books");
       setShowSearchBookButton(true);
       setShowSearchCurrencyButton(true);
     }
-    if (selectedTable === "LibraryOrders") {
+    if (selectedTable == "LibraryOrders") {
       sessionStorage.setItem("searchTable", "Authors");
       setHidePublisherButton(false);
       setShowSearchBookButton(false);
@@ -377,18 +374,18 @@ function Overview() {
       setShowSearchManagerButton(true);
       setShowSearchCurrencyButton(true);
     }
-    if (selectedTable === "Publishers") {
+    if (selectedTable == "Publishers") {
       setShowSearchZipButton(true);
     }
-    if (selectedTable === "Teams") {
+    if (selectedTable == "Teams") {
       setShowSearchTeamButton(true);
       setShowSearchEmployeeButton(true);
     }
-    if (selectedTable === "Librarians") {
+    if (selectedTable == "Librarians") {
       setShowSearchTeamButton(true);
     }
     setShowConvertOrderIntoBookButton(
-      selectedTable === "LibraryOrders" ? true : false
+      selectedTable == "LibraryOrders" ? true : false
     );
 
     // update boookISBNs
@@ -418,7 +415,7 @@ function Overview() {
   }, []);
 
   function deleteEntry(rowID) {
-    if (selectedTable === "Teams") {
+    if (selectedTable == "Teams") {
       axios
         .post(api, {
           query: `UPDATE public."Employees" SET "employeeTeamID" = NULL WHERE "employeeLibrarianID" = ${rowID}`,
@@ -444,23 +441,13 @@ function Overview() {
   }
 
   function convertIntoBook(header, data) {
-    header = header.flat();
-    let libraryOrderISBN = data[header.indexOf("ISBN")];
-    let libraryOrderAmount = data[header.indexOf("Order amount")];
-    let libraryOrderID = data[0];
-    header = header.slice(1);
-    data = data.slice(1);
     console.log(bookISBNs);
 
-    console.log(header, "header");
-
+    header = header.flat();
+    let libraryOrderISBN = data[header.indexOf("libraryOrderISBN")];
     console.log("libraryOrderISBN", libraryOrderISBN);
-
-    console.log(libraryOrderAmount, "libraryOrderAmount");
-
-    console.log(bookISBNs.includes(libraryOrderISBN));
+    let libraryOrderAmount = data[header.indexOf("libraryOrderAmount")];
     if (bookISBNs.includes(libraryOrderISBN)) {
-      console.log("Book already exists");
       if (
         window.confirm(
           "A book with this ISBN already exists. The order amount will be added to the existing book if you press confirm. Otherwise press cancel to abort the order."
@@ -475,7 +462,7 @@ function Overview() {
           })
           .then((response) => {
             setUpdateData(!updateData);
-            let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${libraryOrderID}'`;
+            let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${data[0]}'`;
             // successfull insert -> now update libraryOrderStatusOrder to done
             axios
               .post(api, {
@@ -499,46 +486,49 @@ function Overview() {
       let insertData = "";
       let oldColumn;
       let notNeccessaryColumns = [
-        "Author",
-        "Publisher",
-        "Order date",
-        "Delivery Date",
-        "Cost",
-        "Manager",
-        "Currency",
-        "Order status",
+        "libraryOrderAuthor",
+        "libraryOrderPublisher",
+        "libraryOrderDateOrdered",
+        "libraryOrderDeliveryDate",
+        "libraryOrderCost",
+        "libraryOrderManagerID",
+        "libraryOrderManagerLibrarianID",
+        "libraryOrderCurrencyID",
       ];
       header.forEach((column) => {
-        if (notFilledColumns.includes(column) && column !== "Order status") {
+        if (
+          notFilledColumns.includes(column) &&
+          column != "libraryOrderStatusOrder"
+        ) {
           indexID = header.indexOf(column);
         } else {
           if (notNeccessaryColumns.includes(column)) {
           } else {
             switch (column) {
-              case "Book title":
+              case "libraryOrderBookTitle":
                 oldColumn = column;
                 column = "bookTitle";
                 break;
-              case "Author ID":
+              case "libraryOrderAuthorID":
                 oldColumn = column;
                 column = "bookAuthorID";
                 break;
-              case "Order amount":
+              case "libraryOrderAmount":
                 oldColumn = column;
                 column = "bookAmount";
                 break;
-              case "ISBN":
+              case "libraryOrderISBN":
                 oldColumn = column;
                 column = "bookISBN";
                 break;
-              case "Publisher ID":
+              case "libraryOrderPublisherID":
                 oldColumn = column;
                 column = "bookPublisherID";
                 break;
               default:
                 break;
             }
-            if (column === "bookAmount") {
+            if (column == "bookAmount") {
               insertColumns = insertColumns + `"${column}", `;
               insertData =
                 insertData + `'${data[header.indexOf(oldColumn)]}', `;
@@ -561,7 +551,7 @@ function Overview() {
       insertQuery =
         insertQuery + insertData.slice(0, insertData.length - 2) + ")";
       console.log(insertQuery);
-      let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${libraryOrderID}'`;
+      let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${data[indexID]}'`;
 
       axios
         .post(api, {
@@ -606,21 +596,13 @@ function Overview() {
         setEditData={setEditData}
         showEditModal={showEditModal}
         resultsWithIDs={resultsWithIDs}
-        updateData={updateData}
-        setUpdateData={setUpdateData}
       />
       <div>
-        {/* Create Record Button*/}
         <img
           src={plusGreenIcon}
           alt="Create New Record"
           onClick={() => handleCreate()}
           style={{ cursor: "pointer" }}
-          hidden={
-            sessionStorage.getItem("createRecordPermission") === "true"
-              ? false
-              : true
-          }
         />
         <CreateRecordModal
           showModal={showModal}

@@ -3,6 +3,12 @@ import { Table, Button } from "react-bootstrap";
 import axios from "axios";
 import { useState } from "react";
 import { Input } from "antd";
+import "./DataTable.css"; // Pfad zur CSS-Datei anpassen
+
+import "./dashboard.css";
+import chapterOneLogo from "./img/ChapterOne_logo.png"; 
+// Import des Bildes
+import penBlueIcon from "./img/pen_blue_icon.svg";
 
 function DataTable(props) {
   const {
@@ -345,8 +351,12 @@ function DataTable(props) {
   }
 
   return (
-    // Above the table
     <>
+      <header>
+        <div className="logo-container">
+        <img src={chapterOneLogo} alt="ChapterOne Logo" />
+        </div>
+      </header>
       <Search
         onChange={handleSearch}
         placeholder="Search"
@@ -354,7 +364,7 @@ function DataTable(props) {
         style={{ position: "sticky", top: "0", left: "0" }}
       />
       <br /> <br />
-      <Table striped bordered hover className="table mx-auto">
+      <Table striped bordered hover className="custom-table">
         <thead>
           {columns.map((column) => (
             <th key={column}>{column}</th>
@@ -389,7 +399,6 @@ function DataTable(props) {
                       : entry}
                   </td>
                 ))}
-
                 {selectedTable === "Loans" ? (
                   <td>
                     <Button
@@ -406,18 +415,24 @@ function DataTable(props) {
                 ) : (
                   <></>
                 )}
-
                 {sessionStorage.getItem("hideEditButton") === "true" ? (
                   <></>
                 ) : (
                   <td>
-                    <Button
-                      className="w-100 btn btn-lg btn-primary"
+                    {/* Verwende das Bild als interaktiven Button */}
+                    <button
+                      className="edit-button"
                       onClick={() => handleEdit(data)}
                       disabled={data[columns.indexOf("Status")] === "returned"}
-                    >
-                      Edit
-                    </Button>
+                      style={{
+                        background: `url(${penBlueIcon}) no-repeat center`,
+                        backgroundSize: "contain",
+                        border: "none",
+                        width: "30px",
+                        height: "30px",
+                        cursor: "pointer",
+                      }}
+                    ></button>
                   </td>
                 )}
                 <td>
@@ -429,7 +444,7 @@ function DataTable(props) {
                   </Button>
                 </td>
                 {showConvertOrderIntoBookButton &&
-                  (data[columns.indexOf("Order status")] != "done" ? (
+                  (data[columns.indexOf("Order status")] !== "done" ? (
                     <td>
                       <Button
                         className="w-100 btn btn-lg btn-primary"
