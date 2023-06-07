@@ -11,6 +11,13 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 def run_query():
     # Get the SQL query from the request body
     query = request.json['query']
+    parameters = None
+    try:
+        parameters = request.json['parameters']
+        parameters = tuple(parameters)
+    except:
+        pass
+
 
     conn = psycopg2.connect(
         host="ep-little-rain-759001-pooler.us-east-1.postgres.vercel-storage.com",
@@ -22,7 +29,10 @@ def run_query():
 
     try:
         cur = conn.cursor()
-        cur.execute(query)
+        if parameters != None:
+            cur.execute(query, parameters)
+        else:
+            cur.execute(query)
         conn.commit()
         if query.startswith("SELECT"):
             result = cur.fetchall()
