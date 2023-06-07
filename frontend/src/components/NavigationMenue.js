@@ -2,13 +2,13 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import loansMmanagement from "./img/loans_management.svg";
-import orderManagement from "./img/order_management.svg";
-import personalInformation from "./img/personal_information.svg";
-import supplierManagement from "./img/supplier_management.svg";
-import employeeManagement from "./img/employee_management.svg";
-import bookManagement from "./img/book_management.svg";
-import "./dashboard.css";
+import loansMmanagement from "../img/loans_management.svg";
+import orderManagement from "../img/order_management.svg";
+import personalInformation from "../img/personal_information.svg";
+import supplierManagement from "../img/supplier_management.svg";
+import employeeManagement from "../img/employee_management.svg";
+import bookManagement from "../img/book_management.svg";
+import "../css/NavigationMenue.css";
 
 // import required css
 //import 'bootstrap/dist/css/bootstrap.min.css';

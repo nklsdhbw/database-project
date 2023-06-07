@@ -6,7 +6,8 @@ import TableSearch from "./TableSearch";
 import DataTable from "./DataTable.js";
 import CreateRecordModal from "./CreateRecordModal";
 import EditRecordModal from "./EditRecordModal";
-import plusGreenIcon from "./img/plus_green_icon.svg";
+import plusGreenIcon from "../img/plus_green_icon.svg";
+import "../css/Overview.css";
 
 function Overview() {
   const notFilledColumns = [
