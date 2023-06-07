@@ -1,5 +1,5 @@
-DROP View IF EXISTS "allLoans";
-Create View "allLoans" AS
+DROP VIEW IF EXISTS "allLoans" CASCADE;
+Create MATERIALIZED View "allLoans" AS
 SELECT "loanID" AS "Loan ID", b."bookTitle" AS "Book title", b."bookISBN" AS "ISBN",
 	   concat(a."authorFirstName", ' ', a."authorLastName") AS "Author",
 	   p."publisherName" AS "Publisher",
