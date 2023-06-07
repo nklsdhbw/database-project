@@ -498,6 +498,7 @@ function Overview() {
       let insertColumns = "";
       let insertData = "";
       let oldColumn;
+      let parameters = [];
       let notNeccessaryColumns = [
         "Author",
         "Publisher",
@@ -540,15 +541,15 @@ function Overview() {
             }
             if (column === "bookAmount") {
               insertColumns = insertColumns + `"${column}", `;
-              insertData =
-                insertData + `'${data[header.indexOf(oldColumn)]}', `;
+              insertData = insertData + `%s, `;
+              parameters.push(data[header.indexOf(oldColumn)]);
               insertColumns = insertColumns + `"bookAvailableAmount", `;
-              insertData =
-                insertData + `'${data[header.indexOf(oldColumn)]}', `;
+              insertData = insertData + `%s, `;
+              parameters.push(data[header.indexOf(oldColumn)]);
             } else {
               insertColumns = insertColumns + `"${column}", `;
-              insertData =
-                insertData + `'${data[header.indexOf(oldColumn)]}', `;
+              insertData = insertData + `%s, `;
+              parameters.push(data[header.indexOf(oldColumn)]);
             }
           }
         }
@@ -560,12 +561,16 @@ function Overview() {
 
       insertQuery =
         insertQuery + insertData.slice(0, insertData.length - 2) + ")";
+
       console.log(insertQuery);
-      let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = '${libraryOrderID}'`;
+
+      let updateParameters = [libraryOrderID];
+      let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = %s`;
 
       axios
         .post(api, {
           query: `${insertQuery}`,
+          parameters: parameters,
         })
         .then((response) => {
           setUpdateData(!updateData);
@@ -573,6 +578,7 @@ function Overview() {
           axios
             .post(api, {
               query: `${updateQuery}`,
+              parameters: updateParameters,
             })
             .then((response) => {
               setUpdateData(!updateData);

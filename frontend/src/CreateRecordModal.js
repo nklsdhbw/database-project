@@ -155,15 +155,16 @@ function CreateRecordModal(props) {
 
     let valuesString = "VALUES(";
     let columnsString = "";
-
-    let values = Object.entries(slicedObject).map(
-      ([key, value]) =>
-        (valuesString = valuesString + `'${value.placeholder}',`)
-    );
+    let librariansParameter = [];
+    let values = Object.entries(slicedObject).map(([key, value]) => {
+      valuesString = valuesString + `%s,`;
+      librariansParameter.push(value.placeholder);
+    });
     let columns = Object.entries(slicedObject).map(
       ([key, value]) => (columnsString = columnsString + `"${key}",`)
     );
     console.log(valuesString, columnsString);
+
     let librariansQuery =
       `INSERT INTO public."${selectedTable}" (${columnsString.slice(
         0,
@@ -181,15 +182,20 @@ function CreateRecordModal(props) {
         SELECT "librarianID", ${data["employeeTeamID"].placeholder}
         FROM "Librarians"
         WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}';`;
+    let parameters = [];
+    parameters.push(data["employeeTeamID"].placeholder);
+    parameters.push(data["librarianEmail"].placeholder);
 
     axios
       .post(api, {
         query: librariansQuery,
+        parameters: librariansParameter,
       })
       .then((response) => {
         axios
           .post(api, {
             query: managerOrEmployeeQuery,
+            parameters: parameters,
           })
           .then((response) => {
             setUpdateData(!updateData);
@@ -223,7 +229,8 @@ function CreateRecordModal(props) {
 
     let values = Object.entries(data).map(
       ([key, value]) =>
-        (valuesString = valuesString + `'${value.placeholder}',`)
+        //(valuesString = valuesString + `'${value.placeholder}',`)
+        (valuesString = valuesString + `%s,`)
     );
     let columns = Object.entries(data).map(
       ([key, value]) => (columnsString = columnsString + `"${key}",`)
@@ -233,14 +240,30 @@ function CreateRecordModal(props) {
         0,
         columnsString.length - 1
       )})` + `${valuesString.slice(0, valuesString.length - 1)}) `;
-    console.log(insqertQuery, "insqertQuery");
+    console.log(insqertQuery);
+    let parameters = [];
+    for (const [key, value] of Object.entries(data)) {
+      parameters.push(value.placeholder);
+    }
     axios
       .post(api, {
         query: insqertQuery,
+        parameters,
       })
       .then((response) => {
         //stored function is executed in the background that updates bookAvailability and bookAvailabilityAmount
-        setUpdateData(!updateData);
+        axios
+          .post(api, {
+            query: `CALL markOverdueLoans();`,
+          })
+          .then((response) => {
+            console.log("UPDATEDATA", updateData);
+            setUpdateData(!updateData);
+            console.log("UPDATEDATA", updateData);
+          })
+          .catch((error) => {
+            console.log("ERROR : ", error);
+          });
       })
       .catch((error) => {
         console.log("ERROR : ", error);
