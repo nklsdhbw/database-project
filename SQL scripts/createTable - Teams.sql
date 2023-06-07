@@ -1,5 +1,0 @@
-DROP TABLE IF EXISTS "Teams" CASCADE;
-
-CREATE TABLE "Teams" (
-    "teamID" SERIAL PRIMARY KEY
-);
