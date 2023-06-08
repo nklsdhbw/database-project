@@ -9,6 +9,7 @@ import supplierManagement from "../img/supplier_management.svg";
 import employeeManagement from "../img/employee_management.svg";
 import bookManagement from "../img/book_management.svg";
 import "../css/NavigationMenue.css";
+import Logout from "./Logout.js";
 
 // import required css
 //import 'bootstrap/dist/css/bootstrap.min.css';
@@ -184,6 +185,7 @@ const NavigationMenue = () => {
   return (
     <div>
       <h1>My Dashboard</h1>
+      <Logout></Logout>
       <div className="container">
         {filteredActions.map((option) => (
           <button
