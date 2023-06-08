@@ -10,7 +10,9 @@ import employeeManagement from "../img/employee_management.svg";
 import bookManagement from "../img/book_management.svg";
 import "../css/NavigationMenue.css";
 import Logout from "./Logout.js";
+
 import chapterOneLogo from "../img/ChapterOne_logo.png"
+
 // import required css
 //import 'bootstrap/dist/css/bootstrap.min.css';
 
