@@ -40,58 +40,30 @@ const NavigationMenue = () => {
       label: "Manage personal data",
       table: "Readers",
       entryQuery: {
-        [`${sessionStorage.getItem(
-          "role"
-        )}`]: `SELECT "readerID" AS "ID", "readerFirstName" AS "Firstname", "readerLastName" AS "Lastname", "readerEmail" AS "Email", "readerPassword" AS "Password" FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
+        Reader: `SELECT "readerID" AS "ID", "readerFirstName" AS "Firstname", "readerLastName" AS "Lastname", "readerEmail" AS "Email", "readerPassword" AS "Password" FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
           "readerID"
         )}`,
-        [`${sessionStorage.getItem(
-          "role"
-        )}`]: `SELECT "librarianID" AS "ID", "librarianFirstName" AS "Firstname", "librarianLastName" AS "Lastname", "librarianEmail" AS "Email", "librarianPhone" AS "Phone", "librarianBirthDate" AS "Birth date", "librarianPassword" AS "Password" FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+        Librarian: `SELECT "librarianID" AS "ID", "librarianFirstName" AS "Firstname", "librarianLastName" AS "Lastname", "librarianEmail" AS "Email", "librarianPhone" AS "Phone", "librarianBirthDate" AS "Birth date", "librarianPassword" AS "Password" FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
           "userID"
         )}`,
       },
       formQuery: {
-        [`${sessionStorage.getItem(
-          "role"
-        )}`]: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
+        Reader: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
           "userID"
         )}`,
-        [`${sessionStorage.getItem(
-          "role"
-        )}`]: `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+        Librarian: `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
           "userID"
         )}`,
       },
       img: personalInformation,
       read: ["Manager", "Employee", "Admin", "Reader"],
-      write: ["Manager", "Employee", "Admin", "Reader"],
+      write: [],
     },
     {
       label: "Manage library orders",
       table: "LibraryOrders",
       formQuery: `SELECT * FROM "LibraryOrders"`,
-      entryQuery: `SELECT "libraryOrderID" as "Library Order ID",
-      "libraryOrderBookTitle" AS "Book title",
-      "libraryOrderISBN" AS "ISBN",
-      concat(a."authorFirstName",a."authorLastName")  as "Author",
-      "libraryOrderAmount" AS "Order amount",
-      "libraryOrderCost" as "Cost",
-      c."currencyName" AS "Currency",
-      "libraryOrderDateOrdered" AS "Order date",
-      "libraryOrderDeliveryDate" AS "Delivery Date",
-      "libraryOrderStatusOrder" AS "Order status",
-      concat(l."librarianFirstName", ' ', l."librarianLastName") AS "Manager",
-      "authorID" AS "Author ID",
-      "currencyID" AS "Currency ID",
-      "libraryOrderManagerLibrarianID" AS "Librarian ID",
-      "libraryOrderPublisherID" AS "Publisher ID"
-      
-      
-  FROM "LibraryOrders" lo
-  JOIN "Authors" a ON lo."libraryOrderAuthorID" = a."authorID"
-  JOIN "Currencies" c ON lo."libraryOrderCurrencyID" = c."currencyID"
-  JOIN "Librarians" l ON lo."libraryOrderManagerLibrarianID" = l."librarianID";`,
+      entryQuery: `SELECT * FROM "enrichedLibraryOrders"`,
       img: orderManagement,
       read: ["Manager", "admin", "Employee"],
       write: ["Manager", "admin"],
@@ -100,19 +72,7 @@ const NavigationMenue = () => {
       label: "Manage publishers",
       table: "Publishers",
       formQuery: `SELECT * FROM "Publishers"`,
-      entryQuery: `SELECT 
-      "publisherID" AS "Publisher ID",
-      "publisherName" AS "Name",
-      z."zipCode" AS "Zip",
-      z."zipCity" AS "City",
-        "publisherStreetName" AS "Street",
-      "publisherHouseNumber" AS "Housenumber",
-      "publisherCountry" AS "Country",
-      "publisherEmail" AS "Email",
-      "publisherPhone" AS "Phone"
-    FROM "Publishers" p
-    JOIN "ZIPs" z ON p."publisherZipID" = z."zipID"
-    `,
+      entryQuery: `SELECT * FROM "enrichedPublishers"`,
       columnMapping: {
         publisherID: "Publisher ID",
         publisherName: "Name",
@@ -131,25 +91,7 @@ const NavigationMenue = () => {
     {
       label: "Manage librarians",
       table: "Librarians",
-      entryQuery: `SELECT "librarianID" AS "ID", 
-      "librarianFirstName" AS "Firstname", 
-      "librarianLastName" AS "Lastname", 
-      "librarianEmail" AS "Email", 
-      "librarianPhone" AS "Phone", 
-      "librarianBirthDate" AS "Birth date",
-        "teamID" AS "Team ID",
-        
-        CASE
-            WHEN "librarianID" IN (SELECT "managerLibrarianID" FROM "Managers") THEN 'Manager'
-            WHEN "librarianID" IN (SELECT "employeeLibrarianID" FROM "Employees") THEN 'Employee'
-            ELSE 'Librarian'
-        END AS "Role"
-        
-    
-    FROM "Librarians" l
-    LEFT JOIN "Employees" e ON e."employeeLibrarianID" = l."librarianID"
-    LEFT JOIN "Managers" m ON m."managerLibrarianID" = l."librarianID"
-    LEFT JOIN "Teams" t ON "teamID" = e."employeeTeamID" OR "teamID" = m."managerTeamID"`,
+      entryQuery: `SELECT * FROM "enrichedLibrarians"`,
       formQuery: `SELECT * FROM "Librarians"`,
       img: employeeManagement,
       read: ["Manager", "Employee", "Reader", "Admin"],
@@ -158,19 +100,8 @@ const NavigationMenue = () => {
     {
       label: "My team",
       table: "Teams",
-      entryQuery: `SELECT 
-      "librarianID" AS "ID", 
-      "librarianFirstName" AS "Firstname", 
-      "librarianLastName" AS "Lastname", 
-      "librarianEmail" AS "Email", 
-      "librarianPhone" AS "Phone", 
-      "librarianBirthDate" AS "Birth date",
-      "employeeTeamID" AS "Team ID"
-    FROM 
-      "Teams" t
-    JOIN "Employees" e ON e."employeeTeamID" = t."teamID"
-    JOIN "Librarians" l ON "employeeLibrarianID" = l."librarianID"
-    WHERE "teamID" = ${sessionStorage.getItem("teamID")};
+      entryQuery: `SELECT * FROM "enrichedTeams"
+          WHERE "teamID" = ${sessionStorage.getItem("teamID")};
     `,
       formQuery: `SELECT 'dummy', "employeeTeamID", "employeeLibrarianID", 'dummy2' FROM "Employees"`,
       img: employeeManagement,
@@ -180,24 +111,7 @@ const NavigationMenue = () => {
     {
       label: "Manage books",
       table: "Books",
-      entryQuery: `SELECT 
-      "bookID" AS "ID",
-  "bookTitle" AS "Title",
-  "bookISBN" AS "ISBN",
-   "authorFirstName" AS "Author firstname",
-      "authorLastName" AS "Author lastname",
-   "publisherName" AS "Publisher",
-    "categoryName" AS "Category",
-      "bookPublicationDate" AS "Publication date",
-      "bookAmount" AS "Amount (total)",
-   "bookAvailableAmount" AS "Amount (available)",
-      "bookAvailability" AS "Availability"
-  FROM 
-    "Books" b
-  JOIN "Authors" a ON a."authorID" = b."bookAuthorID"
-  JOIN "Categories" c ON c."categoryID" = b."bookCategoryID"
-  JOIN "Publishers" p ON p."publisherID" = b."bookPublisherID";
-    `,
+      entryQuery: `SELECT * FROM "enrichedBooks"`,
       formQuery: `SELECT * FROM "Books"`,
       img: bookManagement,
       read: ["Manager", "Employee", "Reader", "Admin"],

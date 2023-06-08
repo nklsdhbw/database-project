@@ -50,6 +50,7 @@ function DataTable(props) {
   }
 
   function handleEdit(data) {
+    //setUpdateData(!updateData);
     if (selectedTable === "Publishers") {
       let mappedColumns = Object.keys(
         JSON.parse(sessionStorage.getItem("columnMapping"))
@@ -185,7 +186,8 @@ function DataTable(props) {
       setRowUniqueID(data[0]);
       vals = vals.splice(1);
       dbColumns = dbColumns.splice(1);
-
+      console.log(editData);
+      console.log(dbColumns);
       vals.map((element, index) => {
         let placeholder = element;
 
