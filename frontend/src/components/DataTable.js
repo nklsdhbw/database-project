@@ -3,7 +3,13 @@ import { Table, Button } from "react-bootstrap";
 import axios from "axios";
 import { useState } from "react";
 import { Input } from "antd";
+import "../css/DataTable.css"; // Pfad zur CSS-Datei anpassen
+import chapterOneLogo from "../img/ChapterOne_logo.png"
+import penBlueIcon from "../img/pen_blue_icon.svg"
+import deleteIcon from "../img/bin_red_icon.svg"
+import plusGreenIcon from "../img/plus_green_icon.svg";
 
+import "../css/NavigationMenue.css"
 function DataTable(props) {
   const {
     columns,
@@ -21,6 +27,8 @@ function DataTable(props) {
     resultsWithIDs,
     setUpdateData,
     updateData,
+    showModal,
+    setShowModal
   } = props;
   // Inside the DataTable component
   const [searchTerm, setSearchTerm] = useState("");
@@ -41,6 +49,9 @@ function DataTable(props) {
       .catch((error) => {
         console.log("ERROR: ", error);
       });
+  }
+  function handleCreate() {
+    setShowModal(!showModal);
   }
 
   function handleEdit(data) {
@@ -347,8 +358,12 @@ function DataTable(props) {
   }
 
   return (
-    // Above the table
     <>
+      <header>
+        <div className="logo-container">
+        <img src={chapterOneLogo} alt="ChapterOne Logo" />
+        </div>
+      </header>
       <Search
         onChange={handleSearch}
         placeholder="Search"
@@ -356,12 +371,26 @@ function DataTable(props) {
         style={{ position: "sticky", top: "0", left: "0" }}
       />
       <br /> <br />
-      <Table striped bordered hover className="table mx-auto">
+      <Table striped bordered hover className="custom-table">
         <thead>
           {columns.map((column) => (
             <th key={column}>{column}</th>
           ))}
           <th className="col"></th>
+          <th>
+          <img
+          src={plusGreenIcon}
+          alt="Create New Record"
+          onClick={() => handleCreate()}
+          style={{ cursor: "pointer" }}
+          hidden={
+            sessionStorage.getItem("createRecordPermission") === "true"
+              ? false
+              : true
+          }></img>
+          </th>
+          <th></th>
+
         </thead>
         <tbody>
           {results
@@ -391,7 +420,6 @@ function DataTable(props) {
                       : entry}
                   </td>
                 ))}
-
                 {selectedTable === "Loans" ? (
                   <td>
                     <Button
@@ -408,30 +436,46 @@ function DataTable(props) {
                 ) : (
                   <></>
                 )}
-
                 {sessionStorage.getItem("hideEditButton") === "true" ? (
                   <></>
                 ) : (
                   <td>
-                    <Button
-                      className="w-100 btn btn-lg btn-primary"
+                    {/* Verwende das Bild als interaktiven Button */}
+                    <button
+                      className="edit-button"
                       onClick={() => handleEdit(data)}
                       disabled={data[columns.indexOf("Status")] === "returned"}
-                    >
-                      Edit
-                    </Button>
+                      style={{
+                        background: `url(${penBlueIcon}) no-repeat center`,
+                        backgroundSize: "contain",
+                        border: "none",
+                        width: "40px",
+                        height: "40px",
+                        cursor: "pointer",
+                        marginTop: "5px"
+                      }}
+                    ></button>
                   </td>
                 )}
                 <td>
-                  <Button
-                    className="w-100 btn btn-lg btn-primary"
+                  <div>
+                  <button
                     onClick={() => deleteEntry(data[0])}
+                    style={{
+                      background: `url(${deleteIcon}) no-repeat center`,
+                      backgroundSize: "contain",
+                      border: "none",
+                      width: "50px",
+                      height: "50px",
+                      cursor: "pointer",
+                    }}
                   >
-                    Delete
-                  </Button>
+            
+                  </button>
+                  </div>
                 </td>
                 {showConvertOrderIntoBookButton &&
-                  (data[columns.indexOf("Order status")] != "done" ? (
+                  (data[columns.indexOf("Order status")] !== "done" ? (
                     <td>
                       <Button
                         className="w-100 btn btn-lg btn-primary"
