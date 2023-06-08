@@ -11,6 +11,8 @@ import bookManagement from "../img/book_management.svg";
 import "../css/NavigationMenue.css";
 import Logout from "./Logout.js";
 
+import chapterOneLogo from "../img/ChapterOne_logo.png"
+
 // import required css
 //import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -183,7 +185,13 @@ const NavigationMenue = () => {
   }
 
   return (
+
     <div>
+      <header>
+        <div className="logo-container">
+        <img src={chapterOneLogo} alt="ChapterOne Logo" />
+        </div>
+      </header>
       <h1>My Dashboard</h1>
       <Logout></Logout>
       <div className="container">
@@ -206,6 +214,5 @@ const NavigationMenue = () => {
       </footer>
     </div>
   );
-}; // Schließende Klammer fehlte hier
-
+}; 
 export default NavigationMenue;

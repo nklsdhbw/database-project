@@ -66,3 +66,12 @@ footer {
   color: gray;
   font-size: 12px;
 }
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+}
+
+.logo {
+  width: 100px; 
+}

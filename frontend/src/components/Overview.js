@@ -7,7 +7,6 @@ import DataTable from "./DataTable.js";
 import CreateRecordModal from "./CreateRecordModal";
 import EditRecordModal from "./EditRecordModal";
 import plusGreenIcon from "../img/plus_green_icon.svg";
-import "../css/Overview.css";
 import Logout from "./Logout";
 import { Button } from "react-bootstrap";
 
@@ -621,20 +620,10 @@ function Overview() {
         resultsWithIDs={resultsWithIDs}
         updateData={updateData}
         setUpdateData={setUpdateData}
+        setShowModal={setShowModal}
+        showModal={showModal}
       />
       <div>
-        {/* Create Record Button*/}
-        <img
-          src={plusGreenIcon}
-          alt="Create New Record"
-          onClick={() => handleCreate()}
-          style={{ cursor: "pointer" }}
-          hidden={
-            sessionStorage.getItem("createRecordPermission") === "true"
-              ? false
-              : true
-          }
-        />
         <CreateRecordModal
           showModal={showModal}
           handleCreate={handleCreate}
