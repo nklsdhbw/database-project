@@ -8,6 +8,8 @@ import CreateRecordModal from "./CreateRecordModal";
 import EditRecordModal from "./EditRecordModal";
 import plusGreenIcon from "../img/plus_green_icon.svg";
 import "../css/Overview.css";
+import Logout from "./Logout";
+import { Button } from "react-bootstrap";
 
 function Overview() {
   const notFilledColumns = [
@@ -599,6 +601,10 @@ function Overview() {
 
   return (
     <div>
+      <div>
+        <Logout />
+        <Button onClick={() => navigate("/NavigationMenue")}>Back</Button>
+      </div>
       <DataTable
         columns={columns}
         results={results}

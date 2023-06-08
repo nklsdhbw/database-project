@@ -3,10 +3,7 @@ from flask import Flask, jsonify, request
 import psycopg2
 from flask_cors import CORS
 app = Flask(__name__)
-# CORS(app)  # , origins=["http://localhost:3000/",
-# "http://localhost:3000/run-query"])
-# db = SQLAlchemy(app)
-# ["SQL_ALCHEMY_DATABSE_URI"] = "postgresql://postgres:0609@localhost/postgres"
+
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 
