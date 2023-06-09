@@ -10,7 +10,7 @@ import employeeManagement from "../img/employee_management.svg";
 import bookManagement from "../img/book_management.svg";
 import "../css/NavigationMenue.css";
 import Logout from "./Logout.js";
-import chapterOneLogo from "../img/ChapterOne_logo.png"
+import chapterOneLogo from "../img/ChapterOne_logo.png";
 // import required css
 //import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -22,8 +22,10 @@ const NavigationMenue = () => {
       entryQuery: 'SELECT * FROM "allLoans"',
       formQuery: 'SELECT * FROM "Loans"',
       img: loansMmanagement,
-      read: ["Manager", "Employee"],
-      write: ["Manager", "Employee"],
+      read: ["Manager", "Employee", "Admin"],
+      write: ["Manager", "Employee", "Admin"],
+      delete: ["Manager", "Employee", "Admin"],
+      update: ["Manager", "Employee", "Admin"],
     },
     {
       label: "Manage my Loans",
@@ -35,8 +37,10 @@ const NavigationMenue = () => {
         "readerID"
       )}`,
       img: loansMmanagement,
-      read: ["Manager", "Employee", "Reader"],
-      write: ["Manager", "Employee"],
+      read: ["Reader"],
+      write: ["Manager", "Employee", "Admin"],
+      delete: ["Manager", "Employee", "Admin"],
+      update: ["Manager", "Employee", "Admin"],
     },
     {
       label: "Manage personal data",
@@ -45,7 +49,10 @@ const NavigationMenue = () => {
         Reader: `SELECT "readerID" AS "ID", "readerFirstName" AS "Firstname", "readerLastName" AS "Lastname", "readerEmail" AS "Email", "readerPassword" AS "Password" FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
           "readerID"
         )}`,
-        Librarian: `SELECT "librarianID" AS "ID", "librarianFirstName" AS "Firstname", "librarianLastName" AS "Lastname", "librarianEmail" AS "Email", "librarianPhone" AS "Phone", "librarianBirthDate" AS "Birth date", "librarianPassword" AS "Password" FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+        Employee: `SELECT "librarianID" AS "ID", "librarianFirstName" AS "Firstname", "librarianLastName" AS "Lastname", "librarianEmail" AS "Email", "librarianPhone" AS "Phone", "librarianBirthDate" AS "Birth date", "librarianPassword" AS "Password" FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+          "userID"
+        )}`,
+        Manager: `SELECT "librarianID" AS "ID", "librarianFirstName" AS "Firstname", "librarianLastName" AS "Lastname", "librarianEmail" AS "Email", "librarianPhone" AS "Phone", "librarianBirthDate" AS "Birth date", "librarianPassword" AS "Password" FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
           "userID"
         )}`,
       },
@@ -60,6 +67,8 @@ const NavigationMenue = () => {
       img: personalInformation,
       read: ["Manager", "Employee", "Admin", "Reader"],
       write: [],
+      delete: ["Manager", "Employee", "Admin", "Reader"],
+      update: ["Manager", "Employee", "Admin", "Reader"],
     },
     {
       label: "Manage library orders",
@@ -69,6 +78,8 @@ const NavigationMenue = () => {
       img: orderManagement,
       read: ["Manager", "admin", "Employee"],
       write: ["Manager", "admin"],
+      delete: ["Manager", "Admin"],
+      update: ["Manager", "Admin"],
     },
     {
       label: "Manage publishers",
@@ -89,6 +100,8 @@ const NavigationMenue = () => {
       img: supplierManagement,
       read: ["Employee", "Manager"],
       write: ["Manager", "admin"],
+      delete: ["Manager", "Admin"],
+      update: ["Manager", "Admin"],
     },
     {
       label: "Manage librarians",
@@ -96,19 +109,23 @@ const NavigationMenue = () => {
       entryQuery: `SELECT * FROM "enrichedLibrarians"`,
       formQuery: `SELECT * FROM "Librarians"`,
       img: employeeManagement,
-      read: ["Manager", "Employee", "Reader", "Admin"],
+      read: ["Manager", "Employee", "Admin"],
       write: ["Manager", "Admin"],
+      delete: ["Manager", "Admin"],
+      update: ["Manager", "Admin"],
     },
     {
       label: "My team",
       table: "Teams",
       entryQuery: `SELECT * FROM "enrichedTeams"
-          WHERE "teamID" = ${sessionStorage.getItem("teamID")};
+          WHERE "Team ID" = ${sessionStorage.getItem("teamID")};
     `,
       formQuery: `SELECT 'dummy', "employeeTeamID", "employeeLibrarianID", 'dummy2' FROM "Employees"`,
       img: employeeManagement,
       read: ["Manager", "Employee", "Admin"],
       write: ["Manager", "Admin"],
+      delete: ["Manager", "Admin"],
+      update: ["Manager", "Admin"],
     },
     {
       label: "Manage books",
@@ -118,6 +135,8 @@ const NavigationMenue = () => {
       img: bookManagement,
       read: ["Manager", "Employee", "Reader", "Admin"],
       write: [],
+      delete: ["Manager", "Admin"],
+      update: ["Manager", "Admin"],
     },
     // add employee mngmg
     //read: ['manager', 'employee', 'admin']
@@ -157,16 +176,21 @@ const NavigationMenue = () => {
     let entryQuery = filteredActions[0].entryQuery;
     let formQuery = filteredActions[0].formQuery;
     const createRecordPermission = filteredActions[0].write;
-    let hideEditButtonActions = ["Manage librarians", "My team"];
+    const deleteRecordPermission = filteredActions[0].delete;
+    const updateRecordPermission = filteredActions[0].update;
+    let hideEditButtonActions = ["Manage librarians", "My team", "My Loans"];
     if (option.label === "Manage personal data") {
       entryQuery = entryQuery[sessionStorage.getItem("role")];
       formQuery = formQuery[sessionStorage.getItem("role")];
     }
+
+    /*
     if (hideEditButtonActions.includes(option.label)) {
       sessionStorage.setItem("hideEditButton", true);
     } else {
       sessionStorage.setItem("hideEditButton", false);
     }
+    */
 
     console.log(entryQuery, "entryQuery");
     sessionStorage.setItem("tableQuery", entryQuery);
@@ -180,14 +204,21 @@ const NavigationMenue = () => {
       "createRecordPermission",
       createRecordPermission.includes(sessionStorage.getItem("role"))
     );
+    sessionStorage.setItem(
+      "deleteRecordPermission",
+      deleteRecordPermission.includes(sessionStorage.getItem("role"))
+    );
+    sessionStorage.setItem(
+      "hideEditButton",
+      !deleteRecordPermission.includes(sessionStorage.getItem("role"))
+    );
   }
 
   return (
-
     <div>
       <header>
         <div className="logo-container">
-        <img src={chapterOneLogo} alt="ChapterOne Logo" />
+          <img src={chapterOneLogo} alt="ChapterOne Logo" />
         </div>
       </header>
       <h1>My Dashboard</h1>
@@ -212,5 +243,5 @@ const NavigationMenue = () => {
       </footer>
     </div>
   );
-}; 
+};
 export default NavigationMenue;
