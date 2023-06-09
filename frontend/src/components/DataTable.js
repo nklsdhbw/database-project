@@ -84,9 +84,7 @@ function DataTable(props) {
 
   let extraTableHeaders = [];
   for (let i = 0; i < amountExtraTableHeaders; i++) {
-    extraTableHeaders.push(
-      <th key={amountExtraTableHeaders}>{amountExtraTableHeaders}</th>
-    );
+    extraTableHeaders.push(<th key={amountExtraTableHeaders}></th>);
   }
   sessionStorage.setItem("amountExtraTableHeaders", amountExtraTableHeaders);
 
