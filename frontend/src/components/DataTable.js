@@ -11,6 +11,7 @@ import plusGreenIcon from "../img/plus_green_icon.svg";
 import convertIntoBookIcon from "../img/convert_into_book_2.svg";
 import convertedIntoBookIcon from "../img/convert_into_book_1.svg";
 import returnIcon from "../img/return.svg";
+import alreadyReturnedIcon from "../img/already_returned.svg";
 
 import "../css/NavigationMenue.css";
 function DataTable(props) {
@@ -502,18 +503,17 @@ function DataTable(props) {
                         }}
                       ></button>
                     ) : (
-                      <p
+                      <button
                         hidden={selectedTable !== "Loans"}
                         style={{
+                          background: `url(${alreadyReturnedIcon}) no-repeat center`,
                           backgroundSize: "contain",
                           border: "none",
                           width: "50px",
                           height: "50px",
                           cursor: "pointer",
                         }}
-                      >
-                        Already returned
-                      </p>
+                      ></button>
                     )}
                   </td>
                 ) : (
