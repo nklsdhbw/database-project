@@ -1,6 +1,7 @@
 // import libraries
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import logoutIcon from "../img/logout.svg";
 
 // import required css
 import { Button } from "react-bootstrap";
@@ -13,7 +14,17 @@ const Logout = () => {
   };
   return (
     <div>
-      <Button onClick={() => handleLogout()}>Logout</Button>
+      <button
+        style={{
+          background: `url(${logoutIcon}) no-repeat center`,
+          backgroundSize: "contain",
+          border: "none",
+          width: "50px",
+          height: "50px",
+          cursor: "pointer",
+        }}
+        onClick={() => handleLogout()}
+      ></button>
     </div>
   );
 };

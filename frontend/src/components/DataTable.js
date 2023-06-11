@@ -4,12 +4,15 @@ import axios from "axios";
 import { useState } from "react";
 import { Input } from "antd";
 import "../css/DataTable.css"; // Pfad zur CSS-Datei anpassen
-import chapterOneLogo from "../img/ChapterOne_logo.png"
-import penBlueIcon from "../img/pen_blue_icon.svg"
-import deleteIcon from "../img/bin_red_icon.svg"
+import chapterOneLogo from "../img/logo.svg";
+import penBlueIcon from "../img/pen_blue_icon.svg";
+import deleteIcon from "../img/bin_red_icon.svg";
 import plusGreenIcon from "../img/plus_green_icon.svg";
+import convertIntoBookIcon from "../img/convert_into_book_2.svg";
+import convertedIntoBookIcon from "../img/convert_into_book_1.svg";
+import returnIcon from "../img/return.svg";
 
-import "../css/NavigationMenue.css"
+import "../css/NavigationMenue.css";
 function DataTable(props) {
   const {
     columns,
@@ -28,8 +31,66 @@ function DataTable(props) {
     setUpdateData,
     updateData,
     showModal,
-    setShowModal
+    setShowModal,
   } = props;
+
+  let amountExtraTableHeaders = 0;
+
+  if (sessionStorage.getItem("createRecordPermission") == "true") {
+    if (sessionStorage.getItem("deleteRecordPermission") == "true") {
+      amountExtraTableHeaders += 1;
+      if (sessionStorage.getItem("hideEditButton") == "false") {
+        amountExtraTableHeaders += 1;
+      }
+    } else {
+      if (sessionStorage.getItem("hideEditButton") == "false") {
+        amountExtraTableHeaders += 1;
+      }
+    }
+  } else {
+    if (sessionStorage.getItem("deleteRecordPermission") == "true") {
+      amountExtraTableHeaders += 1;
+      if (sessionStorage.getItem("hideEditButton") == "false") {
+        amountExtraTableHeaders += 1;
+      }
+    } else {
+      if (sessionStorage.getItem("hideEditButton") == "false") {
+        amountExtraTableHeaders += 1;
+      }
+    }
+  }
+
+  if (selectedTable === "Books") {
+    amountExtraTableHeaders += 1;
+  }
+  if (
+    selectedTable === "Publishers" ||
+    selectedTable === "Teams" ||
+    selectedTable === "Books" ||
+    sessionStorage.getItem("tableQuery") ===
+      `SELECT * FROM "enrichedLibrarians"`
+  ) {
+    amountExtraTableHeaders -= 1;
+  }
+  if (
+    selectedTable === "Loans" &&
+    sessionStorage.getItem("role") === "Reader"
+  ) {
+    amountExtraTableHeaders += 1;
+  }
+  if (
+    selectedTable == "LibraryOrders" &&
+    sessionStorage.getItem("role") == "Employee"
+  ) {
+    amountExtraTableHeaders += 1;
+  }
+
+  let extraTableHeaders = [];
+  for (let i = 0; i < amountExtraTableHeaders; i++) {
+    extraTableHeaders.push(<th key={amountExtraTableHeaders}></th>);
+  }
+  sessionStorage.setItem("amountExtraTableHeaders", amountExtraTableHeaders);
+
   // Inside the DataTable component
   const [searchTerm, setSearchTerm] = useState("");
   const Search = Input.Search;
@@ -361,7 +422,7 @@ function DataTable(props) {
     <>
       <header>
         <div className="logo-container">
-        <img src={chapterOneLogo} alt="ChapterOne Logo" />
+          <img src={chapterOneLogo} alt="ChapterOne Logo" />
         </div>
       </header>
       <Search
@@ -376,21 +437,21 @@ function DataTable(props) {
           {columns.map((column) => (
             <th key={column}>{column}</th>
           ))}
-          <th className="col"></th>
-          <th>
-          <img
-          src={plusGreenIcon}
-          alt="Create New Record"
-          onClick={() => handleCreate()}
-          style={{ cursor: "pointer" }}
-          hidden={
-            sessionStorage.getItem("createRecordPermission") === "true"
-              ? false
-              : true
-          }></img>
-          </th>
-          <th></th>
 
+          {sessionStorage.getItem("createRecordPermission") === "true" ? (
+            <th>
+              <img
+                src={plusGreenIcon}
+                alt="Create New Record"
+                onClick={() => handleCreate()}
+                style={{ cursor: "pointer" }}
+              ></img>
+            </th>
+          ) : (
+            <></>
+          )}
+
+          <>{extraTableHeaders}</>
         </thead>
         <tbody>
           {results
@@ -422,20 +483,74 @@ function DataTable(props) {
                 ))}
                 {selectedTable === "Loans" ? (
                   <td>
-                    <Button
-                      hidden={selectedTable !== "Loans"}
-                      className="w-100 btn btn-lg btn-primary"
-                      onClick={() => handleReturn(data)}
-                      disabled={data[columns.indexOf("Status")] === "returned"}
-                    >
-                      {data[columns.indexOf("Status")] === "returned"
-                        ? "Already returned"
-                        : "Return"}
-                    </Button>
+                    {data[columns.indexOf("Status")] !== "returned" ? (
+                      <button
+                        hidden={selectedTable !== "Loans"}
+                        className="w-100 btn btn-lg btn-primary"
+                        onClick={() => handleReturn(data)}
+                        disabled={
+                          data[columns.indexOf("Status")] === "returned"
+                        }
+                        style={{
+                          background: `url(${returnIcon}) no-repeat center`,
+
+                          backgroundSize: "contain",
+                          border: "none",
+                          width: "50px",
+                          height: "50px",
+                          cursor: "pointer",
+                        }}
+                      ></button>
+                    ) : (
+                      <p
+                        hidden={selectedTable !== "Loans"}
+                        style={{
+                          backgroundSize: "contain",
+                          border: "none",
+                          width: "50px",
+                          height: "50px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Already returned
+                      </p>
+                    )}
                   </td>
                 ) : (
                   <></>
                 )}
+                {showConvertOrderIntoBookButton &&
+                  (data[columns.indexOf("Order status")] !== "done" ? (
+                    <td>
+                      <button
+                        className="w-100 btn btn-lg btn-primary"
+                        onClick={() => convertIntoBook(columns, data)}
+                        style={{
+                          background: `url(${convertIntoBookIcon}) no-repeat center`,
+                          backgroundSize: "contain",
+                          border: "none",
+                          width: "50px",
+                          height: "50px",
+                          cursor: "pointer",
+                        }}
+                      ></button>
+                    </td>
+                  ) : (
+                    <td>
+                      <button
+                        className="w-100 btn btn-lg btn-primary"
+                        disabled={true}
+                        style={{
+                          background: `url(${convertedIntoBookIcon}) no-repeat center`,
+                          backgroundSize: "contain",
+                          border: "none",
+                          width: "50px",
+                          height: "50px",
+                          cursor: "pointer",
+                        }}
+                      ></button>
+                    </td>
+                  ))}
                 {sessionStorage.getItem("hideEditButton") === "true" ? (
                   <></>
                 ) : (
@@ -452,48 +567,30 @@ function DataTable(props) {
                         width: "40px",
                         height: "40px",
                         cursor: "pointer",
-                        marginTop: "5px"
+                        marginTop: "5px",
                       }}
                     ></button>
                   </td>
                 )}
-                <td>
-                  <div>
-                  <button
-                    onClick={() => deleteEntry(data[0])}
-                    style={{
-                      background: `url(${deleteIcon}) no-repeat center`,
-                      backgroundSize: "contain",
-                      border: "none",
-                      width: "50px",
-                      height: "50px",
-                      cursor: "pointer",
-                    }}
-                  >
-            
-                  </button>
-                  </div>
-                </td>
-                {showConvertOrderIntoBookButton &&
-                  (data[columns.indexOf("Order status")] !== "done" ? (
-                    <td>
-                      <Button
-                        className="w-100 btn btn-lg btn-primary"
-                        onClick={() => convertIntoBook(columns, data)}
-                      >
-                        Convert into Book
-                      </Button>
-                    </td>
-                  ) : (
-                    <td>
-                      <Button
-                        className="w-100 btn btn-lg btn-primary"
-                        disabled={true}
-                      >
-                        Already converted
-                      </Button>
-                    </td>
-                  ))}
+                {sessionStorage.getItem("deleteRecordPermission") === "true" ? (
+                  <td>
+                    <div>
+                      <button
+                        onClick={() => deleteEntry(data[0])}
+                        style={{
+                          background: `url(${deleteIcon}) no-repeat center`,
+                          backgroundSize: "contain",
+                          border: "none",
+                          width: "50px",
+                          height: "50px",
+                          cursor: "pointer",
+                        }}
+                      ></button>
+                    </div>
+                  </td>
+                ) : (
+                  <></>
+                )}
               </tr>
             ))}
         </tbody>

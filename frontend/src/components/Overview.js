@@ -9,6 +9,7 @@ import EditRecordModal from "./EditRecordModal";
 import plusGreenIcon from "../img/plus_green_icon.svg";
 import Logout from "./Logout";
 import { Button } from "react-bootstrap";
+import backIcon from "../img/back.svg";
 
 function Overview() {
   const notFilledColumns = [
@@ -602,7 +603,17 @@ function Overview() {
     <div>
       <div>
         <Logout />
-        <Button onClick={() => navigate("/NavigationMenue")}>Back</Button>
+        <button
+          style={{
+            background: `url(${backIcon}) no-repeat center`,
+            backgroundSize: "contain",
+            border: "none",
+            width: "50px",
+            height: "50px",
+            cursor: "pointer",
+          }}
+          onClick={() => navigate("/NavigationMenue")}
+        ></button>
       </div>
       <DataTable
         columns={columns}
