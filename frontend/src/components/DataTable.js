@@ -4,10 +4,13 @@ import axios from "axios";
 import { useState } from "react";
 import { Input } from "antd";
 import "../css/DataTable.css"; // Pfad zur CSS-Datei anpassen
-import chapterOneLogo from "../img/ChapterOne_logo.png";
+import chapterOneLogo from "../img/logo.svg";
 import penBlueIcon from "../img/pen_blue_icon.svg";
 import deleteIcon from "../img/bin_red_icon.svg";
 import plusGreenIcon from "../img/plus_green_icon.svg";
+import convertIntoBookIcon from "../img/convert_into_book_2.svg";
+import convertedIntoBookIcon from "../img/convert_into_book_1.svg";
+import returnIcon from "../img/return.svg";
 
 import "../css/NavigationMenue.css";
 function DataTable(props) {
@@ -480,16 +483,38 @@ function DataTable(props) {
                 ))}
                 {selectedTable === "Loans" ? (
                   <td>
-                    <Button
-                      hidden={selectedTable !== "Loans"}
-                      className="w-100 btn btn-lg btn-primary"
-                      onClick={() => handleReturn(data)}
-                      disabled={data[columns.indexOf("Status")] === "returned"}
-                    >
-                      {data[columns.indexOf("Status")] === "returned"
-                        ? "Already returned"
-                        : "Return"}
-                    </Button>
+                    {data[columns.indexOf("Status")] !== "returned" ? (
+                      <button
+                        hidden={selectedTable !== "Loans"}
+                        className="w-100 btn btn-lg btn-primary"
+                        onClick={() => handleReturn(data)}
+                        disabled={
+                          data[columns.indexOf("Status")] === "returned"
+                        }
+                        style={{
+                          background: `url(${returnIcon}) no-repeat center`,
+
+                          backgroundSize: "contain",
+                          border: "none",
+                          width: "50px",
+                          height: "50px",
+                          cursor: "pointer",
+                        }}
+                      ></button>
+                    ) : (
+                      <p
+                        hidden={selectedTable !== "Loans"}
+                        style={{
+                          backgroundSize: "contain",
+                          border: "none",
+                          width: "50px",
+                          height: "50px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Already returned
+                      </p>
+                    )}
                   </td>
                 ) : (
                   <></>
@@ -497,21 +522,33 @@ function DataTable(props) {
                 {showConvertOrderIntoBookButton &&
                   (data[columns.indexOf("Order status")] !== "done" ? (
                     <td>
-                      <Button
+                      <button
                         className="w-100 btn btn-lg btn-primary"
                         onClick={() => convertIntoBook(columns, data)}
-                      >
-                        Convert into Book
-                      </Button>
+                        style={{
+                          background: `url(${convertIntoBookIcon}) no-repeat center`,
+                          backgroundSize: "contain",
+                          border: "none",
+                          width: "50px",
+                          height: "50px",
+                          cursor: "pointer",
+                        }}
+                      ></button>
                     </td>
                   ) : (
                     <td>
-                      <Button
+                      <button
                         className="w-100 btn btn-lg btn-primary"
                         disabled={true}
-                      >
-                        Already converted
-                      </Button>
+                        style={{
+                          background: `url(${convertedIntoBookIcon}) no-repeat center`,
+                          backgroundSize: "contain",
+                          border: "none",
+                          width: "50px",
+                          height: "50px",
+                          cursor: "pointer",
+                        }}
+                      ></button>
                     </td>
                   ))}
                 {sessionStorage.getItem("hideEditButton") === "true" ? (
