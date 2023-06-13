@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Modal, ModalBody } from "react-bootstrap";
+import { Modal, ModalBody, Form } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import TableSearch from "./TableSearch";
@@ -10,6 +10,7 @@ import plusGreenIcon from "../img/plus_green_icon.svg";
 import Logout from "./Logout";
 import { Button } from "react-bootstrap";
 import backIcon from "../img/back.svg";
+import Select from "react-select";
 
 function Overview() {
   const notFilledColumns = [
@@ -83,6 +84,31 @@ function Overview() {
     Employees: 0,
     Managers: 0,
   };
+  const numColumns = results.length > 0 ? results[0].length : 0;
+  let currentFilters = JSON.parse(sessionStorage.getItem("currentFilters"));
+  const handleSelect = (selectedOption, columnIndex) => {
+    // Handle the selected value here
+    console.log(`Selected value for column ${columnIndex}:`, selectedOption);
+    currentFilters.push([columnIndex, selectedOption]);
+
+    let searchQuery = `SELECT * FROM "${sessionStorage.getItem(
+      "view"
+    )}" WHERE `;
+    currentFilters.map((element, index) => {
+      searchQuery =
+        searchQuery + `"${columns[element[0]]}" = '${element[1]}' AND `;
+    });
+    searchQuery = searchQuery.slice(0, searchQuery.length - 4);
+    sessionStorage.setItem("tableQuery", searchQuery);
+    currentFilters = JSON.stringify(currentFilters);
+    sessionStorage.setItem("currentFilters", currentFilters);
+    console.log("CURRENTFILTERS", currentFilters);
+    console.log("SEARCHQUERY", searchQuery);
+    setUpdateData(!updateData);
+  };
+  const [selectedValues, setSelectedValues] = useState(
+    Array(numColumns).fill(null)
+  );
 
   //* Callback function //
   const callThisFromChildComponent = (data) => {
@@ -614,6 +640,26 @@ function Overview() {
           }}
           onClick={() => navigate("/NavigationMenue")}
         ></button>
+      </div>
+      <div>
+        {Array.from({ length: numColumns }, (_, index) => (
+          <Form.Group key={index} controlId={`column-${index}`}>
+            <Form.Label>{columns[index]}</Form.Label>
+            <Select
+              options={Array.from(
+                new Set(results.map((row) => row[index]))
+              ).map((value) => ({
+                value,
+                label: value,
+              }))}
+              isSearchable
+              isMulti
+              onChange={(selectedValue) =>
+                handleSelect(selectedValue[0].value, index)
+              }
+            />
+          </Form.Group>
+        ))}
       </div>
       <DataTable
         columns={columns}

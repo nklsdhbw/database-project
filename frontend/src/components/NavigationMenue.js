@@ -15,6 +15,7 @@ import chapterOneLogo from "../img/logo.svg";
 //import 'bootstrap/dist/css/bootstrap.min.css';
 
 const NavigationMenue = () => {
+  sessionStorage.setItem("currentFilters", JSON.stringify([]));
   const Actions = [
     {
       label: "Manage all Loans",
@@ -26,6 +27,7 @@ const NavigationMenue = () => {
       write: ["Manager", "Employee", "Admin"],
       delete: ["Manager", "Employee", "Admin"],
       update: ["Manager", "Employee", "Admin"],
+      view: "allLoans",
     },
     {
       label: "Manage my Loans",
@@ -41,6 +43,7 @@ const NavigationMenue = () => {
       write: ["Manager", "Employee", "Admin"],
       delete: ["Manager", "Employee", "Admin"],
       update: ["Manager", "Employee", "Admin"],
+      view: "allLoans",
     },
     {
       label: "Manage personal data",
@@ -80,6 +83,7 @@ const NavigationMenue = () => {
       write: ["Manager", "admin"],
       delete: ["Manager", "Admin"],
       update: ["Manager", "Admin"],
+      view: "enrichedLibraryOrders",
     },
     {
       label: "Manage publishers",
@@ -102,6 +106,7 @@ const NavigationMenue = () => {
       write: ["Manager", "admin"],
       delete: ["Manager", "Admin"],
       update: ["Manager", "Admin"],
+      view: "enrichedPublishers",
     },
     {
       label: "Manage librarians",
@@ -113,6 +118,7 @@ const NavigationMenue = () => {
       write: ["Manager", "Admin"],
       delete: ["Manager", "Admin"],
       update: ["Manager", "Admin"],
+      view: "enrichedLibrarians",
     },
     {
       label: "My team",
@@ -126,6 +132,7 @@ const NavigationMenue = () => {
       write: ["Manager", "Admin"],
       delete: ["Manager", "Admin"],
       update: ["Manager", "Admin"],
+      view: "enrichedTeams",
     },
     {
       label: "Manage books",
@@ -137,6 +144,7 @@ const NavigationMenue = () => {
       write: [],
       delete: ["Manager", "Admin"],
       update: ["Manager", "Admin"],
+      view: "enrichedBooks",
     },
     // add employee mngmg
     //read: ['manager', 'employee', 'admin']
@@ -175,6 +183,7 @@ const NavigationMenue = () => {
     console.log(filteredActions[0]);
     let entryQuery = filteredActions[0].entryQuery;
     let formQuery = filteredActions[0].formQuery;
+    let view = filteredActions[0].view;
     const createRecordPermission = filteredActions[0].write;
     const deleteRecordPermission = filteredActions[0].delete;
     const updateRecordPermission = filteredActions[0].update;
@@ -191,7 +200,7 @@ const NavigationMenue = () => {
       sessionStorage.setItem("hideEditButton", false);
     }
     */
-
+    sessionStorage.setItem("view", view);
     console.log(entryQuery, "entryQuery");
     sessionStorage.setItem("tableQuery", entryQuery);
     sessionStorage.setItem("formQuery", formQuery);
