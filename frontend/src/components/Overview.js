@@ -11,6 +11,8 @@ import Logout from "./Logout";
 import { Button } from "react-bootstrap";
 import backIcon from "../img/back.svg";
 import Select from "react-select";
+import "../css/Overview.css";
+import Filterpanel from "./Filterpanel";
 
 function Overview() {
   const notFilledColumns = [
@@ -84,116 +86,6 @@ function Overview() {
     Employees: 0,
     Managers: 0,
   };
-  const numColumns = results.length > 0 ? results[0].length : 0;
-  const [options, setOptions] = useState();
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const selectRef = useRef(null);
-  const handleChange = () => {
-    let singleFilterValuesHTML = document.body.getElementsByClassName(
-      "css-wsp0cs-MultiValueGeneric"
-    );
-    let filterValues = [];
-    for (let index = 0; index < singleFilterValuesHTML.length; index++) {
-      let element = singleFilterValuesHTML[index];
-      filterValues.push(element.textContent);
-    }
-    let multiFilterValuesHTML = document.body.getElementsByClassName(
-      "css-1p3m7a8-multiValue"
-    );
-    for (let index = 0; index < multiFilterValuesHTML.length; index++) {
-      let element = multiFilterValuesHTML[index];
-      filterValues.push(element.textContent);
-    }
-
-    //remove duplicates from filterValues
-    filterValues = [...new Set(filterValues)];
-
-    let labels = [];
-    for (let i = 0; i < singleFilterValuesHTML.length; i++) {
-      let greatGrandparentElement =
-        singleFilterValuesHTML[i].parentNode.parentNode.parentNode.parentNode
-          .parentNode;
-      let label = greatGrandparentElement.querySelector("label");
-      if (label) {
-        labels.push(label.textContent);
-      }
-    }
-
-    let searchQuery = `SELECT * FROM "${sessionStorage.getItem(
-      "view"
-    )}" WHERE `;
-    labels.map((column, index) => {
-      let filterValue = filterValues[index];
-      filterValue = filterValue.trim();
-      searchQuery = searchQuery + `"${column}" = '${filterValue}' AND `;
-    });
-    if (labels.length === 0) {
-      searchQuery = `SELECT * FROM "${sessionStorage.getItem("view")}"`;
-      sessionStorage.setItem("tableQuery", searchQuery);
-    } else {
-      searchQuery = searchQuery.slice(0, searchQuery.length - 4);
-      sessionStorage.setItem("tableQuery", searchQuery);
-    }
-
-    setUpdateData(!updateData);
-  };
-
-  const debounce = (func, delay) => {
-    let timeoutId;
-    return (...args) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        func(...args);
-      }, delay);
-    };
-  };
-
-  const observeDOMChanges = () => {
-    const targetNode = document.body;
-
-    const observer = new MutationObserver(
-      debounce(() => {
-        // Execute your code when DOM changes occur
-        handleChange();
-      }, 1000) // Specify the delay (in milliseconds) you want between executions
-    );
-
-    const observerConfig = { childList: true, subtree: true };
-
-    observer.observe(targetNode, observerConfig);
-  };
-
-  // Start observing DOM changes immediately
-  observeDOMChanges();
-
-  let currentFilters = JSON.parse(sessionStorage.getItem("currentFilters"));
-  const handleSelect = (selectedOption, columnIndex) => {
-    console.log();
-    /*
-    // Handle the selected value here
-    console.log(`Selected value for column ${columnIndex}:`, selectedOption);
-    currentFilters.push([columnIndex, selectedOption]);
-    
-    let searchQuery = `SELECT * FROM "${sessionStorage.getItem(
-      "view"
-    )}" WHERE `;
-    currentFilters.map((element, index) => {
-      searchQuery =
-        searchQuery + `"${columns[element[0]]}" = '${element[1]}' AND `;
-    });
-    searchQuery = searchQuery.slice(0, searchQuery.length - 4);
-    sessionStorage.setItem("tableQuery", searchQuery);
-    currentFilters = JSON.stringify(currentFilters);
-    sessionStorage.setItem("currentFilters", currentFilters);
-    console.log("CURRENTFILTERS", currentFilters);
-    console.log("SEARCHQUERY", searchQuery);
-    setUpdateData(!updateData);
-    */
-  };
-
-  const [selectedValues, setSelectedValues] = useState(
-    Array(numColumns).fill(null)
-  );
 
   //* Callback function //
   const callThisFromChildComponent = (data) => {
@@ -745,26 +637,12 @@ function Overview() {
           onClick={() => navigate("/NavigationMenue")}
         ></button>
       </div>
-      <div>
-        {Array.from({ length: numColumns }, (_, index) => (
-          <Form.Group key={index} controlId={`column-${index}`}>
-            <Form.Label>{columns[index]}</Form.Label>
-            <Select
-              options={Array.from(
-                new Set(results.map((row) => row[index]))
-              ).map((value) => ({
-                value,
-                label: value,
-              }))}
-              id="Select"
-              ref={selectRef}
-              isSearchable
-              isMulti
-              onChange={handleChange}
-            />
-          </Form.Group>
-        ))}
-      </div>
+      <Filterpanel
+        columns={columns}
+        results={results}
+        setUpdateData={setUpdateData}
+        updateData={updateData}
+      />
       <DataTable
         columns={columns}
         results={results}
