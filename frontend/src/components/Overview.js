@@ -9,6 +9,7 @@ import EditRecordModal from "./EditRecordModal";
 import Logout from "./Logout";
 import backIcon from "../img/back.svg";
 import Filterpanel from "./Filterpanel";
+import ClipLoader from "react-spinners/ClipLoader";
 
 function Overview() {
   const notFilledColumns = [
@@ -33,6 +34,12 @@ function Overview() {
   const [selectedTable, setSelectedTable] = useState(
     sessionStorage.getItem("table")
   );
+  const override = {
+    display: "block",
+    margin: "0 auto",
+    borderColor: "blue",
+    marginTop: "10%",
+  };
 
   //* State variables //
   const [results, setResults] = useState([]);
@@ -82,6 +89,7 @@ function Overview() {
     Employees: 0,
     Managers: 0,
   };
+  const [isLoading, setIsLoading] = useState();
 
   //* Callback function //
   const callThisFromChildComponent = (data) => {
@@ -161,6 +169,7 @@ function Overview() {
   // Main Hook: This hook is called whenever the selected table is changed or the data updates
 
   useEffect(() => {
+    setIsLoading(true);
     let uniqueColumn = selectedTable.slice(0, selectedTable.length - 1);
     uniqueColumn = uniqueColumn.toLowerCase();
     uniqueColumn = uniqueColumn + "ID"; //e.g. loanID
@@ -251,25 +260,6 @@ function Overview() {
 
             setColumnsWithIDs(results.data[0]);
             setColumns(columnswithoutID);
-            /*
-            let tempResults = results.data[1];
-            console.log(tempResults, "tempResults", tempResults.length);
-            let amountColumns =
-              tempResults.length > 0 ? tempResults[1].length : 0;
-            console.log(tempResults, "tempResults");
-            let tempOptions = Array.from(
-              { length: amountColumns },
-              (_, index) =>
-                Array.from(new Set(tempResults.map((row) => row[index]))).map(
-                  (value) => ({
-                    value,
-                    label: value,
-                  })
-                )
-            );
-            console.log(tempOptions, "tempOptions");
-            setOptions(tempOptions);
-            */
 
             axios
               .post(api, {
@@ -361,6 +351,7 @@ function Overview() {
                   console.log(newFormData);
                   setEditData(newFormData);
                 }
+                setIsLoading(false);
               });
           })
           .catch((error) => {
@@ -639,25 +630,39 @@ function Overview() {
         setUpdateData={setUpdateData}
         updateData={updateData}
       />
-      <DataTable
-        columns={columns}
-        results={results}
-        deleteEntry={deleteEntry}
-        showConvertOrderIntoBookButton={showConvertOrderIntoBookButton}
-        convertIntoBook={convertIntoBook}
-        selectedTable={selectedTable}
-        editData={editData}
-        api={api}
-        setRowUniqueID={setRowUniqueID}
-        setShowEditModal={setShowEditModal}
-        setEditData={setEditData}
-        showEditModal={showEditModal}
-        resultsWithIDs={resultsWithIDs}
-        updateData={updateData}
-        setUpdateData={setUpdateData}
-        setShowModal={setShowModal}
-        showModal={showModal}
-      />
+      {isLoading ? (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginTop: "10%",
+          }}
+        >
+          <ClipLoader css={override} size={150} color={"blue"} loading={true} />
+          <span style={{ marginTop: "0.5rem" }}>Loading...</span>
+        </div>
+      ) : (
+        <DataTable
+          columns={columns}
+          results={results}
+          deleteEntry={deleteEntry}
+          showConvertOrderIntoBookButton={showConvertOrderIntoBookButton}
+          convertIntoBook={convertIntoBook}
+          selectedTable={selectedTable}
+          editData={editData}
+          api={api}
+          setRowUniqueID={setRowUniqueID}
+          setShowEditModal={setShowEditModal}
+          setEditData={setEditData}
+          showEditModal={showEditModal}
+          resultsWithIDs={resultsWithIDs}
+          updateData={updateData}
+          setUpdateData={setUpdateData}
+          setShowModal={setShowModal}
+          showModal={showModal}
+        />
+      )}
       <div>
         <CreateRecordModal
           showModal={showModal}

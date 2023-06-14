@@ -41,6 +41,7 @@ function Filterpanel(props) {
     let searchQuery = `SELECT * FROM "${sessionStorage.getItem(
       "view"
     )}" WHERE `;
+    let oldSearchQuery = sessionStorage.getItem("tableQuery");
     labels.map((column, index) => {
       let filterValue = filterValues[index];
       filterValue = filterValue.trim();
@@ -53,8 +54,18 @@ function Filterpanel(props) {
       searchQuery = searchQuery.slice(0, searchQuery.length - 4);
       sessionStorage.setItem("tableQuery", searchQuery);
     }
-
-    setUpdateData(!updateData);
+    let updatedSearchQuery = oldSearchQuery === searchQuery ? false : true;
+    console.log(
+      "updatedSearchQuery",
+      updatedSearchQuery,
+      oldSearchQuery,
+      searchQuery
+    );
+    console.log("updatedSearchQuery", updatedSearchQuery);
+    if (updatedSearchQuery === true) {
+      console.log("Spinner is loading");
+      setUpdateData(!updateData);
+    }
   };
 
   const debounce = (func, delay) => {
