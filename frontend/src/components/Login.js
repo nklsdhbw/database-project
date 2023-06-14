@@ -1,16 +1,17 @@
-// import libraries
+//* import libraries *//
 import * as React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import "bootstrap/dist/css/bootstrap.min.css";
 import bcrypt from "bcryptjs";
 import axios from "axios";
-import loginBackground from "../img/login_background.svg";
-import "../css/Login.css";
 
-// import required css
-//import 'bootstrap/dist/css/bootstrap.min.css';
+//* import required images *//
+import loginBackground from "../img/login_background.svg";
+
+//* import required css *//
+import "../css/Login.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -25,7 +26,6 @@ const Login = () => {
     navigate("/NavigationMenue");
   }
 
-  //let { isLoading, data } = useFetch("/api/login");
   useEffect(() => {
     let query = `SELECT * FROM "allUsers"`;
     axios
@@ -132,7 +132,5 @@ const Login = () => {
     </div>
   );
 };
-//  }
-//};
 
 export default Login;

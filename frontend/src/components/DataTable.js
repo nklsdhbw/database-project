@@ -1,9 +1,11 @@
+//* import libraries *//
 import React from "react";
-import { Table, Button } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import axios from "axios";
 import { useState } from "react";
 import { Input } from "antd";
-import "../css/DataTable.css"; // Pfad zur CSS-Datei anpassen
+
+//* import images *//
 import chapterOneLogo from "../img/logo.svg";
 import penBlueIcon from "../img/pen_blue_icon.svg";
 import deleteIcon from "../img/bin_red_icon.svg";
@@ -13,6 +15,8 @@ import convertedIntoBookIcon from "../img/convert_into_book_1.svg";
 import returnIcon from "../img/return.svg";
 import alreadyReturnedIcon from "../img/already_returned.svg";
 
+//* import css *//
+import "../css/DataTable.css";
 import "../css/NavigationMenue.css";
 function DataTable(props) {
   const {

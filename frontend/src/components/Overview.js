@@ -2,16 +2,22 @@ import { useState, useEffect } from "react";
 import { Modal, ModalBody } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import ClipLoader from "react-spinners/ClipLoader";
+
+//* import components *//
 import TableSearch from "./TableSearch";
 import DataTable from "./DataTable.js";
 import CreateRecordModal from "./CreateRecordModal";
 import EditRecordModal from "./EditRecordModal";
 import Logout from "./Logout";
-import backIcon from "../img/back.svg";
 import Filterpanel from "./Filterpanel";
-import ClipLoader from "react-spinners/ClipLoader";
+
+//* import required images *//
+import backIcon from "../img/back.svg";
 
 function Overview() {
+  const navigate = useNavigate();
+  // general variables
   const notFilledColumns = [
     "loanID",
     "bookID",
@@ -24,16 +30,13 @@ function Overview() {
     "zipID",
     "currencyID",
   ];
-  const navigate = useNavigate();
-  // general variables
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
+  const api = "http://localhost:5000/run-query";
   if (!loginStatus) {
     navigate("/Login");
   }
-  const api = "http://localhost:5000/run-query";
-  const [selectedTable, setSelectedTable] = useState(
-    sessionStorage.getItem("table")
-  );
+
+  // spinner properties
   const override = {
     display: "block",
     margin: "0 auto",
@@ -42,6 +45,9 @@ function Overview() {
   };
 
   //* State variables //
+  const [selectedTable, setSelectedTable] = useState(
+    sessionStorage.getItem("table")
+  );
   const [results, setResults] = useState([]);
   const [resultsWithIDs, setResultsWithIDs] = useState([]);
   const [columns, setColumns] = useState([]);
@@ -160,7 +166,6 @@ function Overview() {
       });
       setFormData(updatedFormData);
       setshowSearch(!showSearch);
-      sessionStorage.setItem("showPublisher", "false");
     }
   };
 
@@ -179,254 +184,18 @@ function Overview() {
     setUniqueColumn(uniqueColumn);
     console.log(selectedTable, "selectedTable");
 
-    setHidePublisherButton(
-      selectedTable === "Books" || selectedTable === "LibraryOrders"
-        ? false
-        : true
-    );
-
     // set datatypes
-    axios
-      .post(api, {
-        query: `SELECT data_type, column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
-      })
-      .then((datatypes) => {
-        let datatypesData = datatypes.data[1];
-        console.log("DATATYPES", datatypes);
-        for (let index = 0; index < datatypesData.length; index++) {
-          let element = datatypesData[index];
-          let type = element[0];
-          let columnName = element[1];
-          console.log(columnName, type);
-          if (type.startsWith("character") || type.startsWith("char")) {
-            datatypesData[index] = "text";
-            console.log(columnName);
-          }
-          if (
-            type.startsWith("big") ||
-            type.startsWith("int") ||
-            type.startsWith("small") ||
-            type.startsWith("numeric")
-          ) {
-            datatypesData[index] = "number";
-          }
-          if (type.startsWith("date")) {
-            datatypesData[index] = "date";
-          }
-          if (type.startsWith("bool")) {
-            datatypesData[index] = "checked";
-          }
-          if (columnName.includes("mail")) {
-            datatypesData[index] = "email";
-          }
-          if (columnName.includes("assword")) {
-            datatypesData[index] = "password";
-          }
-          if (notFilledColumns.includes(columnName)) {
-            datatypesData[index] = null;
-          }
-        }
-
-        const filteredArr = datatypesData.filter((value) => value != null);
-        console.log(filteredArr.length, "length", datatypesData.length);
-
-        setDatatypes(filteredArr);
-        console.log(filteredArr);
-
-        // set formData/editData
-        datatypes = filteredArr;
-        console.log(sessionStorage.getItem("tableQuery"));
-        axios
-          .post(api, {
-            query: sessionStorage.getItem("tableQuery"),
-          })
-          .then((results) => {
-            console.log(results.data[1], "results.data[1]");
-            setResultsWithIDs(results.data[1]);
-            let resultsWithoutIDs = Array.from(results.data[1]);
-            resultsWithoutIDs.forEach((element, index) => {
-              resultsWithoutIDs[index] = element.slice(
-                0,
-                element.length - amountIDColumns[selectedTable]
-              );
-            });
-
-            setResults(resultsWithoutIDs);
-            let columnswithoutID = results.data[0];
-            columnswithoutID = columnswithoutID.slice(
-              0,
-              columnswithoutID.length - amountIDColumns[selectedTable]
-            );
-
-            setColumnsWithIDs(results.data[0]);
-            setColumns(columnswithoutID);
-
-            axios
-              .post(api, {
-                query: sessionStorage.getItem("formQuery"),
-              })
-              .then((results) => {
-                // set EditData/formData
-                let cols = results.data[0];
-                const newFormData = {};
-                // columns without id row
-                console.log(cols, "cols");
-                cols = cols.slice(1, cols.length);
-                console.log("COLS", cols);
-                let prefillDateColumns = [
-                  "loanLoanDate",
-                  "libraryOrderDateOrdered",
-                ];
-                cols.map((column, index) => {
-                  let placeholder = "";
-                  if (column === "loanReaderEmail") {
-                    placeholder = sessionStorage.getItem("loginMail");
-                  }
-                  if (prefillDateColumns.includes(column)) {
-                    placeholder = new Date().toISOString().slice(0, 10);
-                  }
-                  if (column === "loanRenewals") {
-                    placeholder = 0;
-                  }
-                  if (column === "loanOverdue") {
-                    placeholder = false;
-                  }
-                  if (column === "loanFine") {
-                    placeholder = 0;
-                  }
-                  if (column === "loanStatus") {
-                    placeholder = "open";
-                  }
-                  //prefill loanReaderID
-                  if (column === "loanReaderID") {
-                    placeholder = sessionStorage.getItem("readerID");
-                  }
-                  if (notFilledColumns.includes(column[0])) {
-                  } else {
-                    newFormData[column] = {
-                      type: datatypes[index],
-                      required: true,
-                      placeholder: placeholder,
-                    };
-                  }
-                });
-
-                if (selectedTable === "Teams") {
-                  let teamsFormData = {
-                    employeeTeamID: {
-                      type: "number",
-                      required: true,
-                      placeholder: undefined,
-                    },
-                    employeeLibrarianID: {
-                      type: "number",
-                      required: true,
-                      placeholder: undefined,
-                    },
-                  };
-                  setFormData(teamsFormData);
-                  console.log(teamsFormData);
-                  setEditData(teamsFormData);
-                  setDatatypes(["number", "number"]);
-                } else if (selectedTable === "Librarians") {
-                  newFormData["employeeTeamID"] = {
-                    type: "number",
-                    required: true,
-                    placeholder: undefined,
-                  };
-                  newFormData["Role"] = {
-                    type: "option",
-                    required: true,
-                    placeholder: undefined,
-                  };
-
-                  setFormData(newFormData);
-                  console.log(newFormData);
-                  setEditData(newFormData);
-                  let tempDatatypes = Array.from(datatypes);
-                  tempDatatypes.push("number", "option");
-                  setDatatypes(tempDatatypes);
-                } else {
-                  setFormData(newFormData);
-                  console.log(newFormData);
-                  setEditData(newFormData);
-                }
-                setIsLoading(false);
-              });
-          })
-          .catch((error) => {
-            console.log("ERROR : ", error);
-          });
-      })
-      .catch((error) => {
-        console.log("ERROR : ", error);
-      });
+    getDatatypes();
 
     // set visibility of buttons
-    setShowSearchAuthorButton(false);
-    setShowSearchBookButton(false);
-    setHidePublisherButton(true);
-    setShowSearchManagerButton(false);
-    setShowSearchZipButton(false);
-    setShowSearchTeamButton(false);
-    setShowSearchCurrencyButton(false);
-    setShowSearchEmployeeButton(false);
-    if (selectedTable === "Books") {
-      setShowSearchAuthorButton(true);
-      setHidePublisherButton(false);
-    }
-
-    if (selectedTable === "Loans") {
-      sessionStorage.setItem("searchTable", "Books");
-      setShowSearchBookButton(true);
-      setShowSearchCurrencyButton(true);
-    }
-    if (selectedTable === "LibraryOrders") {
-      sessionStorage.setItem("searchTable", "Authors");
-      setHidePublisherButton(false);
-      setShowSearchBookButton(false);
-      setShowSearchAuthorButton(true);
-      setShowSearchManagerButton(true);
-      setShowSearchCurrencyButton(true);
-    }
-    if (selectedTable === "Publishers") {
-      setShowSearchZipButton(true);
-    }
-    if (selectedTable === "Teams") {
-      setShowSearchTeamButton(true);
-      setShowSearchEmployeeButton(true);
-    }
-    if (selectedTable === "Librarians") {
-      setShowSearchTeamButton(true);
-    }
-    setShowConvertOrderIntoBookButton(
-      selectedTable === "LibraryOrders" ? true : false
-    );
+    setButtonVisabilities();
 
     // update boookISBNs
-    axios
-      .post(api, {
-        query: `SELECT "bookISBN" FROM public."Books"`,
-      })
-      .then((response) => {
-        setBookISBNs(response.data[1].flat());
-      })
-      .catch((error) => {
-        console.log("ERROR : ", error);
-      });
+    getISBNs();
   }, [selectedTable, updateData]);
 
   useEffect(() => {
-    axios
-      .post(api, {
-        query: `SELECT "bookISBN" FROM public."Books"`,
-      })
-      .then((response) => {
-        setBookISBNs(response.data[1].flat());
-      })
-      .catch((error) => {
-        console.log("ERROR : ", error);
-      });
+    getISBNs();
   }, []);
 
   function deleteEntry(rowID) {
@@ -462,17 +231,8 @@ function Overview() {
     let libraryOrderID = data[0];
     header = header.slice(1);
     data = data.slice(1);
-    console.log(bookISBNs);
 
-    console.log(header, "header");
-
-    console.log("libraryOrderISBN", libraryOrderISBN);
-
-    console.log(libraryOrderAmount, "libraryOrderAmount");
-
-    console.log(bookISBNs.includes(libraryOrderISBN));
     if (bookISBNs.includes(libraryOrderISBN)) {
-      console.log("Book already exists");
       if (
         window.confirm(
           "A book with this ISBN already exists. The order amount will be added to the existing book if you press confirm. Otherwise press cancel to abort the order."
@@ -480,7 +240,6 @@ function Overview() {
       ) {
         // book already exists, update bookAmount and bookAvilabilityAmount
         let query = `UPDATE public."Books" SET "bookAmount" = "bookAmount" + ${libraryOrderAmount}, "bookAvailableAmount" = "bookAvailableAmount" + ${libraryOrderAmount} WHERE "bookISBN" = '${libraryOrderISBN}'`;
-        console.log("QUERY", query);
         axios
           .post(api, {
             query: `${query}`,
@@ -570,12 +329,8 @@ function Overview() {
         insertQuery +
         insertColumns.slice(0, insertColumns.length - 2) +
         ") Values (";
-
       insertQuery =
         insertQuery + insertData.slice(0, insertData.length - 2) + ")";
-
-      console.log(insertQuery);
-
       let updateParameters = [libraryOrderID];
       let updateQuery = `UPDATE public."LibraryOrders" SET "libraryOrderStatusOrder" = 'done' WHERE "libraryOrderID" = %s`;
 
@@ -604,8 +359,238 @@ function Overview() {
         });
     }
   }
+
   function handleCreate() {
     setShowModal(!showModal);
+  }
+
+  function getDatatypes() {
+    axios
+      .post(api, {
+        query: `SELECT data_type, column_name FROM information_schema.columns  WHERE table_name = '${selectedTable}' AND table_schema = 'public'`,
+      })
+      .then((datatypes) => {
+        let datatypesData = datatypes.data[1];
+        console.log("DATATYPES", datatypes);
+        for (let index = 0; index < datatypesData.length; index++) {
+          let element = datatypesData[index];
+          let type = element[0];
+          let columnName = element[1];
+
+          if (type.startsWith("character") || type.startsWith("char")) {
+            datatypesData[index] = "text";
+            console.log(columnName);
+          }
+          if (
+            type.startsWith("big") ||
+            type.startsWith("int") ||
+            type.startsWith("small") ||
+            type.startsWith("numeric")
+          ) {
+            datatypesData[index] = "number";
+          }
+          if (type.startsWith("date")) {
+            datatypesData[index] = "date";
+          }
+          if (type.startsWith("bool")) {
+            datatypesData[index] = "checked";
+          }
+          if (columnName.includes("mail")) {
+            datatypesData[index] = "email";
+          }
+          if (columnName.includes("assword")) {
+            datatypesData[index] = "password";
+          }
+          if (notFilledColumns.includes(columnName)) {
+            datatypesData[index] = null;
+          }
+        }
+
+        const filteredArr = datatypesData.filter((value) => value != null);
+        setDatatypes(filteredArr);
+        setFormAndEditData(filteredArr);
+      })
+      .catch((error) => {
+        console.log("ERROR : ", error);
+      });
+  }
+
+  function getISBNs() {
+    axios
+      .post(api, {
+        query: `SELECT "bookISBN" FROM public."Books"`,
+      })
+      .then((response) => {
+        setBookISBNs(response.data[1].flat());
+      })
+      .catch((error) => {
+        console.log("ERROR : ", error);
+      });
+  }
+
+  function setButtonVisabilities() {
+    setHidePublisherButton(
+      selectedTable === "Books" || selectedTable === "LibraryOrders"
+        ? false
+        : true
+    );
+    setShowSearchAuthorButton(false);
+    setShowSearchBookButton(false);
+    setHidePublisherButton(true);
+    setShowSearchManagerButton(false);
+    setShowSearchZipButton(false);
+    setShowSearchTeamButton(false);
+    setShowSearchCurrencyButton(false);
+    setShowSearchEmployeeButton(false);
+    if (selectedTable === "Books") {
+      setShowSearchAuthorButton(true);
+      setHidePublisherButton(false);
+    }
+
+    if (selectedTable === "Loans") {
+      sessionStorage.setItem("searchTable", "Books");
+      setShowSearchBookButton(true);
+      setShowSearchCurrencyButton(true);
+    }
+    if (selectedTable === "LibraryOrders") {
+      sessionStorage.setItem("searchTable", "Authors");
+      setHidePublisherButton(false);
+      setShowSearchBookButton(false);
+      setShowSearchAuthorButton(true);
+      setShowSearchManagerButton(true);
+      setShowSearchCurrencyButton(true);
+    }
+    if (selectedTable === "Publishers") {
+      setShowSearchZipButton(true);
+    }
+    if (selectedTable === "Teams") {
+      setShowSearchTeamButton(true);
+      setShowSearchEmployeeButton(true);
+    }
+    if (selectedTable === "Librarians") {
+      setShowSearchTeamButton(true);
+    }
+    setShowConvertOrderIntoBookButton(
+      selectedTable === "LibraryOrders" ? true : false
+    );
+  }
+
+  function setFormAndEditData(datatypes) {
+    console.log(sessionStorage.getItem("tableQuery"));
+    axios
+      .post(api, {
+        query: sessionStorage.getItem("tableQuery"),
+      })
+      .then((results) => {
+        setResultsWithIDs(results.data[1]);
+        let resultsWithoutIDs = Array.from(results.data[1]);
+        resultsWithoutIDs.forEach((element, index) => {
+          resultsWithoutIDs[index] = element.slice(
+            0,
+            element.length - amountIDColumns[selectedTable]
+          );
+        });
+        setResults(resultsWithoutIDs);
+        let columnswithoutID = results.data[0];
+        columnswithoutID = columnswithoutID.slice(
+          0,
+          columnswithoutID.length - amountIDColumns[selectedTable]
+        );
+        setColumnsWithIDs(results.data[0]);
+        setColumns(columnswithoutID);
+
+        axios
+          .post(api, {
+            query: sessionStorage.getItem("formQuery"),
+          })
+          .then((results) => {
+            // set EditData/formData
+            let cols = results.data[0];
+            const newFormData = {};
+            // columns without id row
+            cols = cols.slice(1, cols.length);
+
+            let prefillDateColumns = [
+              "loanLoanDate",
+              "libraryOrderDateOrdered",
+            ];
+            cols.map((column, index) => {
+              let placeholder = "";
+              if (column === "loanReaderEmail") {
+                placeholder = sessionStorage.getItem("loginMail");
+              }
+              if (prefillDateColumns.includes(column)) {
+                placeholder = new Date().toISOString().slice(0, 10);
+              }
+              if (column === "loanRenewals") {
+                placeholder = 0;
+              }
+              if (column === "loanOverdue") {
+                placeholder = false;
+              }
+              if (column === "loanFine") {
+                placeholder = 0;
+              }
+              if (column === "loanStatus") {
+                placeholder = "open";
+              }
+              //prefill loanReaderID
+              if (column === "loanReaderID") {
+                placeholder = sessionStorage.getItem("readerID");
+              }
+              if (notFilledColumns.includes(column[0])) {
+              } else {
+                newFormData[column] = {
+                  type: datatypes[index],
+                  required: true,
+                  placeholder: placeholder,
+                };
+              }
+            });
+
+            if (selectedTable === "Teams") {
+              let teamsFormData = {
+                employeeTeamID: {
+                  type: "number",
+                  required: true,
+                  placeholder: undefined,
+                },
+                employeeLibrarianID: {
+                  type: "number",
+                  required: true,
+                  placeholder: undefined,
+                },
+              };
+              setFormData(teamsFormData);
+              setEditData(teamsFormData);
+              setDatatypes(["number", "number"]);
+            } else if (selectedTable === "Librarians") {
+              newFormData["employeeTeamID"] = {
+                type: "number",
+                required: true,
+                placeholder: undefined,
+              };
+              newFormData["Role"] = {
+                type: "option",
+                required: true,
+                placeholder: undefined,
+              };
+
+              setFormData(newFormData);
+              setEditData(newFormData);
+              let tempDatatypes = Array.from(datatypes);
+              tempDatatypes.push("number", "option");
+              setDatatypes(tempDatatypes);
+            } else {
+              setFormData(newFormData);
+              setEditData(newFormData);
+            }
+            setIsLoading(false);
+          });
+      })
+      .catch((error) => {
+        console.log("ERROR : ", error);
+      });
   }
 
   return (

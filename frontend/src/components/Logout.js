@@ -1,10 +1,9 @@
-// import libraries
+//* import libraries *//
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import logoutIcon from "../img/logout.svg";
 
-// import required css
-import { Button } from "react-bootstrap";
+//* import images *//
+import logoutIcon from "../img/logout.svg";
 
 const Logout = () => {
   const navigate = useNavigate();

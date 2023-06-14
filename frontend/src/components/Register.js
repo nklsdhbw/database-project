@@ -1,58 +1,44 @@
-// import libraries
+//* import libraries *//
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import bcrypt from "bcryptjs";
 import axios from "axios";
-import "../css/Login.css";
-import loginBackground from "../img/login_background.svg";
-// import required css
-
-import "bootstrap/dist/css/bootstrap.min.css";
 import PasswordChecklist from "react-password-checklist";
 
-const Register = () => {
-  // fetch loginData from /api/login
-  //const { isLoading, data } = useFetch("/api/login");
+//* import required images *//
+import loginBackground from "../img/login_background.svg";
 
+//* import css *//
+import "../css/Login.css";
+
+const Register = () => {
+  const api = "http://localhost:5000/run-query";
   const { register, handleSubmit, formState } = useForm();
   const navigate = useNavigate();
-  const [results, setResults] = useState([]);
   const [existingUsers, setExistingUsers] = useState([]);
   const [userExists, setUserExists] = useState(false);
-  const api = "http://localhost:5000/run-query";
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
   const [formStateValid, setFormStateValid] = useState(false);
-
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
-  console.log("LoginStatus", loginStatus);
+
+  // navigate to NavigationMenue if user is already logged in
   if (!loginStatus) {
   } else {
     navigate("/NavigationMenue");
   }
-  // check if user already exists
-  useEffect(() => {
-    let query = 'SELECT * FROM public."Readers"';
-    axios
-      .post(api, { query })
-      .then((response) => {
-        setExistingUsers(response.data[1]);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
 
-  // continue when data is fully loaded
+  // fetch current Readers
+  getReaders();
 
+  //* HANDLERS *//
   const onSubmit = async (registerData) => {
-    //const password = registerData.password;
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const email = registerData.eMail;
-    console.log(existingUsers);
+
     for (let i = 0; i < existingUsers.length; i++) {
       if (existingUsers[i][3] === email) {
         setUserExists(true);
@@ -67,59 +53,58 @@ const Register = () => {
       // and navigate then to the "overview" page
       sessionStorage.setItem("loggedIn", JSON.stringify(true));
       sessionStorage.setItem("loginMail", registerData.eMail);
-      console.log("registerData", registerData);
+
       let registerParameters = [
         registerData.firstname,
         registerData.lastname,
         registerData.username,
         hashedPassword,
       ];
-      axios
-        .post(api, {
-          query: `INSERT INTO public."Readers" ("readerFirstName", "readerLastName", "readerEmail", "readerPassword") Values(%s, %s, %s, %s)`,
-          parameters: registerParameters,
-        })
-        .then((response) => {
-          setResults(response.data);
 
-          //get readerData from database
-          let query = `SELECT * FROM "allUsers"`;
-          axios
-            .post(api, {
-              query: query,
-            })
-            .then((response) => {
-              setResults(response.data[1]);
-              let results = response.data[1];
-              //get readerID from User and save it in sessionStorage
-              console.log(results);
-              results.forEach((element) => {
-                console.log(element[1], registerData.username);
-                if (element[1] === registerData.username) {
-                  let userID = element[0];
-                  let role = element[2];
-                  let teamID = element[4];
-                  let loginMail = element[1];
-                  sessionStorage.setItem("teamID", teamID);
-                  sessionStorage.setItem("loginMail", loginMail);
-                  sessionStorage.setItem("role", role);
-                  if (element[2] === "Reader") {
-                    sessionStorage.setItem("readerID", userID);
-                  }
-                  sessionStorage.setItem("userID", userID);
-                }
-              });
-              navigate("/NavigationMenue");
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      createReader(registerParameters, registerData);
     }
   };
+
+  //* FUNCTIONS *//
+  async function getReaders() {
+    let query = 'SELECT * FROM public."Readers"';
+    try {
+      const response = await axios.post(api, { query });
+      await new Promise((resolve) => {
+        setExistingUsers(response.data[1], () => resolve());
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function createReader(registerParameters, registerData) {
+    const response = await axios.post(api, {
+      query: `INSERT INTO public."Readers" ("readerFirstName", "readerLastName", "readerEmail", "readerPassword") Values(%s, %s, %s, %s)`,
+      parameters: registerParameters,
+    });
+
+    await getReaders();
+    let results = existingUsers;
+
+    //get readerID from User and save it in sessionStorage
+    results.forEach((element) => {
+      if (element[1] === registerData.username) {
+        let userID = element[0];
+        let role = element[2];
+        let teamID = element[4];
+        let loginMail = element[1];
+        sessionStorage.setItem("teamID", teamID);
+        sessionStorage.setItem("loginMail", loginMail);
+        sessionStorage.setItem("role", role);
+        if (element[2] === "Reader") {
+          sessionStorage.setItem("readerID", userID);
+        }
+        sessionStorage.setItem("userID", userID);
+      }
+    });
+    navigate("/NavigationMenue");
+  }
 
   // return form with input fields for registrating a new user
   // disable the "register" button if inputValidation is false,

@@ -1,3 +1,4 @@
+//* import libraries *//
 import React, { useState, useRef } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
@@ -54,7 +55,6 @@ function CreateRecordModal(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(formData);
     if (selectedTable === "Teams") {
       addTeamMember(formData);
     } else if (selectedTable === "Librarians") {
@@ -257,9 +257,7 @@ function CreateRecordModal(props) {
             query: `CALL markOverdueLoans();`,
           })
           .then((response) => {
-            console.log("UPDATEDATA", updateData);
             setUpdateData(!updateData);
-            console.log("UPDATEDATA", updateData);
           })
           .catch((error) => {
             console.log("ERROR : ", error);
