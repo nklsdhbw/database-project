@@ -1,17 +1,13 @@
-import { useState, useEffect, useRef } from "react";
-import { Modal, ModalBody, Form } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { Modal, ModalBody } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import TableSearch from "./TableSearch";
 import DataTable from "./DataTable.js";
 import CreateRecordModal from "./CreateRecordModal";
 import EditRecordModal from "./EditRecordModal";
-import plusGreenIcon from "../img/plus_green_icon.svg";
 import Logout from "./Logout";
-import { Button } from "react-bootstrap";
 import backIcon from "../img/back.svg";
-import Select from "react-select";
-import "../css/Overview.css";
 import Filterpanel from "./Filterpanel";
 
 function Overview() {
