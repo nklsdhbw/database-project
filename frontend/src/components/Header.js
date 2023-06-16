@@ -3,17 +3,33 @@ import axios from "axios";
 import chapterOneLogo from "../img/logo.svg";
 import "../css/Header.css";
 import Logout from "./Logout.js";
+import { set } from "react-hook-form";
 
 const Header = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [loanFine, setLoanFine] = useState(10);
   const api = "http://localhost:5000/run-query";
   const readerID = sessionStorage.getItem("userID");
-  const query = `SELECT SUM("Fine"), "Reader ID" FROM "allLoans"
-  GROUP  BY "Reader ID"
-  HAVING "Reader ID" = ${readerID}
-  `;
   const userRole = sessionStorage.getItem("role");
+
+  fetchLoanFine();
+
+  function fetchLoanFine() {
+    let query = `SELECT "Reader ID", SUM("Fine") AS total_fine
+    FROM "allLoans"
+    GROUP BY "Reader ID"
+    HAVING "Reader ID" = '${readerID}';
+    `;
+    axios
+      .post(api, { query: query })
+      .then((response) => {
+        const fine = response.data[1][0][1];
+        if (fine !== loanFine) {
+          setLoanFine(fine);
+        }
+      })
+      .catch((error) => {});
+  }
 
   return (
     <header>

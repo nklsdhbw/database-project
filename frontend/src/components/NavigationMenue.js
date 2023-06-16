@@ -215,9 +215,15 @@ const NavigationMenue = () => {
     }
     */
     sessionStorage.setItem("view", view);
-    if (sessionStorage.getItem("role") == "Reader") {
+    if (
+      sessionStorage.getItem("role") == "Reader" &&
+      sessionStorage.getItem("action") == "Manage personal data"
+    ) {
       sessionStorage.setItem("view", "Readers");
-    } else {
+    } else if (
+      sessionStorage.getItem("role") == "Manager" &&
+      sessionStorage.getItem("action") == "Manage personal data"
+    ) {
       sessionStorage.setItem("view", "enrichedLibrarians");
     }
     console.log(entryQuery, "entryQuery");
