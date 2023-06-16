@@ -6,7 +6,6 @@ import { useState } from "react";
 import { Input } from "antd";
 
 //* import images *//
-import chapterOneLogo from "../img/logo.svg";
 import penBlueIcon from "../img/pen_blue_icon.svg";
 import deleteIcon from "../img/bin_red_icon.svg";
 import plusGreenIcon from "../img/plus_green_icon.svg";
@@ -425,11 +424,6 @@ function DataTable(props) {
 
   return (
     <>
-      <header>
-        <div className="logo-container">
-          <img src={chapterOneLogo} alt="ChapterOne Logo" />
-        </div>
-      </header>
       <Search
         onChange={handleSearch}
         placeholder="Search"

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 //* import components *//
 import Logout from "./Logout.js";
+import Header from "./Header.js";
 
 //* import images *//
 import loansMmanagement from "../img/loans_management.svg";
@@ -12,7 +13,6 @@ import personalInformation from "../img/personal_information.svg";
 import supplierManagement from "../img/supplier_management.svg";
 import employeeManagement from "../img/employee_management.svg";
 import bookManagement from "../img/book_management.svg";
-import chapterOneLogo from "../img/logo.svg";
 
 //* import css *//
 import "../css/NavigationMenue.css";
@@ -228,11 +228,7 @@ const NavigationMenue = () => {
 
   return (
     <div>
-      <header>
-        <div className="logo-container">
-          <img src={chapterOneLogo} alt="ChapterOne Logo" />
-        </div>
-      </header>
+      <Header />
       <h1>My Dashboard</h1>
       <Logout></Logout>
       <div className="container">

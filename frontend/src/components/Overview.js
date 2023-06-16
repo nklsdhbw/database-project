@@ -11,6 +11,7 @@ import CreateRecordModal from "./CreateRecordModal";
 import EditRecordModal from "./EditRecordModal";
 import Logout from "./Logout";
 import Filterpanel from "./Filterpanel";
+import Header from "./Header";
 
 //* import required images *//
 import backIcon from "../img/back.svg";
@@ -609,12 +610,15 @@ function Overview() {
           onClick={() => navigate("/NavigationMenue")}
         ></button>
       </div>
+      <Header />
+
       <Filterpanel
         columns={columns}
         results={results}
         setUpdateData={setUpdateData}
         updateData={updateData}
       />
+      <br></br>
       {isLoading ? (
         <div
           style={{
