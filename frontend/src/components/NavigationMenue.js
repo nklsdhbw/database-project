@@ -3,7 +3,6 @@ import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
 //* import components *//
-import Logout from "./Logout.js";
 import Header from "./Header.js";
 
 //* import images *//
@@ -66,7 +65,10 @@ const NavigationMenue = () => {
         Reader: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
           "userID"
         )}`,
-        Librarian: `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+        Employee: `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+          "userID"
+        )}`,
+        Manager: `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
           "userID"
         )}`,
       },
@@ -127,7 +129,7 @@ const NavigationMenue = () => {
       label: "My team",
       table: "Teams",
       entryQuery: `SELECT * FROM "enrichedTeams"
-          WHERE "Team ID" = ${sessionStorage.getItem("teamID")};
+          WHERE "Team ID" = ${sessionStorage.getItem("teamID")}
     `,
       formQuery: `SELECT 'dummy', "employeeTeamID", "employeeLibrarianID", 'dummy2' FROM "Employees"`,
       img: employeeManagement,
@@ -186,14 +188,23 @@ const NavigationMenue = () => {
     console.log(filteredActions[0]);
     let entryQuery = filteredActions[0].entryQuery;
     let formQuery = filteredActions[0].formQuery;
+    console.log(formQuery, "formQuery");
+    console.log(formQuery.Reader);
+    console.log(formQuery["Reader"]);
     let view = filteredActions[0].view;
     const createRecordPermission = filteredActions[0].write;
     const deleteRecordPermission = filteredActions[0].delete;
     const updateRecordPermission = filteredActions[0].update;
     let hideEditButtonActions = ["Manage librarians", "My team", "My Loans"];
+    sessionStorage.setItem("action", "");
+    sessionStorage.setItem("tableQuery", entryQuery);
+    sessionStorage.setItem("formQuery", formQuery);
     if (option.label === "Manage personal data") {
       entryQuery = entryQuery[sessionStorage.getItem("role")];
-      formQuery = formQuery[sessionStorage.getItem("role")];
+      let specialFormQuery = formQuery[sessionStorage.getItem("role")];
+      console.log(specialFormQuery, "formQuery");
+      sessionStorage.setItem("formQuery", specialFormQuery);
+      sessionStorage.setItem("action", "Manage personal data");
     }
 
     /*
@@ -204,9 +215,13 @@ const NavigationMenue = () => {
     }
     */
     sessionStorage.setItem("view", view);
+    if (sessionStorage.getItem("role") == "Reader") {
+      sessionStorage.setItem("view", "Readers");
+    } else {
+      sessionStorage.setItem("view", "enrichedLibrarians");
+    }
     console.log(entryQuery, "entryQuery");
-    sessionStorage.setItem("tableQuery", entryQuery);
-    sessionStorage.setItem("formQuery", formQuery);
+    console.log(formQuery, "formQuery");
 
     sessionStorage.setItem(
       "columnMapping",
@@ -230,7 +245,7 @@ const NavigationMenue = () => {
     <div>
       <Header />
       <h1>My Dashboard</h1>
-      <Logout></Logout>
+
       <div className="container">
         {filteredActions.map((option) => (
           <button

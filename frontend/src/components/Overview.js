@@ -9,7 +9,6 @@ import TableSearch from "./TableSearch";
 import DataTable from "./DataTable.js";
 import CreateRecordModal from "./CreateRecordModal";
 import EditRecordModal from "./EditRecordModal";
-import Logout from "./Logout";
 import Filterpanel from "./Filterpanel";
 import Header from "./Header";
 
@@ -596,8 +595,8 @@ function Overview() {
 
   return (
     <div>
+      <Header />
       <div>
-        <Logout />
         <button
           style={{
             background: `url(${backIcon}) no-repeat center`,
@@ -610,8 +609,7 @@ function Overview() {
           onClick={() => navigate("/NavigationMenue")}
         ></button>
       </div>
-      <Header />
-
+      <br></br>
       <Filterpanel
         columns={columns}
         results={results}

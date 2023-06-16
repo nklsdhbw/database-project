@@ -50,7 +50,36 @@ function Filterpanel(props) {
     let searchQuery = `SELECT * FROM "${sessionStorage.getItem(
       "view"
     )}" WHERE `;
-    const oldSearchQuery = sessionStorage.getItem("tableQuery");
+    if (
+      sessionStorage.getItem("view") == "allLoans" &&
+      sessionStorage.getItem("role") == "Reader"
+    ) {
+      searchQuery = `SELECT * FROM "allLoans" WHERE "Reader ID" = ${sessionStorage.getItem(
+        "userID"
+      )} AND `;
+    }
+    if (sessionStorage.getItem("view") == "enrichedTeams") {
+      searchQuery = `SELECT * FROM "enrichedTeams" WHERE "Team ID" = ${sessionStorage.getItem(
+        "teamID"
+      )} AND `;
+    }
+    if (
+      sessionStorage.getItem("table") == "Librarians" &&
+      sessionStorage.getItem("action") == "Manage personal data"
+    ) {
+      searchQuery = `SELECT * FROM "enrichedLibrarians" WHERE "ID" = ${sessionStorage.getItem(
+        "userID"
+      )} AND `;
+    }
+    if (
+      sessionStorage.getItem("table") == "Readers" &&
+      sessionStorage.getItem("action") == "Manage personal data"
+    ) {
+      searchQuery = `SELECT * FROM "Readers" WHERE "ID" = ${sessionStorage.getItem(
+        "userID"
+      )} AND `;
+    }
+
     labels.forEach((column, index) => {
       const filterValue = filterValues[index].trim();
       searchQuery += `"${column}" = '${filterValue}' AND `;
@@ -58,16 +87,43 @@ function Filterpanel(props) {
 
     if (labels.length === 0) {
       searchQuery = `SELECT * FROM "${sessionStorage.getItem("view")}"`;
+      if (
+        sessionStorage.getItem("view") == "allLoans" &&
+        sessionStorage.getItem("role") == "Reader"
+      ) {
+        searchQuery = `SELECT * FROM "allLoans" WHERE "Reader ID" = ${sessionStorage.getItem(
+          "userID"
+        )}`;
+      }
+      if (sessionStorage.getItem("view") == "enrichedTeams") {
+        searchQuery = `SELECT * FROM "enrichedTeams" WHERE "Team ID" = ${sessionStorage.getItem(
+          "teamID"
+        )}`;
+      }
+      if (
+        sessionStorage.getItem("table") == "Librarians" &&
+        sessionStorage.getItem("action") == "Manage personal data"
+      ) {
+        searchQuery = `SELECT * FROM "enrichedLibrarians" WHERE "ID" = ${sessionStorage.getItem(
+          "userID"
+        )}`;
+      }
+      if (
+        sessionStorage.getItem("table") == "Readers" &&
+        sessionStorage.getItem("action") == "Manage personal data"
+      ) {
+        searchQuery = `SELECT * FROM "Readers" WHERE "ID" = ${sessionStorage.getItem(
+          "userID"
+        )}`;
+      }
     } else {
       searchQuery = searchQuery.slice(0, searchQuery.length - 4);
     }
 
     sessionStorage.setItem("tableQuery", searchQuery);
-    const updatedSearchQuery = oldSearchQuery !== searchQuery;
-    if (updatedSearchQuery) {
-      console.log("Spinner is loading");
-      setUpdateData(!updateData);
-    }
+
+    console.log("Fetching data");
+    setUpdateData(!updateData);
   };
 
   useEffect(() => {
