@@ -5,6 +5,7 @@ import Select from "react-select";
 
 //* import required css *//
 import "../css/Filterpanel.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function getFilterValues() {
   const singleFilterValuesHTML = document.body.getElementsByClassName(
@@ -40,10 +41,11 @@ function getLabels() {
 
 function Filterpanel(props) {
   const { columns, results, setUpdateData, updateData } = props;
-  const numColumns = results.length > 0 ? results[0].length : 0;
+  const numColumns = columns.length;
   const selectRef = useRef(null);
 
   const handleChange = () => {
+    const oldSearchQuery = sessionStorage.getItem("tableQuery");
     const filterValues = getFilterValues();
     const labels = getLabels();
 
@@ -80,10 +82,21 @@ function Filterpanel(props) {
       )} AND `;
     }
 
-    labels.forEach((column, index) => {
+    const searchQueryParts = labels.map((column, index) => {
       const filterValue = filterValues[index].trim();
-      searchQuery += `"${column}" = '${filterValue}' AND `;
+      return `"${column}" = '${filterValue}'`;
     });
+
+    const uniqueLabels = [...new Set(labels)];
+    const newSearchQueryParts = uniqueLabels.map((label) => {
+      const labelCount = labels.filter((l) => l === label).length;
+      return labelCount === 1
+        ? searchQueryParts.find((part) => part.includes(`"${label}"`))
+        : `(${searchQueryParts
+            .filter((part) => part.includes(`"${label}"`))
+            .join(" OR ")})`;
+    });
+    searchQuery = searchQuery + newSearchQueryParts.join(" AND ");
 
     if (labels.length === 0) {
       searchQuery = `SELECT * FROM "${sessionStorage.getItem("view")}"`;
@@ -116,14 +129,9 @@ function Filterpanel(props) {
           "userID"
         )}`;
       }
-    } else {
-      searchQuery = searchQuery.slice(0, searchQuery.length - 4);
     }
 
     sessionStorage.setItem("tableQuery", searchQuery);
-
-    console.log("Fetching data");
-    setUpdateData(!updateData);
   };
 
   useEffect(() => {
@@ -176,6 +184,13 @@ function Filterpanel(props) {
           />
         </Form.Group>
       ))}
+
+      <button
+        onClick={() => setUpdateData(!updateData)}
+        className="btn btn-primary"
+      >
+        Apply filters
+      </button>
     </div>
   );
 }
