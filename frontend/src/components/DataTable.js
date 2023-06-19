@@ -424,12 +424,13 @@ function DataTable(props) {
 
   return (
     <>
+      {/*
       <Search
         onChange={handleSearch}
         placeholder="Search"
         enterButton
         style={{ position: "sticky", top: "0", left: "0" }}
-      />
+      />*/}
       <br /> <br />
       <Table striped bordered hover className="custom-table">
         <thead>
