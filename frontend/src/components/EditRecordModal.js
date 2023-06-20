@@ -1,3 +1,4 @@
+//* import libraries *//
 import React, { useState, useRef } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
@@ -96,11 +97,10 @@ function EditRecordModal(props) {
     let arr = Object.entries(data);
     for (let index = 0; index < arr.length; index++) {
       const column = arr[index][0];
-      console.log("COLUMN? ", column);
       const values = arr[index][1];
       const datatype = values.type;
-      console.log(arr[index], column, values, datatype);
       let placeholder = values.placeholder;
+
       if (datatype == "password") {
         const password = values.placeholder;
         const saltRounds = 10;

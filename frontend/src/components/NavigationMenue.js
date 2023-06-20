@@ -1,20 +1,23 @@
-// import libraries
+//* import libraries *//
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
+
+//* import components *//
+import Header from "./Header.js";
+
+//* import images *//
 import loansMmanagement from "../img/loans_management.svg";
 import orderManagement from "../img/order_management.svg";
 import personalInformation from "../img/personal_information.svg";
 import supplierManagement from "../img/supplier_management.svg";
 import employeeManagement from "../img/employee_management.svg";
 import bookManagement from "../img/book_management.svg";
+
+//* import css *//
 import "../css/NavigationMenue.css";
-import Logout from "./Logout.js";
-import chapterOneLogo from "../img/logo.svg";
-// import required css
-//import 'bootstrap/dist/css/bootstrap.min.css';
 
 const NavigationMenue = () => {
+  sessionStorage.setItem("currentFilters", JSON.stringify([]));
   const Actions = [
     {
       label: "Manage all Loans",
@@ -26,6 +29,7 @@ const NavigationMenue = () => {
       write: ["Manager", "Employee", "Admin"],
       delete: ["Manager", "Employee", "Admin"],
       update: ["Manager", "Employee", "Admin"],
+      view: "allLoans",
     },
     {
       label: "Manage my Loans",
@@ -41,6 +45,7 @@ const NavigationMenue = () => {
       write: ["Manager", "Employee", "Admin"],
       delete: ["Manager", "Employee", "Admin"],
       update: ["Manager", "Employee", "Admin"],
+      view: "allLoans",
     },
     {
       label: "Manage personal data",
@@ -60,7 +65,10 @@ const NavigationMenue = () => {
         Reader: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
           "userID"
         )}`,
-        Librarian: `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+        Employee: `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+          "userID"
+        )}`,
+        Manager: `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
           "userID"
         )}`,
       },
@@ -80,6 +88,7 @@ const NavigationMenue = () => {
       write: ["Manager", "admin"],
       delete: ["Manager", "Admin"],
       update: ["Manager", "Admin"],
+      view: "enrichedLibraryOrders",
     },
     {
       label: "Manage publishers",
@@ -102,6 +111,7 @@ const NavigationMenue = () => {
       write: ["Manager", "admin"],
       delete: ["Manager", "Admin"],
       update: ["Manager", "Admin"],
+      view: "enrichedPublishers",
     },
     {
       label: "Manage librarians",
@@ -113,12 +123,13 @@ const NavigationMenue = () => {
       write: ["Manager", "Admin"],
       delete: ["Manager", "Admin"],
       update: ["Manager", "Admin"],
+      view: "enrichedLibrarians",
     },
     {
       label: "My team",
       table: "Teams",
       entryQuery: `SELECT * FROM "enrichedTeams"
-          WHERE "Team ID" = ${sessionStorage.getItem("teamID")};
+          WHERE "Team ID" = ${sessionStorage.getItem("teamID")}
     `,
       formQuery: `SELECT 'dummy', "employeeTeamID", "employeeLibrarianID", 'dummy2' FROM "Employees"`,
       img: employeeManagement,
@@ -126,6 +137,7 @@ const NavigationMenue = () => {
       write: ["Manager", "Admin"],
       delete: ["Manager", "Admin"],
       update: ["Manager", "Admin"],
+      view: "enrichedTeams",
     },
     {
       label: "Manage books",
@@ -137,6 +149,7 @@ const NavigationMenue = () => {
       write: [],
       delete: ["Manager", "Admin"],
       update: ["Manager", "Admin"],
+      view: "enrichedBooks",
     },
     // add employee mngmg
     //read: ['manager', 'employee', 'admin']
@@ -175,13 +188,23 @@ const NavigationMenue = () => {
     console.log(filteredActions[0]);
     let entryQuery = filteredActions[0].entryQuery;
     let formQuery = filteredActions[0].formQuery;
+    console.log(formQuery, "formQuery");
+    console.log(formQuery.Reader);
+    console.log(formQuery["Reader"]);
+    let view = filteredActions[0].view;
     const createRecordPermission = filteredActions[0].write;
     const deleteRecordPermission = filteredActions[0].delete;
     const updateRecordPermission = filteredActions[0].update;
     let hideEditButtonActions = ["Manage librarians", "My team", "My Loans"];
+    sessionStorage.setItem("action", "");
+    sessionStorage.setItem("tableQuery", entryQuery);
+    sessionStorage.setItem("formQuery", formQuery);
     if (option.label === "Manage personal data") {
       entryQuery = entryQuery[sessionStorage.getItem("role")];
-      formQuery = formQuery[sessionStorage.getItem("role")];
+      let specialFormQuery = formQuery[sessionStorage.getItem("role")];
+      console.log(specialFormQuery, "formQuery");
+      sessionStorage.setItem("formQuery", specialFormQuery);
+      sessionStorage.setItem("action", "Manage personal data");
     }
 
     /*
@@ -191,10 +214,20 @@ const NavigationMenue = () => {
       sessionStorage.setItem("hideEditButton", false);
     }
     */
-
+    sessionStorage.setItem("view", view);
+    if (
+      sessionStorage.getItem("role") == "Reader" &&
+      sessionStorage.getItem("action") == "Manage personal data"
+    ) {
+      sessionStorage.setItem("view", "Readers");
+    } else if (
+      sessionStorage.getItem("role") == "Manager" &&
+      sessionStorage.getItem("action") == "Manage personal data"
+    ) {
+      sessionStorage.setItem("view", "enrichedLibrarians");
+    }
     console.log(entryQuery, "entryQuery");
-    sessionStorage.setItem("tableQuery", entryQuery);
-    sessionStorage.setItem("formQuery", formQuery);
+    console.log(formQuery, "formQuery");
 
     sessionStorage.setItem(
       "columnMapping",
@@ -216,13 +249,9 @@ const NavigationMenue = () => {
 
   return (
     <div>
-      <header>
-        <div className="logo-container">
-          <img src={chapterOneLogo} alt="ChapterOne Logo" />
-        </div>
-      </header>
+      <Header />
       <h1>My Dashboard</h1>
-      <Logout></Logout>
+
       <div className="container">
         {filteredActions.map((option) => (
           <button

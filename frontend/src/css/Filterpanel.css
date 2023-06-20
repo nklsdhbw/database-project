@@ -1,0 +1,13 @@
+.filter-flex-container {
+  display: flex;
+}
+
+.filter-form-group {
+  margin-right: 1rem;
+}
+
+.dropdown-indicator {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}

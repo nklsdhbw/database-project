@@ -17,7 +17,7 @@ SELECT
   "loanFine" AS "Fine",
   "currencyCode" AS "Currency",
   "loanBookID" AS "Book ID",
-  "loanReaderID" AS "eader ID",
+  "loanReaderID" AS "Reader ID",
   "currencyID" AS "Currency ID"
 FROM
   "Books" b

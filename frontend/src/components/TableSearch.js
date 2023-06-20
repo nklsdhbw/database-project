@@ -25,15 +25,6 @@ const fetchUsers = async () => {
     WHERE "employeeTeamID" IS NULL`;
   }
 
-  console.log(dataQuery);
-
-  console.log("SEARCH TABLE", table);
-
-  //if (sessionStorage.getItem("showPublisher") === "true") {
-  //  table = "Publishers";
-  //}
-  console.log("FETCH USERS");
-
   await axios
     .post("http://localhost:5000/run-query", {
       query: dataQuery,

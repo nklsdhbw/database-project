@@ -1,17 +1,21 @@
+//* import libraries *//
 import React from "react";
-import { Table, Button } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import axios from "axios";
 import { useState } from "react";
 import { Input } from "antd";
-import "../css/DataTable.css"; // Pfad zur CSS-Datei anpassen
-import chapterOneLogo from "../img/logo.svg";
+
+//* import images *//
 import penBlueIcon from "../img/pen_blue_icon.svg";
 import deleteIcon from "../img/bin_red_icon.svg";
 import plusGreenIcon from "../img/plus_green_icon.svg";
 import convertIntoBookIcon from "../img/convert_into_book_2.svg";
 import convertedIntoBookIcon from "../img/convert_into_book_1.svg";
 import returnIcon from "../img/return.svg";
+import alreadyReturnedIcon from "../img/already_returned.svg";
 
+//* import css *//
+import "../css/DataTable.css";
 import "../css/NavigationMenue.css";
 function DataTable(props) {
   const {
@@ -420,17 +424,13 @@ function DataTable(props) {
 
   return (
     <>
-      <header>
-        <div className="logo-container">
-          <img src={chapterOneLogo} alt="ChapterOne Logo" />
-        </div>
-      </header>
+      {/*
       <Search
         onChange={handleSearch}
         placeholder="Search"
         enterButton
         style={{ position: "sticky", top: "0", left: "0" }}
-      />
+      />*/}
       <br /> <br />
       <Table striped bordered hover className="custom-table">
         <thead>
@@ -502,18 +502,17 @@ function DataTable(props) {
                         }}
                       ></button>
                     ) : (
-                      <p
+                      <button
                         hidden={selectedTable !== "Loans"}
                         style={{
+                          background: `url(${alreadyReturnedIcon}) no-repeat center`,
                           backgroundSize: "contain",
                           border: "none",
                           width: "50px",
                           height: "50px",
                           cursor: "pointer",
                         }}
-                      >
-                        Already returned
-                      </p>
+                      ></button>
                     )}
                   </td>
                 ) : (
