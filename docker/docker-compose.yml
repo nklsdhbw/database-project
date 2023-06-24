@@ -18,6 +18,7 @@ services:
   postgres:
     image: postgres:latest
     restart: always
+    container_name: postgres
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=0609
@@ -34,12 +35,13 @@ services:
       - ./sql/fill_tables.sql:/docker-entrypoint-initdb.d/2-fill_tables.sql
       - ./sql/create_views.sql:/docker-entrypoint-initdb.d/3-create_views.sql
       - ./sql/create_stored_functions_and_triggers.sql:/docker-entrypoint-initdb.d/4create_stored_functions_and_triggers.sql
+      - ./sql/create_indexes.sql:/docker-entrypoint-initdb.d/5-create_indexes.sql
     networks:
       - mynetwork
 
   flaskapp:
     image: nklsdhbw/flask-server:latest
-    container_name: flaskApp
+    container_name: flask-server
     restart: always
     ports:
       - "5000:5000"
