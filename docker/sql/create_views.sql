@@ -1,4 +1,4 @@
-DROP VIEW IF EXISTS "allLoans" CASCADE;
+DROP MATERIALIZED VIEW IF EXISTS "allLoans" CASCADE;
 
 Create MATERIALIZED VIEW "allLoans" AS
 SELECT
@@ -25,10 +25,14 @@ FROM
   JOIN "Readers" r ON l."loanReaderID" = r."readerID"
   JOIN "Authors" a ON b."bookAuthorID" = a."authorID"
   JOIN "Publishers" p ON b."bookPublisherID" = p."publisherID"
-  JOIN "Currencies" c ON c."currencyID" = l."loanCurrencyID";
+  JOIN "Currencies" c ON c."currencyID" = l."loanCurrencyID"
+ORDER BY
+  "loanID";
 
-CREATE
-OR REPLACE VIEW "allUsers" AS
+DROP VIEW IF EXISTS "allUsers" CASCADE;
+
+CREATE VIEW
+  "allUsers" AS
 SELECT
   "id",
   "username",
@@ -100,8 +104,10 @@ FROM
 ORDER BY
   id;
 
-CREATE
-OR REPLACE VIEW "enrichedLibraryOrders" AS
+DROP VIEW IF EXISTS "enrichedLibraryOrders" CASCADE;
+
+CREATE VIEW
+  "enrichedLibraryOrders" AS
 SELECT
   "libraryOrderID" as "Library Order ID",
   "libraryOrderBookTitle" AS "Book title",
@@ -126,10 +132,14 @@ FROM
   "LibraryOrders" lo
   JOIN "Authors" a ON lo."libraryOrderAuthorID" = a."authorID"
   JOIN "Currencies" c ON lo."libraryOrderCurrencyID" = c."currencyID"
-  JOIN "Librarians" l ON lo."libraryOrderManagerLibrarianID" = l."librarianID";
+  JOIN "Librarians" l ON lo."libraryOrderManagerLibrarianID" = l."librarianID"
+ORDER BY
+  "libraryOrderID";
 
-CREATE
-OR REPLACE VIEW "enrichedPublishers" AS
+DROP VIEW IF EXISTS "enrichedPublishers" CASCADE;
+
+CREATE VIEW
+  "enrichedPublishers" AS
 SELECT
   "publisherID" AS "Publisher ID",
   "publisherName" AS "Name",
@@ -142,10 +152,14 @@ SELECT
   "publisherPhone" AS "Phone"
 FROM
   "Publishers" p
-  JOIN "ZIPs" z ON p."publisherZipID" = z."zipID";
+  JOIN "ZIPs" z ON p."publisherZipID" = z."zipID"
+ORDER BY
+  "publisherID";
 
-CREATE
-OR REPLACE VIEW "enrichedLibrarians" AS
+DROP VIEW IF EXISTS "enrichedLibrarians" CASCADE;
+
+CREATE VIEW
+  "enrichedLibrarians" AS
 SELECT
   "librarianID" AS "ID",
   "librarianFirstName" AS "Firstname",
@@ -174,10 +188,14 @@ FROM
   LEFT JOIN "Employees" e ON e."employeeLibrarianID" = l."librarianID"
   LEFT JOIN "Managers" m ON m."managerLibrarianID" = l."librarianID"
   LEFT JOIN "Teams" t ON "teamID" = e."employeeTeamID"
-  OR "teamID" = m."managerTeamID";
+  OR "teamID" = m."managerTeamID"
+ORDER BY
+  "librarianID";
 
-CREATE
-OR REPLACE VIEW "enrichedTeams" AS
+DROP VIEW IF EXISTS "enrichedTeams" CASCADE;
+
+CREATE VIEW
+  "enrichedTeams" AS
 SELECT
   "librarianID" AS "ID",
   "librarianFirstName" AS "Firstname",
@@ -189,10 +207,14 @@ SELECT
 FROM
   "Teams" t
   JOIN "Employees" e ON e."employeeTeamID" = t."teamID"
-  JOIN "Librarians" l ON "employeeLibrarianID" = l."librarianID";
+  JOIN "Librarians" l ON "employeeLibrarianID" = l."librarianID"
+ORDER BY
+  "librarianID";
 
-CREATE
-OR REPLACE VIEW "enrichedBooks" AS
+DROP VIEW IF EXISTS "enrichedBooks" CASCADE;
+
+CREATE VIEW
+  "enrichedBooks" AS
 SELECT
   "bookID" AS "ID",
   "bookTitle" AS "Title",
@@ -209,4 +231,6 @@ FROM
   "Books" b
   JOIN "Authors" a ON a."authorID" = b."bookAuthorID"
   JOIN "Categories" c ON c."categoryID" = b."bookCategoryID"
-  JOIN "Publishers" p ON p."publisherID" = b."bookPublisherID";
+  JOIN "Publishers" p ON p."publisherID" = b."bookPublisherID"
+ORDER BY
+  "bookID";
