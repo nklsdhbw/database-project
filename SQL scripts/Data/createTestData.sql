@@ -7,7 +7,12 @@ INSERT INTO
     )
 VALUES
     ('John', 'Doe', 'johndoe@example.com', '555-1234'),
-    ('Jane', 'Doe', 'janedoe@example.com', '555-5678'),
+    (
+        'Petko',
+        'Rutešić',
+        'petko.rutesic@dhbw-mannheim.de',
+        '+49 621 4105-1348'
+    ),
     (
         'Bob',
         'Smith',
@@ -66,71 +71,71 @@ INSERT INTO
     )
 VALUES
     (
-        'John',
-        'Doe',
-        'johndoe@gmail.com',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        'Niklas',
+        'Scholz',
+        'niklas.scholz@dhbw-mannheim.de',
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'Jane',
         'Smith',
         'janesmith@yahoo.com',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'Mark',
         'Johnson',
         'markjohnson@hotmail.com',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'Mary',
         'Williams',
         'marywilliams@gmail.com',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'David',
         'Brown',
         'davidbrown@yahoo.com',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'Sarah',
         'Jones',
         'sarahjones@hotmail.com',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'Alex',
         'Lee',
         'alexlee@gmail.com',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'Linda',
         'Davis',
         'lindadavis@yahoo.com',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'Brian',
         'Wilson',
         'brianwilson@hotmail.com',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'Emily',
         'Taylor',
         'emilytaylor@gmail.com',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     );
 
 INSERT INTO
     "ZIPs" ("zipCode", "zipCity")
 VALUES
     (1000, 'Brussels'),
-    (2000, 'Antwerp'),
+    (68163, 'Mannheim'),
     (3000, 'Leuven'),
     (4000, 'Liege'),
     (5000, 'Namur'),
@@ -214,7 +219,7 @@ VALUES
         'johndoe@example.com',
         '1234567890',
         '1990-01-01',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'Jane',
@@ -222,7 +227,7 @@ VALUES
         'janedoe@example.com',
         '1234567891',
         '1991-02-02',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'Bob',
@@ -230,7 +235,7 @@ VALUES
         'bobsmith@example.com',
         '1234567892',
         '1992-03-03',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'Alice',
@@ -238,7 +243,7 @@ VALUES
         'alicesmith@example.com',
         '1234567893',
         '1993-04-04',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'Mark',
@@ -246,7 +251,7 @@ VALUES
         'markjohnson@example.com',
         '1234567894',
         '1994-05-05',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'Mary',
@@ -254,7 +259,7 @@ VALUES
         'maryjohnson@example.com',
         '1234567895',
         '1995-06-06',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'Tom',
@@ -262,7 +267,7 @@ VALUES
         'tomwilson@example.com',
         '1234567896',
         '1996-07-07',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'Emily',
@@ -270,7 +275,7 @@ VALUES
         'emilywilson@example.com',
         '1234567897',
         '1997-08-08',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'David',
@@ -278,7 +283,7 @@ VALUES
         'davidbrown@example.com',
         '1234567898',
         '1998-09-09',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     ),
     (
         'Sarah',
@@ -286,7 +291,7 @@ VALUES
         'sarahbrown@example.com',
         '1234567899',
         '1999-10-10',
-        '$2a$10$OUiLkXa96FDoTlAqazvgIe4oXO8TAgX0shZ/LcqfgmxV7LrM6J8mS'
+        '$2a$10$eIR/cOJu2GkQxRwHUPoFZ.LE952pNlG2piDE81xk.fvS2aH.e4bsW'
     );
 
 INSERT INTO
@@ -310,13 +315,13 @@ VALUES
         '+44 (0) 20 7255 1000'
     ),
     (
-        'HarperCollins Publishers',
+        'DHBW Mannheim',
         2,
-        'The News Building',
-        '1 London Bridge Street',
-        'United Kingdom',
-        'contact@harpercollins.co.uk',
-        '+44 (0) 207 010 7000'
+        'Coblitzallee',
+        '1-9',
+        'Germany',
+        'info@dhbw-mannheim.de',
+        '+49 621 4105 - 0'
     ),
     (
         'Random House',
@@ -417,9 +422,9 @@ VALUES
     ),
     (
         5,
-        'To Kill a Mockingbird',
+        'An Enhanced Meta-model to Generate Web Forms for Ontology Population',
         2,
-        '9780061120084',
+        '978-3-030-91305-2',
         2,
         '1960-07-11',
         true,
