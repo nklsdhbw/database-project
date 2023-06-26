@@ -528,6 +528,7 @@ function DataTable(props) {
                       <button
                         className="w-100 btn btn-lg btn-primary"
                         onClick={() => convertIntoBook(columns, data)}
+                        title="Convert order into book"
                         style={{
                           background: `url(${convertIntoBookIcon}) no-repeat center`,
                           backgroundSize: "contain",
@@ -541,6 +542,7 @@ function DataTable(props) {
                   ) : (
                     <td>
                       <button
+                        title="Order already converted into book"
                         className="w-100 btn btn-lg btn-primary"
                         disabled={true}
                         style={{
