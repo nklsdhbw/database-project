@@ -23,6 +23,7 @@ function EditRecordModal(props) {
     hidePublisherButton,
     showSearchZipButton,
     showSearchCurrencyButton,
+    showSearchReaderButton,
     setshowSearch,
     showSearch,
   } = props;
@@ -176,6 +177,10 @@ function EditRecordModal(props) {
     sessionStorage.setItem("searchTable", "Currencies");
     setshowSearch(!showSearch);
   }
+  function handleReader() {
+    sessionStorage.setItem("searchTable", "Readers");
+    setshowSearch(!showSearch);
+  }
 
   return (
     <Modal show={showEditModal}>
@@ -241,6 +246,9 @@ function EditRecordModal(props) {
           )}
           {showSearchCurrencyButton && (
             <Button onClick={handleCurrency}>Search Currency</Button>
+          )}
+          {showSearchReaderButton && (
+            <Button onClick={handleReader}>Search Reader</Button>
           )}
           <Button hidden={hidePublisherButton} onClick={handlePublisher}>
             Search Publisher

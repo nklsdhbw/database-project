@@ -25,6 +25,7 @@ function CreateRecordModal(props) {
     showSearchCurrencyButton,
     showSearchTeamButton,
     showSearchEmployeeButton,
+    showSearchReaderButton,
   } = props;
 
   // event handler
@@ -124,6 +125,10 @@ function CreateRecordModal(props) {
   }
   function handleEmployee() {
     sessionStorage.setItem("searchTable", "Employees");
+    setshowSearch(!showSearch);
+  }
+  function handleReader() {
+    sessionStorage.setItem("searchTable", "Readers");
     setshowSearch(!showSearch);
   }
 
@@ -336,6 +341,9 @@ function CreateRecordModal(props) {
           )}
           {showSearchEmployeeButton && (
             <Button onClick={handleEmployee}>Search Employee</Button>
+          )}
+          {showSearchReaderButton && (
+            <Button onClick={handleReader}>Search Reader</Button>
           )}
 
           <Button hidden={hidePublisherButton} onClick={handlePublisher}>

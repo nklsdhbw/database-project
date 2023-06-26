@@ -63,6 +63,7 @@ function Overview() {
     useState(false);
   const [showSearchCurrencyButton, setShowSearchCurrencyButton] =
     useState(false);
+  const [showSearchReaderButton, setShowSearchReaderButton] = useState(false);
   const [showConvertOrderIntoBookButton, setShowConvertOrderIntoBookButton] =
     useState();
   const [hidePublisherButton, setHidePublisherButton] = useState();
@@ -155,6 +156,12 @@ function Overview() {
           sessionStorage.getItem("searchTable") === "Teams"
         ) {
           formDataKey = "employeeTeamID";
+        }
+        if (
+          key === "readerID" &&
+          sessionStorage.getItem("searchTable") === "Readers"
+        ) {
+          formDataKey = "loanReaderID";
         }
 
         if (
@@ -442,6 +449,7 @@ function Overview() {
     setShowSearchTeamButton(false);
     setShowSearchCurrencyButton(false);
     setShowSearchEmployeeButton(false);
+    setShowSearchReaderButton(false);
     if (selectedTable === "Books") {
       setShowSearchAuthorButton(true);
       setHidePublisherButton(false);
@@ -451,6 +459,7 @@ function Overview() {
       sessionStorage.setItem("searchTable", "Books");
       setShowSearchBookButton(true);
       setShowSearchCurrencyButton(true);
+      setShowSearchReaderButton(true);
     }
     if (selectedTable === "LibraryOrders") {
       sessionStorage.setItem("searchTable", "Authors");
@@ -664,6 +673,7 @@ function Overview() {
           showSearchTeamButton={showSearchTeamButton}
           showSearchEmployeeButton={showSearchEmployeeButton}
           showSearchCurrencyButton={showSearchCurrencyButton}
+          showSearchReaderButton={showSearchReaderButton}
           setShowModal={setShowModal}
           setFormData={setFormData}
           setUpdateData={setUpdateData}
@@ -693,6 +703,7 @@ function Overview() {
           hidePublisherButton={hidePublisherButton}
           showSearchZipButton={showSearchZipButton}
           showSearchCurrencyButton={showSearchCurrencyButton}
+          showSearchReaderButton={showSearchReaderButton}
           setshowSearch={setshowSearch}
           showSearch={showSearch}
         />
