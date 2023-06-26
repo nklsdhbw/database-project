@@ -15,6 +15,7 @@ const Logout = () => {
   return (
     <div>
       <button
+        title="Logout"
         style={{
           background: `url(${logoutIcon}) no-repeat center`,
           backgroundSize: "contain",
