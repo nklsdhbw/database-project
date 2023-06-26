@@ -1,5 +1,3 @@
-DROP FUNCTION IF EXISTS increaseBookAvailability () CASCADE;
-
 CREATE FUNCTION increaseBookAvailability () RETURNS TRIGGER AS $$
 BEGIN
     IF NEW."loanStatus" = ' returned ' AND OLD."loanStatus" <> ' returned ' THEN

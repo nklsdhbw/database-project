@@ -1,5 +1,7 @@
-CREATE
-OR REPLACE VIEW "enrichedLibrarians" AS
+DROP VIEW IF EXISTS "enrichedLibrarians" CASCADE;
+
+CREATE VIEW
+    "enrichedLibrarians" AS
 SELECT
     "librarianID" AS "ID",
     "librarianFirstName" AS "Firstname",
@@ -28,4 +30,6 @@ FROM
     LEFT JOIN "Employees" e ON e."employeeLibrarianID" = l."librarianID"
     LEFT JOIN "Managers" m ON m."managerLibrarianID" = l."librarianID"
     LEFT JOIN "Teams" t ON "teamID" = e."employeeTeamID"
-    OR "teamID" = m."managerTeamID";
+    OR "teamID" = m."managerTeamID"
+ORDER BY
+    "librarianID";

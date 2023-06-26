@@ -1,5 +1,7 @@
-CREATE
-OR REPLACE VIEW "enrichedPublishers" AS
+DROP VIEW IF EXISTS "enrichedPublishers" CASCADE;
+
+CREATE VIEW
+  "enrichedPublishers" AS
 SELECT
   "publisherID" AS "Publisher ID",
   "publisherName" AS "Name",
@@ -12,4 +14,6 @@ SELECT
   "publisherPhone" AS "Phone"
 FROM
   "Publishers" p
-  JOIN "ZIPs" z ON p."publisherZipID" = z."zipID";
+  JOIN "ZIPs" z ON p."publisherZipID" = z."zipID"
+ORDER BY
+  "publisherID";

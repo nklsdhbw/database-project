@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS "Authors";
+DROP TABLE IF EXISTS "Authors" CASCADE;
 
 CREATE TABLE
 	"Authors" (
@@ -7,4 +7,4 @@ CREATE TABLE
 		"authorLastName" varchar(255),
 		"authorEmail" varchar(255),
 		"authorPhone" varchar(255)
-	)
+	);

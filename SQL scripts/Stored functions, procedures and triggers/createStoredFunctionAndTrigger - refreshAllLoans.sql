@@ -1,11 +1,11 @@
 --- Refresh materialized view allLoans ---
 CREATE
-OR REPLACE FUNCTION refreshAllLoans () RETURNS TRIGGER AS '
+OR REPLACE FUNCTION refreshAllLoans () RETURNS TRIGGER AS $$
 BEGIN
   REFRESH MATERIALIZED VIEW "allLoans";
   RETURN NEW;
 END;
-' LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS refreshAllLoansBooksTrigger ON "Books";
 
