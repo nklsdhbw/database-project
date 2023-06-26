@@ -1,6 +1,6 @@
-DROP VIEW IF EXISTS "allLoans" CASCADE;
+DROP MATERIALIZED VIEW IF EXISTS "allLoans" CASCADE;
 
-Create MATERIALIZED View "allLoans" AS
+Create MATERIALIZED VIEW "allLoans" AS
 SELECT
 	"loanID" AS "Loan ID",
 	b."bookTitle" AS "Book title",
@@ -25,4 +25,6 @@ FROM
 	JOIN "Readers" r ON l."loanReaderID" = r."readerID"
 	JOIN "Authors" a ON b."bookAuthorID" = a."authorID"
 	JOIN "Publishers" p ON b."bookPublisherID" = p."publisherID"
-	JOIN "Currencies" c ON c."currencyID" = l."loanCurrencyID";
+	JOIN "Currencies" c ON c."currencyID" = l."loanCurrencyID"
+ORDER BY
+	"loanID";

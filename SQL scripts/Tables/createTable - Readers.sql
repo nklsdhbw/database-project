@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS "Readers";
+DROP TABLE IF EXISTS "Readers" CASCADE;
 
 CREATE TABLE
     "Readers" (
@@ -7,4 +7,4 @@ CREATE TABLE
         "readerLastName" varchar(255),
         "readerEmail" varchar(255),
         "readerPassword" varchar(255)
-    )
+    );

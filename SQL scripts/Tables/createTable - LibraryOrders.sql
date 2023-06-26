@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS "LibraryOrders";
+DROP TABLE IF EXISTS "LibraryOrders" CASCADE;
 
 CREATE TABLE
 	"LibraryOrders" (
@@ -18,4 +18,4 @@ CREATE TABLE
 		CONSTRAINT fk_libraryOrderAuthorID FOREIGN KEY ("libraryOrderAuthorID") REFERENCES "Authors" ("authorID") ON DELETE CASCADE,
 		CONSTRAINT fk_libraryOrderManagerID FOREIGN KEY ("libraryOrderManagerLibrarianID") REFERENCES "Managers" ("managerLibrarianID") ON DELETE CASCADE,
 		CONSTRAINT fk_libraryOrderCurrencyID FOREIGN KEY ("libraryOrderCurrencyID") REFERENCES "Currencies" ("currencyID") ON DELETE CASCADE
-	)
+	);
