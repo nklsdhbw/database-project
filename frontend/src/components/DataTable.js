@@ -443,6 +443,7 @@ function DataTable(props) {
               <img
                 src={plusGreenIcon}
                 alt="Create New Record"
+                title="Create New Record"
                 onClick={() => handleCreate()}
                 style={{ cursor: "pointer" }}
               ></img>
@@ -488,6 +489,7 @@ function DataTable(props) {
                         hidden={selectedTable !== "Loans"}
                         className="w-100 btn btn-lg btn-primary"
                         onClick={() => handleReturn(data)}
+                        title="Return book"
                         disabled={
                           data[columns.indexOf("Status")] === "returned"
                         }
@@ -499,11 +501,13 @@ function DataTable(props) {
                           width: "50px",
                           height: "50px",
                           cursor: "pointer",
+                          disabled: "true",
                         }}
                       ></button>
                     ) : (
                       <button
                         hidden={selectedTable !== "Loans"}
+                        title="Book already returned"
                         style={{
                           background: `url(${alreadyReturnedIcon}) no-repeat center`,
                           backgroundSize: "contain",
@@ -524,6 +528,7 @@ function DataTable(props) {
                       <button
                         className="w-100 btn btn-lg btn-primary"
                         onClick={() => convertIntoBook(columns, data)}
+                        title="Convert order into book"
                         style={{
                           background: `url(${convertIntoBookIcon}) no-repeat center`,
                           backgroundSize: "contain",
@@ -537,6 +542,7 @@ function DataTable(props) {
                   ) : (
                     <td>
                       <button
+                        title="Order already converted into book"
                         className="w-100 btn btn-lg btn-primary"
                         disabled={true}
                         style={{
@@ -558,6 +564,7 @@ function DataTable(props) {
                     <button
                       className="edit-button"
                       onClick={() => handleEdit(data)}
+                      title="Edit"
                       disabled={data[columns.indexOf("Status")] === "returned"}
                       style={{
                         background: `url(${penBlueIcon}) no-repeat center`,
@@ -576,6 +583,7 @@ function DataTable(props) {
                     <div>
                       <button
                         onClick={() => deleteEntry(data[0])}
+                        title="Delete"
                         style={{
                           background: `url(${deleteIcon}) no-repeat center`,
                           backgroundSize: "contain",

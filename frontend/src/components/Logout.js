@@ -9,11 +9,13 @@ const Logout = () => {
   const navigate = useNavigate();
   const handleLogout = () => {
     sessionStorage.setItem("loggedIn", JSON.stringify(false));
+    sessionStorage.clear();
     navigate("/Login");
   };
   return (
     <div>
       <button
+        title="Logout"
         style={{
           background: `url(${logoutIcon}) no-repeat center`,
           backgroundSize: "contain",
