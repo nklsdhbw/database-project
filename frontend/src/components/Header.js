@@ -41,7 +41,7 @@ const Header = () => {
           <img src={chapterOneLogo} alt="ChapterOne Logo" />
         </div>
         <div>
-          <p className={userRole !== "Reader" ? "hidden-paragraph" : ""}>
+          <p>
             {username} | {role}
           </p>
           <p className={userRole !== "Reader" ? "hidden-paragraph" : ""}>
