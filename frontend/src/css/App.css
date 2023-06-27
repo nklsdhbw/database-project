@@ -1,6 +1,7 @@
 .app-content {
-  width: 100%;
+  width: 80%;
   height: 100vh;
+  margin-left: 10px;
 }
 .App {
   text-align: center;
