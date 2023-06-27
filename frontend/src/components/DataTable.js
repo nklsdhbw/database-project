@@ -178,6 +178,7 @@ function DataTable(props) {
           console.log("ERROR: ", error);
         });
     }
+    /*
     if (selectedTable === "Librarians") {
       let dbColumns = [
         "librarianID",
@@ -211,9 +212,9 @@ function DataTable(props) {
       setEditData(editData);
       setShowEditModal(!showEditModal);
     }
-    if (selectedTable === "enrichedLibrarians") {
+    */
+    if (sessionStorage.getItem("view") === "enrichedLibrarians") {
       console.log(editData);
-      /*
       let dbColumns = [
         "librarianID",
         "librarianFirstName",
@@ -229,23 +230,43 @@ function DataTable(props) {
       dbColumns = dbColumns.splice(1);
       console.log(editData);
       console.log(vals);
+      vals.splice(vals.length - 2, 1);
       console.log(dbColumns);
-      delete editData["employeeTeamID"];
-      delete editData["Role"];
+      console.log(vals);
+      vals = vals.filter((el) => !(el === "Manager" || el === "Employee"));
+      dbColumns = dbColumns.filter((el) => !(el === "Role"));
+
+      let tempEditData = {
+        librarianFirstName: {
+          type: "text",
+          required: true,
+          placeholder: "",
+        },
+        librarianLastName: { type: "text", required: true, placeholder: "" },
+        librarianEmail: { type: "email", required: true, placeholder: "" },
+        librarianPhone: { type: "text", required: true, placeholder: "" },
+        librarianBirthDate: { type: "date", required: true, placeholder: "" },
+        //librarianPassword: { type: "text", required: true, placeholder: "" },
+      };
+
+      setRowUniqueID(sessionStorage.getItem("userID"));
+
+      console.log(dbColumns);
+
       vals.map((element, index) => {
         let placeholder = element;
         console.log(element, "ELEMENT");
-        if (editData[dbColumns[index]]["type"] === "date") {
+        console.log(dbColumns[index]);
+        if (tempEditData[dbColumns[index]]["type"] === "date") {
           placeholder = new Date(element).toISOString().slice(0, 10);
-          editData[dbColumns[index]]["placeholder"] = placeholder;
+          tempEditData[dbColumns[index]]["placeholder"] = placeholder;
         } else {
-          editData[dbColumns[index]]["placeholder"] = placeholder;
+          tempEditData[dbColumns[index]]["placeholder"] = placeholder;
         }
       });
-
-      setEditData(editData);
+      console.log(tempEditData, "TEMPEDITDATA");
+      setEditData(tempEditData);
       setShowEditModal(!showEditModal);
-      */
     }
     if (selectedTable === "Books") {
       let dbColumns = [

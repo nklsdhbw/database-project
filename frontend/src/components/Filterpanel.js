@@ -69,7 +69,7 @@ function Filterpanel(props) {
       sessionStorage.getItem("table") == "Librarians" &&
       sessionStorage.getItem("action") == "Manage personal data"
     ) {
-      searchQuery = `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+      searchQuery = `SELECT * FROM "enrichedLibrarians" WHERE "ID" = ${sessionStorage.getItem(
         "userID"
       )} AND `;
     }
@@ -117,7 +117,7 @@ function Filterpanel(props) {
         sessionStorage.getItem("table") == "Librarians" &&
         sessionStorage.getItem("action") == "Manage personal data"
       ) {
-        searchQuery = `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+        searchQuery = `SELECT * FROM "enrichedLibrarians" WHERE "ID" = ${sessionStorage.getItem(
           "userID"
         )}`;
       }
