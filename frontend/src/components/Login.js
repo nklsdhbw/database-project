@@ -47,33 +47,43 @@ const Login = () => {
     let userID;
     let role;
     let teamID;
-
-    //get readerID and hashePassword from User and store readerID in session storage
+    let usernames = [];
     results.forEach((element) => {
-      console.log(element[1], formData.username);
-      if (element[1] === formData.username) {
-        hashedPassword = element[3];
-        userID = element[0];
-        role = element[2];
-        teamID = element[4];
-        if (element[2] === "Reader") {
-          sessionStorage.setItem("readerID", userID);
-        }
-        sessionStorage.setItem("userID", userID);
-      }
+      usernames.push(element[1]);
     });
 
-    const passwordsMatch = await bcrypt.compare(password, hashedPassword);
-    console.log(hashedPassword, " : ", password);
-    console.log(passwordsMatch);
-    if (passwordsMatch) {
-      sessionStorage.setItem("loggedIn", JSON.stringify(true));
-      sessionStorage.setItem("loginMail", loginMail);
-      sessionStorage.setItem("role", role);
-      sessionStorage.setItem("teamID", teamID);
-      navigate("/NavigationMenue");
+    if (!usernames.includes(loginMail)) {
+      window.alert(
+        "Unknown username. Please register or try different username"
+      );
     } else {
-      window.alert("Wrong password or username. Please try again.");
+      //get readerID and hashePassword from User and store readerID in session storage
+      results.forEach((element) => {
+        console.log(element[1], formData.username);
+        if (element[1] === formData.username) {
+          hashedPassword = element[3];
+          userID = element[0];
+          role = element[2];
+          teamID = element[4];
+          if (element[2] === "Reader") {
+            sessionStorage.setItem("readerID", userID);
+          }
+          sessionStorage.setItem("userID", userID);
+        }
+      });
+
+      const passwordsMatch = await bcrypt.compare(password, hashedPassword);
+      console.log(hashedPassword, " : ", password);
+      console.log(passwordsMatch);
+      if (passwordsMatch) {
+        sessionStorage.setItem("loggedIn", JSON.stringify(true));
+        sessionStorage.setItem("loginMail", loginMail);
+        sessionStorage.setItem("role", role);
+        sessionStorage.setItem("teamID", teamID);
+        navigate("/NavigationMenue");
+      } else {
+        window.alert("Wrong password or username. Please try again.");
+      }
     }
   };
 
