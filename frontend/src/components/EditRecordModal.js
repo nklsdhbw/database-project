@@ -3,6 +3,9 @@ import React, { useState, useRef } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
 import bcrypt from "bcryptjs";
+import SearchAttributes from "./SearchAttributes";
+
+import "../css/Buttons.css";
 
 function EditRecordModal(props) {
   const {
@@ -20,6 +23,7 @@ function EditRecordModal(props) {
     showSearchBookButton,
     showSearchAuthorButton,
     showSearchManagerButton,
+    showSearchEmployeeButton,
     hidePublisherButton,
     showSearchZipButton,
     showSearchCurrencyButton,
@@ -152,36 +156,6 @@ function EditRecordModal(props) {
     setUpdateData(!updateData);
     setShowEditModal(!showEditModal);
   };
-  function handlePublisher() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "Publishers");
-  }
-  function handleZip() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "ZIPs");
-  }
-
-  function handleBook() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "Books");
-  }
-  function handleAuthor() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "Authors");
-  }
-
-  function handleManager() {
-    sessionStorage.setItem("searchTable", "Managers");
-    setshowSearch(!showSearch);
-  }
-  function handleCurrency() {
-    sessionStorage.setItem("searchTable", "Currencies");
-    setshowSearch(!showSearch);
-  }
-  function handleReader() {
-    sessionStorage.setItem("searchTable", "Readers");
-    setshowSearch(!showSearch);
-  }
 
   return (
     <Modal show={showEditModal}>
@@ -230,31 +204,24 @@ function EditRecordModal(props) {
               )}
             </Form.Group>
           ))}
-          <Button disabled={!formValid} type="submit">
-            Submit Edit
-          </Button>
-          {showSearchBookButton && (
-            <Button onClick={handleBook}>Search Book</Button>
-          )}
-          {showSearchAuthorButton && (
-            <Button onClick={handleAuthor}>Search Author</Button>
-          )}
-          {showSearchManagerButton && (
-            <Button onClick={handleManager}>Search Manager</Button>
-          )}
-          {showSearchZipButton && (
-            <Button onClick={handleZip}>Search Zip</Button>
-          )}
-          {showSearchCurrencyButton && (
-            <Button onClick={handleCurrency}>Search Currency</Button>
-          )}
-          {showSearchReaderButton && (
-            <Button onClick={handleReader}>Search Reader</Button>
-          )}
-
-          <Button hidden={hidePublisherButton} onClick={handlePublisher}>
-            Search Publisher
-          </Button>
+          <div className="button-container">
+            <Button disabled={!formValid} type="submit">
+              Submit Edit
+            </Button>
+            <SearchAttributes
+              showSearchAuthorButton={showSearchAuthorButton}
+              showSearchBookButton={showSearchBookButton}
+              showSearchCurrencyButton={showSearchCurrencyButton}
+              showSearchManagerButton={showSearchManagerButton}
+              showSearchReaderButton={showSearchReaderButton}
+              showSearchTeamButton={showSearchTeamButton}
+              showSearchZipButton={showSearchZipButton}
+              hidePublisherButton={hidePublisherButton}
+              showSearchEmployeeButton={showSearchEmployeeButton}
+              setshowSearch={setshowSearch}
+              showSearch={showSearch}
+            />
+          </div>
         </Form>
       </Modal.Body>
     </Modal>

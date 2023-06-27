@@ -2,6 +2,8 @@
 import React, { useState, useRef } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
+import SearchAttributes from "./SearchAttributes";
+import "../css/Buttons.css";
 
 function CreateRecordModal(props) {
   const {
@@ -92,45 +94,6 @@ function CreateRecordModal(props) {
       }
     }
   };
-
-  function handlePublisher() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "Publishers");
-  }
-  function handleZip() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "ZIPs");
-  }
-
-  function handleBook() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "Books");
-  }
-  function handleAuthor() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "Authors");
-  }
-
-  function handleManager() {
-    sessionStorage.setItem("searchTable", "Managers");
-    setshowSearch(!showSearch);
-  }
-  function handleCurrency() {
-    sessionStorage.setItem("searchTable", "Currencies");
-    setshowSearch(!showSearch);
-  }
-  function handleTeam() {
-    sessionStorage.setItem("searchTable", "Teams");
-    setshowSearch(!showSearch);
-  }
-  function handleEmployee() {
-    sessionStorage.setItem("searchTable", "Employees");
-    setshowSearch(!showSearch);
-  }
-  function handleReader() {
-    sessionStorage.setItem("searchTable", "Readers");
-    setshowSearch(!showSearch);
-  }
 
   function addTeamMember(data) {
     axios
@@ -317,38 +280,24 @@ function CreateRecordModal(props) {
               )}
             </Form.Group>
           ))}
-
-          <Button type="submit" disabled={!formValid}>
-            Create
-          </Button>
-          {showSearchBookButton && (
-            <Button onClick={handleBook}>Search Book</Button>
-          )}
-          {showSearchAuthorButton && (
-            <Button onClick={handleAuthor}>Search Author</Button>
-          )}
-          {showSearchManagerButton && (
-            <Button onClick={handleManager}>Search Manager</Button>
-          )}
-          {showSearchZipButton && (
-            <Button onClick={handleZip}>Search Zip</Button>
-          )}
-          {showSearchCurrencyButton && (
-            <Button onClick={handleCurrency}>Search Currency</Button>
-          )}
-          {showSearchTeamButton && (
-            <Button onClick={handleTeam}>Search Team</Button>
-          )}
-          {showSearchEmployeeButton && (
-            <Button onClick={handleEmployee}>Search Employee</Button>
-          )}
-          {showSearchReaderButton && (
-            <Button onClick={handleReader}>Search Reader</Button>
-          )}
-
-          <Button hidden={hidePublisherButton} onClick={handlePublisher}>
-            Search Publisher
-          </Button>
+          <div className="button-container">
+            <Button type="submit" disabled={!formValid}>
+              Create
+            </Button>
+            <SearchAttributes
+              showSearchAuthorButton={showSearchAuthorButton}
+              showSearchBookButton={showSearchBookButton}
+              showSearchCurrencyButton={showSearchCurrencyButton}
+              showSearchEmployeeButton={showSearchEmployeeButton}
+              showSearchManagerButton={showSearchManagerButton}
+              showSearchReaderButton={showSearchReaderButton}
+              showSearchTeamButton={showSearchTeamButton}
+              showSearchZipButton={showSearchZipButton}
+              hidePublisherButton={hidePublisherButton}
+              setshowSearch={setshowSearch}
+              showSearch={showSearch}
+            />
+          </div>
         </Form>
       </Modal.Body>
     </Modal>
