@@ -69,7 +69,7 @@ function Filterpanel(props) {
       sessionStorage.getItem("table") == "Librarians" &&
       sessionStorage.getItem("action") == "Manage personal data"
     ) {
-      searchQuery = `SELECT * FROM "enrichedLibrarians" WHERE "ID" = ${sessionStorage.getItem(
+      searchQuery = `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
         "userID"
       )} AND `;
     }
@@ -77,7 +77,7 @@ function Filterpanel(props) {
       sessionStorage.getItem("table") == "Readers" &&
       sessionStorage.getItem("action") == "Manage personal data"
     ) {
-      searchQuery = `SELECT * FROM "Readers" WHERE "ID" = ${sessionStorage.getItem(
+      searchQuery = `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
         "userID"
       )} AND `;
     }
@@ -117,7 +117,7 @@ function Filterpanel(props) {
         sessionStorage.getItem("table") == "Librarians" &&
         sessionStorage.getItem("action") == "Manage personal data"
       ) {
-        searchQuery = `SELECT * FROM "enrichedLibrarians" WHERE "ID" = ${sessionStorage.getItem(
+        searchQuery = `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
           "userID"
         )}`;
       }
@@ -125,7 +125,7 @@ function Filterpanel(props) {
         sessionStorage.getItem("table") == "Readers" &&
         sessionStorage.getItem("action") == "Manage personal data"
       ) {
-        searchQuery = `SELECT * FROM "Readers" WHERE "ID" = ${sessionStorage.getItem(
+        searchQuery = `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
           "userID"
         )}`;
       }

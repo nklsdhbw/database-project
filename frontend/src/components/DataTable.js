@@ -195,6 +195,8 @@ function DataTable(props) {
       console.log(editData);
       console.log(vals);
       console.log(dbColumns);
+      delete editData["employeeTeamID"];
+      delete editData["Role"];
       vals.map((element, index) => {
         let placeholder = element;
         console.log(element, "ELEMENT");
@@ -208,6 +210,42 @@ function DataTable(props) {
 
       setEditData(editData);
       setShowEditModal(!showEditModal);
+    }
+    if (selectedTable === "enrichedLibrarians") {
+      console.log(editData);
+      /*
+      let dbColumns = [
+        "librarianID",
+        "librarianFirstName",
+        "librarianLastName",
+        "librarianEmail",
+        "librarianPhone",
+        "librarianBirthDate",
+        "librarianPassword",
+      ];
+      let vals = data;
+      setRowUniqueID(data[0]);
+      vals = vals.splice(1);
+      dbColumns = dbColumns.splice(1);
+      console.log(editData);
+      console.log(vals);
+      console.log(dbColumns);
+      delete editData["employeeTeamID"];
+      delete editData["Role"];
+      vals.map((element, index) => {
+        let placeholder = element;
+        console.log(element, "ELEMENT");
+        if (editData[dbColumns[index]]["type"] === "date") {
+          placeholder = new Date(element).toISOString().slice(0, 10);
+          editData[dbColumns[index]]["placeholder"] = placeholder;
+        } else {
+          editData[dbColumns[index]]["placeholder"] = placeholder;
+        }
+      });
+
+      setEditData(editData);
+      setShowEditModal(!showEditModal);
+      */
     }
     if (selectedTable === "Books") {
       let dbColumns = [

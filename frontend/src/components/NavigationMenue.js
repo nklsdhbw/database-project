@@ -224,7 +224,7 @@ const NavigationMenue = () => {
       sessionStorage.getItem("role") == "Manager" &&
       sessionStorage.getItem("action") == "Manage personal data"
     ) {
-      sessionStorage.setItem("view", "enrichedLibrarians");
+      sessionStorage.setItem("view", "Librarians");
     }
     console.log(entryQuery, "entryQuery");
     console.log(formQuery, "formQuery");
