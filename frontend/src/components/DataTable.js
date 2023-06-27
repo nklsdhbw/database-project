@@ -178,42 +178,11 @@ function DataTable(props) {
           console.log("ERROR: ", error);
         });
     }
-    /*
-    if (selectedTable === "Librarians") {
-      let dbColumns = [
-        "librarianID",
-        "librarianFirstName",
-        "librarianLastName",
-        "librarianEmail",
-        "librarianPhone",
-        "librarianBirthDate",
-        "librarianPassword",
-      ];
-      let vals = data;
-      setRowUniqueID(data[0]);
-      vals = vals.splice(1);
-      dbColumns = dbColumns.splice(1);
-      console.log(editData);
-      console.log(vals);
-      console.log(dbColumns);
-      delete editData["employeeTeamID"];
-      delete editData["Role"];
-      vals.map((element, index) => {
-        let placeholder = element;
-        console.log(element, "ELEMENT");
-        if (editData[dbColumns[index]]["type"] === "date") {
-          placeholder = new Date(element).toISOString().slice(0, 10);
-          editData[dbColumns[index]]["placeholder"] = placeholder;
-        } else {
-          editData[dbColumns[index]]["placeholder"] = placeholder;
-        }
-      });
 
-      setEditData(editData);
-      setShowEditModal(!showEditModal);
-    }
-    */
-    if (sessionStorage.getItem("view") === "enrichedLibrarians") {
+    if (
+      sessionStorage.getItem("view") === "enrichedLibrarians" &&
+      sessionStorage.getItem("action") === "Manage personal data"
+    ) {
       console.log(editData);
       let dbColumns = [
         "librarianID",
@@ -235,6 +204,8 @@ function DataTable(props) {
       console.log(vals);
       vals = vals.filter((el) => !(el === "Manager" || el === "Employee"));
       dbColumns = dbColumns.filter((el) => !(el === "Role"));
+      console.log(vals);
+      console.log(dbColumns);
 
       let tempEditData = {
         librarianFirstName: {
@@ -266,6 +237,70 @@ function DataTable(props) {
       });
       console.log(tempEditData, "TEMPEDITDATA");
       setEditData(tempEditData);
+      setShowEditModal(!showEditModal);
+    }
+
+    if (
+      sessionStorage.getItem("view") === "enrichedLibrarians" &&
+      sessionStorage.getItem("action") !== "Manage personal data"
+    ) {
+      console.log(editData);
+      let dbColumns = [
+        "librarianID",
+        "librarianFirstName",
+        "librarianLastName",
+        "librarianEmail",
+        "librarianPhone",
+        "librarianBirthDate",
+        "librarianTeamID",
+      ];
+      let vals = data;
+      setRowUniqueID(data[0]);
+      vals = vals.splice(1);
+      dbColumns = dbColumns.splice(1);
+      console.log(editData);
+      console.log(vals);
+
+      vals.splice(vals.length - 1, 1);
+      console.log(dbColumns);
+      console.log(vals);
+      vals = vals.filter((el) => !(el === "Manager" || el === "Employee"));
+
+      dbColumns = dbColumns.filter((el) => !(el === "Role"));
+
+      let tempEditData = {
+        librarianFirstName: {
+          type: "text",
+          required: true,
+          placeholder: "",
+        },
+        librarianLastName: { type: "text", required: true, placeholder: "" },
+        librarianEmail: { type: "email", required: true, placeholder: "" },
+        librarianPhone: { type: "text", required: true, placeholder: "" },
+        librarianBirthDate: { type: "date", required: true, placeholder: "" },
+        librarianTeamID: { type: "text", required: true, placeholder: "" },
+      };
+
+      setRowUniqueID(sessionStorage.getItem("userID"));
+
+      console.log(dbColumns);
+
+      vals.map((element, index) => {
+        let placeholder = element;
+        console.log(element, "ELEMENT");
+        console.log(dbColumns[index]);
+        if (tempEditData[dbColumns[index]]["type"] === "date") {
+          placeholder = new Date(element).toISOString().slice(0, 10);
+          tempEditData[dbColumns[index]]["placeholder"] = placeholder;
+        } else {
+          tempEditData[dbColumns[index]]["placeholder"] = placeholder;
+        }
+      });
+      console.log(tempEditData, "TEMPEDITDATA");
+      console.log(vals);
+      console.log(dbColumns);
+      setEditData(tempEditData);
+      console.log(editData);
       setShowEditModal(!showEditModal);
     }
     if (selectedTable === "Books") {

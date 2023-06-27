@@ -705,6 +705,7 @@ function Overview() {
           showSearchZipButton={showSearchZipButton}
           showSearchCurrencyButton={showSearchCurrencyButton}
           showSearchReaderButton={showSearchReaderButton}
+          showSearchTeamButton={showSearchTeamButton}
           setshowSearch={setshowSearch}
           showSearch={showSearch}
         />

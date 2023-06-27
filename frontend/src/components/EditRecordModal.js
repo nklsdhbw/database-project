@@ -24,6 +24,7 @@ function EditRecordModal(props) {
     showSearchZipButton,
     showSearchCurrencyButton,
     showSearchReaderButton,
+    showSearchTeamButton,
     setshowSearch,
     showSearch,
   } = props;
@@ -214,7 +215,7 @@ function EditRecordModal(props) {
                 />
               ) : (
                 <Form.Control
-                  type={datatypes[index]} //`${String(value.type)}`}
+                  type={value.type} //`${String(value.type)}`}
                   name={`${String(key)}`}
                   value={
                     value.type == "date" && !isNaN(new Date(value.placeholder))
@@ -250,6 +251,7 @@ function EditRecordModal(props) {
           {showSearchReaderButton && (
             <Button onClick={handleReader}>Search Reader</Button>
           )}
+
           <Button hidden={hidePublisherButton} onClick={handlePublisher}>
             Search Publisher
           </Button>
