@@ -32,6 +32,11 @@ function CreateRecordModal(props) {
 
   // event handler
   const handleInputChange = (event) => {
+    var selectElement = document.getElementById("Role");
+    var selectedOption = selectElement.options[selectElement.selectedIndex];
+
+    var selectedValue = selectedOption.value;
+    formData["Role"].placeholder = selectedValue;
     const { name, value } = event.target;
     setFormData({
       ...formData,
@@ -140,16 +145,55 @@ function CreateRecordModal(props) {
       )})` + `${valuesString.slice(0, valuesString.length - 1)}) `;
     console.log(data);
 
-    let managerOrEmployeeQuery =
-      data["Role"] == "Manager"
-        ? `INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID")
-        SELECT "librarianID", ${data["employeeTeamID"].placeholder}
-        FROM "Librarians"
-        WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}';`
-        : `INSERT INTO "Employees" ("employeeLibrarianID", "employeeTeamID")
+    let managerOrEmployeeQuery;
+    if (
+      data["Role"].placeholder == "Manager" &&
+      (data["employeeTeamID"].placeholder != null ||
+        data["employeeTeamID"].placeholder != undefined)
+    ) {
+      managerOrEmployeeQuery = `INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID")
         SELECT "librarianID", ${data["employeeTeamID"].placeholder}
         FROM "Librarians"
         WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}';`;
+    }
+    if (
+      data["Role"].placeholder == "Employee" &&
+      (data["employeeTeamID"].placeholder != null ||
+        data["employeeTeamID"].placeholder != undefined)
+    ) {
+      console.log("TEEEEST");
+      managerOrEmployeeQuery = `INSERT INTO "Employees" ("employeeLibrarianID", "employeeTeamID")
+      SELECT "librarianID", ${data["employeeTeamID"].placeholder}
+      FROM "Librarians"
+      WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}';`;
+    }
+    console.log(
+      data["employeeTeamID"].placeholder == null ||
+        data["employeeTeamID"].placeholder == undefined
+    );
+    if (
+      data["Role"].placeholder == "Manager" &&
+      (data["employeeTeamID"].placeholder == null ||
+        data["employeeTeamID"].placeholder == undefined)
+    ) {
+      console.log("INNN");
+      managerOrEmployeeQuery = `INSERT INTO "Managers" ("managerLibrarianID")
+        SELECT "librarianID"
+        FROM "Librarians"
+        WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}';`;
+    }
+    if (
+      data["Role"].placeholder == "Employee" &&
+      (data["employeeTeamID"].placeholder == null ||
+        data["employeeTeamID"].placeholder == undefined)
+    ) {
+      managerOrEmployeeQuery = `INSERT INTO "Employees" ("employeeLibrarianID")
+      SELECT "librarianID"
+      FROM "Librarians"
+      WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}';`;
+    }
+
+    console.log(managerOrEmployeeQuery, "managerOrEmployeeQuery");
     let parameters = [];
     parameters.push(data["employeeTeamID"].placeholder);
     parameters.push(data["librarianEmail"].placeholder);
@@ -246,10 +290,11 @@ function CreateRecordModal(props) {
       <Modal.Body>
         <Form onSubmit={handleSubmit} ref={formRef}>
           {Object.entries(formData).map(([key, value], index) => (
-            <Form.Group controlId={String(key)} key={index}>
+            <Form.Group key={index}>
               <Form.Label>{String(key)}</Form.Label>
               {datatypes[index] === "option" ? (
                 <Form.Control
+                  id="Role"
                   as="select"
                   name={key}
                   value={value.placeholder}
