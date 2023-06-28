@@ -3,7 +3,7 @@ import * as React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import bcrypt from "bcryptjs";
+import bcrypt, { hash } from "bcryptjs";
 import axios from "axios";
 
 //* import required images *//
@@ -80,6 +80,7 @@ const Login = () => {
         sessionStorage.setItem("loginMail", loginMail);
         sessionStorage.setItem("role", role);
         sessionStorage.setItem("teamID", teamID);
+        sessionStorage.setItem("password", hashedPassword);
         navigate("/NavigationMenue");
       } else {
         window.alert("Wrong password or username. Please try again.");

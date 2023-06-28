@@ -204,6 +204,7 @@ function DataTable(props) {
       console.log(vals);
       vals = vals.filter((el) => !(el === "Manager" || el === "Employee"));
       dbColumns = dbColumns.filter((el) => !(el === "Role"));
+      vals.push(sessionStorage.getItem("password"));
       console.log(vals);
       console.log(dbColumns);
 
@@ -217,7 +218,11 @@ function DataTable(props) {
         librarianEmail: { type: "email", required: true, placeholder: "" },
         librarianPhone: { type: "text", required: true, placeholder: "" },
         librarianBirthDate: { type: "date", required: true, placeholder: "" },
-        //librarianPassword: { type: "text", required: true, placeholder: "" },
+        librarianPassword: {
+          type: "password",
+          required: true,
+          placeholder: "",
+        },
       };
 
       setRowUniqueID(sessionStorage.getItem("userID"));
