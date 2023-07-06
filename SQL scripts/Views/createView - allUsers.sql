@@ -1,5 +1,7 @@
-CREATE
-OR REPLACE VIEW "allUsers" AS
+DROP VIEW IF EXISTS "allUsers" CASCADE;
+
+CREATE VIEW
+  "allUsers" AS
 SELECT
   "id",
   "username",

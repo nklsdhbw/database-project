@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS "Books";
+DROP TABLE IF EXISTS "Books" CASCADE;
 
 CREATE TABLE
     "Books" (
@@ -12,7 +12,7 @@ CREATE TABLE
         "bookAvailability" BOOLEAN,
         "bookAvailableAmount" INTEGER,
         "bookCategoryID" INTEGER,
-        CONSTRAINT fk_authorID FOREIGN KEY ("bookAuthorID") REFERENCES "Authors" ("authorID") ON DELETE CASCADE,
-        CONSTRAINT fk_publisherID FOREIGN KEY ("bookPublisherID") REFERENCES "Publishers" ("publisherID") ON DELETE CASCADE,
-        CONSTRAINT fk_categoryID FOREIGN KEY ("bookCategoryID") REFERENCES "Categories" ("categoryID") ON DELETE CASCADE
-    )
+        CONSTRAINT fk_bookAuthorID FOREIGN KEY ("bookAuthorID") REFERENCES "Authors" ("authorID") ON DELETE CASCADE,
+        CONSTRAINT fk_bookPublisherID FOREIGN KEY ("bookPublisherID") REFERENCES "Publishers" ("publisherID") ON DELETE CASCADE,
+        CONSTRAINT fk_bookCategoryID FOREIGN KEY ("bookCategoryID") REFERENCES "Categories" ("categoryID") ON DELETE CASCADE
+    );

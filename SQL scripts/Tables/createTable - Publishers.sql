@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS "Publishers";
+DROP TABLE IF EXISTS "Publishers" CASCADE;
 
 CREATE TABLE
 	"Publishers" (
@@ -10,5 +10,5 @@ CREATE TABLE
 		"publisherCountry" varchar(255),
 		"publisherEmail" varchar(255),
 		"publisherPhone" varchar(255),
-		CONSTRAINT fk_publisherCurrencyCode FOREIGN KEY ("publisherZipID") REFERENCES "ZIPs" ("zipID") ON DELETE CASCADE
-	)
+		CONSTRAINT fk_publisherZipID FOREIGN KEY ("publisherZipID") REFERENCES "ZIPs" ("zipID") ON DELETE CASCADE
+	);

@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS "Managers";
+DROP TABLE IF EXISTS "Managers" CASCADE;
 
 CREATE TABLE
   "Managers" (
@@ -8,4 +8,4 @@ CREATE TABLE
     UNIQUE ("managerLibrarianID", "managerTeamID"),
     CONSTRAINT fk_managerLibrarianID FOREIGN KEY ("managerLibrarianID") REFERENCES "Librarians" ("librarianID") ON DELETE CASCADE,
     CONSTRAINT fk_managerTeamID FOREIGN KEY ("managerTeamID") REFERENCES "Teams" ("teamID") ON DELETE CASCADE
-  )
+  );

@@ -11,6 +11,8 @@ const Header = () => {
   const api = "http://localhost:5000/run-query";
   const readerID = sessionStorage.getItem("userID");
   const userRole = sessionStorage.getItem("role");
+  const username = sessionStorage.getItem("loginMail");
+  const role = sessionStorage.getItem("role");
 
   fetchLoanFine();
 
@@ -38,9 +40,14 @@ const Header = () => {
         <div className="logo-container">
           <img src={chapterOneLogo} alt="ChapterOne Logo" />
         </div>
-        <p className={userRole !== "Reader" ? "hidden-paragraph" : ""}>
-          Loan Fine: {loanFine}
-        </p>
+        <div>
+          <p>
+            {username} | {role}
+          </p>
+          <p className={userRole !== "Reader" ? "hidden-paragraph" : ""}>
+            Loan Fine: {loanFine}
+          </p>
+        </div>
       </div>
     </header>
   );
