@@ -73,6 +73,16 @@ const Login = () => {
       });
 
       const passwordsMatch = await bcrypt.compare(password, hashedPassword);
+      console.log(bcrypt.hash(password, 10));
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(password, salt, (err, hash) => {
+          if (err) {
+            console.error(err);
+            return;
+          }
+          console.log("HASH", hash);
+        });
+      });
       console.log(hashedPassword, " : ", password);
       console.log(passwordsMatch);
       if (passwordsMatch) {
