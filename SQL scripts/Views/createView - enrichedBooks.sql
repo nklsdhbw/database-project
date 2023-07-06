@@ -1,5 +1,7 @@
-CREATE
-OR REPLACE VIEW "enrichedBooks" AS
+DROP VIEW IF EXISTS "enrichedBooks" CASCADE;
+
+CREATE VIEW
+   "enrichedBooks" AS
 SELECT
    "bookID" AS "ID",
    "bookTitle" AS "Title",
@@ -16,4 +18,6 @@ FROM
    "Books" b
    JOIN "Authors" a ON a."authorID" = b."bookAuthorID"
    JOIN "Categories" c ON c."categoryID" = b."bookCategoryID"
-   JOIN "Publishers" p ON p."publisherID" = b."bookPublisherID";
+   JOIN "Publishers" p ON p."publisherID" = b."bookPublisherID"
+ORDER BY
+   "bookID";

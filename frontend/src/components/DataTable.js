@@ -178,7 +178,12 @@ function DataTable(props) {
           console.log("ERROR: ", error);
         });
     }
-    if (selectedTable === "Librarians") {
+
+    if (
+      sessionStorage.getItem("view") === "enrichedLibrarians" &&
+      sessionStorage.getItem("action") === "Manage personal data"
+    ) {
+      console.log(editData);
       let dbColumns = [
         "librarianID",
         "librarianFirstName",
@@ -194,19 +199,113 @@ function DataTable(props) {
       dbColumns = dbColumns.splice(1);
       console.log(editData);
       console.log(vals);
+      vals.splice(vals.length - 2, 1);
       console.log(dbColumns);
+      console.log(vals);
+      vals = vals.filter((el) => !(el === "Manager" || el === "Employee"));
+      dbColumns = dbColumns.filter((el) => !(el === "Role"));
+      vals.push(sessionStorage.getItem("password"));
+      console.log(vals);
+      console.log(dbColumns);
+
+      let tempEditData = {
+        librarianFirstName: {
+          type: "text",
+          required: true,
+          placeholder: "",
+        },
+        librarianLastName: { type: "text", required: true, placeholder: "" },
+        librarianEmail: { type: "email", required: true, placeholder: "" },
+        librarianPhone: { type: "text", required: true, placeholder: "" },
+        librarianBirthDate: { type: "date", required: true, placeholder: "" },
+        librarianPassword: {
+          type: "password",
+          required: true,
+          placeholder: "",
+        },
+      };
+
+      setRowUniqueID(sessionStorage.getItem("userID"));
+
+      console.log(dbColumns);
+
       vals.map((element, index) => {
         let placeholder = element;
         console.log(element, "ELEMENT");
-        if (editData[dbColumns[index]]["type"] === "date") {
+        console.log(dbColumns[index]);
+        if (tempEditData[dbColumns[index]]["type"] === "date") {
           placeholder = new Date(element).toISOString().slice(0, 10);
-          editData[dbColumns[index]]["placeholder"] = placeholder;
+          tempEditData[dbColumns[index]]["placeholder"] = placeholder;
         } else {
-          editData[dbColumns[index]]["placeholder"] = placeholder;
+          tempEditData[dbColumns[index]]["placeholder"] = placeholder;
         }
       });
+      console.log(tempEditData, "TEMPEDITDATA");
+      setEditData(tempEditData);
+      setShowEditModal(!showEditModal);
+    }
 
-      setEditData(editData);
+    if (
+      sessionStorage.getItem("view") === "enrichedLibrarians" &&
+      sessionStorage.getItem("action") !== "Manage personal data"
+    ) {
+      console.log(editData);
+      let dbColumns = [
+        "librarianID",
+        "librarianFirstName",
+        "librarianLastName",
+        "librarianEmail",
+        "librarianPhone",
+        "librarianBirthDate",
+        "librarianTeamID",
+      ];
+      let vals = data;
+      setRowUniqueID(data[0]);
+      vals = vals.splice(1);
+      dbColumns = dbColumns.splice(1);
+      console.log(editData);
+      console.log(vals);
+
+      vals.splice(vals.length - 1, 1);
+      console.log(dbColumns);
+      console.log(vals);
+      vals = vals.filter((el) => !(el === "Manager" || el === "Employee"));
+
+      dbColumns = dbColumns.filter((el) => !(el === "Role"));
+
+      let tempEditData = {
+        librarianFirstName: {
+          type: "text",
+          required: true,
+          placeholder: "",
+        },
+        librarianLastName: { type: "text", required: true, placeholder: "" },
+        librarianEmail: { type: "email", required: true, placeholder: "" },
+        librarianPhone: { type: "text", required: true, placeholder: "" },
+        librarianBirthDate: { type: "date", required: true, placeholder: "" },
+        librarianTeamID: { type: "text", required: true, placeholder: "" },
+      };
+
+      setRowUniqueID(sessionStorage.getItem("userID"));
+
+      console.log(dbColumns);
+
+      vals.map((element, index) => {
+        let placeholder = element;
+        console.log(element, "ELEMENT");
+        console.log(dbColumns[index]);
+        if (tempEditData[dbColumns[index]]["type"] === "date") {
+          placeholder = new Date(element).toISOString().slice(0, 10);
+          tempEditData[dbColumns[index]]["placeholder"] = placeholder;
+        } else {
+          tempEditData[dbColumns[index]]["placeholder"] = placeholder;
+        }
+      });
+      console.log(tempEditData, "TEMPEDITDATA");
+      console.log(vals);
+      console.log(dbColumns);
+      setEditData(tempEditData);
+      console.log(editData);
       setShowEditModal(!showEditModal);
     }
     if (selectedTable === "Books") {
@@ -443,6 +542,7 @@ function DataTable(props) {
               <img
                 src={plusGreenIcon}
                 alt="Create New Record"
+                title="Create New Record"
                 onClick={() => handleCreate()}
                 style={{ cursor: "pointer" }}
               ></img>
@@ -488,6 +588,7 @@ function DataTable(props) {
                         hidden={selectedTable !== "Loans"}
                         className="w-100 btn btn-lg btn-primary"
                         onClick={() => handleReturn(data)}
+                        title="Return book"
                         disabled={
                           data[columns.indexOf("Status")] === "returned"
                         }
@@ -499,11 +600,13 @@ function DataTable(props) {
                           width: "50px",
                           height: "50px",
                           cursor: "pointer",
+                          disabled: "true",
                         }}
                       ></button>
                     ) : (
                       <button
                         hidden={selectedTable !== "Loans"}
+                        title="Book already returned"
                         style={{
                           background: `url(${alreadyReturnedIcon}) no-repeat center`,
                           backgroundSize: "contain",
@@ -524,6 +627,7 @@ function DataTable(props) {
                       <button
                         className="w-100 btn btn-lg btn-primary"
                         onClick={() => convertIntoBook(columns, data)}
+                        title="Convert order into book"
                         style={{
                           background: `url(${convertIntoBookIcon}) no-repeat center`,
                           backgroundSize: "contain",
@@ -537,6 +641,7 @@ function DataTable(props) {
                   ) : (
                     <td>
                       <button
+                        title="Order already converted into book"
                         className="w-100 btn btn-lg btn-primary"
                         disabled={true}
                         style={{
@@ -558,6 +663,7 @@ function DataTable(props) {
                     <button
                       className="edit-button"
                       onClick={() => handleEdit(data)}
+                      title="Edit"
                       disabled={data[columns.indexOf("Status")] === "returned"}
                       style={{
                         background: `url(${penBlueIcon}) no-repeat center`,
@@ -576,6 +682,7 @@ function DataTable(props) {
                     <div>
                       <button
                         onClick={() => deleteEntry(data[0])}
+                        title="Delete"
                         style={{
                           background: `url(${deleteIcon}) no-repeat center`,
                           backgroundSize: "contain",

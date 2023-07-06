@@ -72,7 +72,7 @@ CREATE TABLE
         "publisherCountry" varchar(255),
         "publisherEmail" varchar(255),
         "publisherPhone" varchar(255),
-        CONSTRAINT fk_publisherCurrencyCode FOREIGN KEY ("publisherZipID") REFERENCES "ZIPs" ("zipID") ON DELETE CASCADE
+        CONSTRAINT fk_publisherZipID FOREIGN KEY ("publisherZipID") REFERENCES "ZIPs" ("zipID") ON DELETE CASCADE
     );
 
 DROP TABLE IF EXISTS "Books" CASCADE;
@@ -89,9 +89,9 @@ CREATE TABLE
         "bookAvailability" BOOLEAN,
         "bookAvailableAmount" INTEGER,
         "bookCategoryID" INTEGER,
-        CONSTRAINT fk_authorID FOREIGN KEY ("bookAuthorID") REFERENCES "Authors" ("authorID") ON DELETE CASCADE,
-        CONSTRAINT fk_publisherID FOREIGN KEY ("bookPublisherID") REFERENCES "Publishers" ("publisherID") ON DELETE CASCADE,
-        CONSTRAINT fk_categoryID FOREIGN KEY ("bookCategoryID") REFERENCES "Categories" ("categoryID") ON DELETE CASCADE
+        CONSTRAINT fk_bookAuthorID FOREIGN KEY ("bookAuthorID") REFERENCES "Authors" ("authorID") ON DELETE CASCADE,
+        CONSTRAINT fk_bookPublisherID FOREIGN KEY ("bookPublisherID") REFERENCES "Publishers" ("publisherID") ON DELETE CASCADE,
+        CONSTRAINT fk_bookCategoryID FOREIGN KEY ("bookCategoryID") REFERENCES "Categories" ("categoryID") ON DELETE CASCADE
     );
 
 DROP TABLE IF EXISTS "Teams" CASCADE;

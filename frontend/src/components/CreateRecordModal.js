@@ -2,6 +2,8 @@
 import React, { useState, useRef } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
+import SearchAttributes from "./SearchAttributes";
+import "../css/Buttons.css";
 
 function CreateRecordModal(props) {
   const {
@@ -25,10 +27,16 @@ function CreateRecordModal(props) {
     showSearchCurrencyButton,
     showSearchTeamButton,
     showSearchEmployeeButton,
+    showSearchReaderButton,
   } = props;
 
   // event handler
   const handleInputChange = (event) => {
+    var selectElement = document.getElementById("Role");
+    var selectedOption = selectElement.options[selectElement.selectedIndex];
+
+    var selectedValue = selectedOption.value;
+    formData["Role"].placeholder = selectedValue;
     const { name, value } = event.target;
     setFormData({
       ...formData,
@@ -92,41 +100,6 @@ function CreateRecordModal(props) {
     }
   };
 
-  function handlePublisher() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "Publishers");
-  }
-  function handleZip() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "ZIPs");
-  }
-
-  function handleBook() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "Books");
-  }
-  function handleAuthor() {
-    setshowSearch(!showSearch);
-    sessionStorage.setItem("searchTable", "Authors");
-  }
-
-  function handleManager() {
-    sessionStorage.setItem("searchTable", "Managers");
-    setshowSearch(!showSearch);
-  }
-  function handleCurrency() {
-    sessionStorage.setItem("searchTable", "Currencies");
-    setshowSearch(!showSearch);
-  }
-  function handleTeam() {
-    sessionStorage.setItem("searchTable", "Teams");
-    setshowSearch(!showSearch);
-  }
-  function handleEmployee() {
-    sessionStorage.setItem("searchTable", "Employees");
-    setshowSearch(!showSearch);
-  }
-
   function addTeamMember(data) {
     axios
       .post(api, {
@@ -172,16 +145,55 @@ function CreateRecordModal(props) {
       )})` + `${valuesString.slice(0, valuesString.length - 1)}) `;
     console.log(data);
 
-    let managerOrEmployeeQuery =
-      data["Role"] == "Manager"
-        ? `INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID")
-        SELECT "librarianID", ${data["employeeTeamID"].placeholder}
-        FROM "Librarians"
-        WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}';`
-        : `INSERT INTO "Employees" ("employeeLibrarianID", "employeeTeamID")
+    let managerOrEmployeeQuery;
+    if (
+      data["Role"].placeholder == "Manager" &&
+      (data["employeeTeamID"].placeholder != null ||
+        data["employeeTeamID"].placeholder != undefined)
+    ) {
+      managerOrEmployeeQuery = `INSERT INTO "Managers" ("managerLibrarianID", "managerTeamID")
         SELECT "librarianID", ${data["employeeTeamID"].placeholder}
         FROM "Librarians"
         WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}';`;
+    }
+    if (
+      data["Role"].placeholder == "Employee" &&
+      (data["employeeTeamID"].placeholder != null ||
+        data["employeeTeamID"].placeholder != undefined)
+    ) {
+      console.log("TEEEEST");
+      managerOrEmployeeQuery = `INSERT INTO "Employees" ("employeeLibrarianID", "employeeTeamID")
+      SELECT "librarianID", ${data["employeeTeamID"].placeholder}
+      FROM "Librarians"
+      WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}';`;
+    }
+    console.log(
+      data["employeeTeamID"].placeholder == null ||
+        data["employeeTeamID"].placeholder == undefined
+    );
+    if (
+      data["Role"].placeholder == "Manager" &&
+      (data["employeeTeamID"].placeholder == null ||
+        data["employeeTeamID"].placeholder == undefined)
+    ) {
+      console.log("INNN");
+      managerOrEmployeeQuery = `INSERT INTO "Managers" ("managerLibrarianID")
+        SELECT "librarianID"
+        FROM "Librarians"
+        WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}';`;
+    }
+    if (
+      data["Role"].placeholder == "Employee" &&
+      (data["employeeTeamID"].placeholder == null ||
+        data["employeeTeamID"].placeholder == undefined)
+    ) {
+      managerOrEmployeeQuery = `INSERT INTO "Employees" ("employeeLibrarianID")
+      SELECT "librarianID"
+      FROM "Librarians"
+      WHERE "librarianEmail" = '${data["librarianEmail"].placeholder}';`;
+    }
+
+    console.log(managerOrEmployeeQuery, "managerOrEmployeeQuery");
     let parameters = [];
     parameters.push(data["employeeTeamID"].placeholder);
     parameters.push(data["librarianEmail"].placeholder);
@@ -278,10 +290,11 @@ function CreateRecordModal(props) {
       <Modal.Body>
         <Form onSubmit={handleSubmit} ref={formRef}>
           {Object.entries(formData).map(([key, value], index) => (
-            <Form.Group controlId={String(key)} key={index}>
+            <Form.Group key={index}>
               <Form.Label>{String(key)}</Form.Label>
               {datatypes[index] === "option" ? (
                 <Form.Control
+                  id="Role"
                   as="select"
                   name={key}
                   value={value.placeholder}
@@ -312,35 +325,24 @@ function CreateRecordModal(props) {
               )}
             </Form.Group>
           ))}
-
-          <Button type="submit" disabled={!formValid}>
-            Create
-          </Button>
-          {showSearchBookButton && (
-            <Button onClick={handleBook}>Search Book</Button>
-          )}
-          {showSearchAuthorButton && (
-            <Button onClick={handleAuthor}>Search Author</Button>
-          )}
-          {showSearchManagerButton && (
-            <Button onClick={handleManager}>Search Manager</Button>
-          )}
-          {showSearchZipButton && (
-            <Button onClick={handleZip}>Search Zip</Button>
-          )}
-          {showSearchCurrencyButton && (
-            <Button onClick={handleCurrency}>Search Currency</Button>
-          )}
-          {showSearchTeamButton && (
-            <Button onClick={handleTeam}>Search Team</Button>
-          )}
-          {showSearchEmployeeButton && (
-            <Button onClick={handleEmployee}>Search Employee</Button>
-          )}
-
-          <Button hidden={hidePublisherButton} onClick={handlePublisher}>
-            Search Publisher
-          </Button>
+          <div className="button-container">
+            <Button type="submit" disabled={!formValid}>
+              Create
+            </Button>
+            <SearchAttributes
+              showSearchAuthorButton={showSearchAuthorButton}
+              showSearchBookButton={showSearchBookButton}
+              showSearchCurrencyButton={showSearchCurrencyButton}
+              showSearchEmployeeButton={showSearchEmployeeButton}
+              showSearchManagerButton={showSearchManagerButton}
+              showSearchReaderButton={showSearchReaderButton}
+              showSearchTeamButton={showSearchTeamButton}
+              showSearchZipButton={showSearchZipButton}
+              hidePublisherButton={hidePublisherButton}
+              setshowSearch={setshowSearch}
+              showSearch={showSearch}
+            />
+          </div>
         </Form>
       </Modal.Body>
     </Modal>

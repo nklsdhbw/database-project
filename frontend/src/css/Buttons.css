@@ -1,0 +1,9 @@
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.button-container button {
+  margin-right: 0.5rem;
+}

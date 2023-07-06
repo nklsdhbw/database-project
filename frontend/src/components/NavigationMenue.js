@@ -54,10 +54,10 @@ const NavigationMenue = () => {
         Reader: `SELECT "readerID" AS "ID", "readerFirstName" AS "Firstname", "readerLastName" AS "Lastname", "readerEmail" AS "Email", "readerPassword" AS "Password" FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
           "readerID"
         )}`,
-        Employee: `SELECT "librarianID" AS "ID", "librarianFirstName" AS "Firstname", "librarianLastName" AS "Lastname", "librarianEmail" AS "Email", "librarianPhone" AS "Phone", "librarianBirthDate" AS "Birth date", "librarianPassword" AS "Password" FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+        Employee: `SELECT * FROM "enrichedLibrarians" WHERE "ID" = ${sessionStorage.getItem(
           "userID"
         )}`,
-        Manager: `SELECT "librarianID" AS "ID", "librarianFirstName" AS "Firstname", "librarianLastName" AS "Lastname", "librarianEmail" AS "Email", "librarianPhone" AS "Phone", "librarianBirthDate" AS "Birth date", "librarianPassword" AS "Password" FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+        Manager: `SELECT * FROM "enrichedLibrarians" WHERE "ID" = ${sessionStorage.getItem(
           "userID"
         )}`,
       },
@@ -65,10 +65,10 @@ const NavigationMenue = () => {
         Reader: `SELECT * FROM "Readers" WHERE "readerID" = ${sessionStorage.getItem(
           "userID"
         )}`,
-        Employee: `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+        Employee: `SELECT * FROM "enrichedLibrarians" WHERE "ID" = ${sessionStorage.getItem(
           "userID"
         )}`,
-        Manager: `SELECT * FROM "Librarians" WHERE "librarianID" = ${sessionStorage.getItem(
+        Manager: `SELECT * FROM "enrichedLibrarians" WHERE "ID" = ${sessionStorage.getItem(
           "userID"
         )}`,
       },
@@ -221,7 +221,7 @@ const NavigationMenue = () => {
     ) {
       sessionStorage.setItem("view", "Readers");
     } else if (
-      sessionStorage.getItem("role") == "Manager" &&
+      (sessionStorage.getItem("role") == "Manager" || "Employee") &&
       sessionStorage.getItem("action") == "Manage personal data"
     ) {
       sessionStorage.setItem("view", "enrichedLibrarians");
