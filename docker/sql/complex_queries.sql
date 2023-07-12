@@ -29,31 +29,7 @@ WHERE
             ) AS l
     );
 
--- Query 2: Retrieve the readers who have loaned all available books
-SELECT
-    r."readerFirstName",
-    r."readerLastName"
-FROM
-    "Readers" r
-WHERE
-    NOT EXISTS (
-        SELECT
-            "bookID"
-        FROM
-            "Books"
-        WHERE
-            NOT EXISTS (
-                SELECT
-                    "loanID"
-                FROM
-                    "Loans"
-                WHERE
-                    "loanBookID" = "bookID"
-                    AND "loanReaderID" = r."readerID"
-            )
-    );
-
--- Query 3: Retrieve the authors who have written books in all categories
+-- Query 2: Retrieve the authors who have written books in all categories
 SELECT
     concat (a."authorFirstName", ' ', a."authorLastName") AS "authorName"
 FROM
@@ -76,7 +52,7 @@ WHERE
             )
     );
 
--- Query 4: Retrieve the books, the loan count of this book and the average loan count over all books
+-- Query 3: Retrieve the books, the loan count of this book and the average loan count over all books
 -- that have been loaned more than the average number of loans
 SELECT
     b."bookTitle",
@@ -127,7 +103,7 @@ WHERE
             ) AS l
     );
 
--- Query 5: Retrieve the readers who have loaned books published by a specific publisher
+-- Query 4: Retrieve the readers who have loaned books published by a specific publisher
 SELECT
     concat (r."readerFirstName", ' ', r."readerLastName") AS "readerName"
 FROM
@@ -145,7 +121,7 @@ WHERE
             AND p."publisherName" = 'Penguin Books'
     );
 
--- Query 6: Retrieve the authors who have written books that are loaned by a specific reader
+-- Query 5: Retrieve the authors who have written books that are loaned by a specific reader
 SELECT
     concat (a."authorFirstName", ' ', a."authorLastName") AS "authorName"
 FROM
@@ -162,7 +138,7 @@ WHERE
             AND l."loanReaderID" = 1
     );
 
--- Query 7: Retrieve the books that have not been loaned
+-- Query 6: Retrieve the books that have not been loaned
 SELECT
     "bookTitle"
 FROM
@@ -175,7 +151,7 @@ WHERE
             "Loans"
     );
 
--- Query 8: Retrieve the publishers that have published books in all categories
+-- Query 7: Retrieve the publishers that have published books in all categories
 SELECT
     p."publisherName"
 FROM
@@ -195,7 +171,7 @@ WHERE
             "Categories"
     );
 
--- Query 9: Retrieve the readers who have loaned books by all authors
+-- Query 8: Retrieve the readers who have loaned books by all authors
 SELECT
     r."readerFirstName",
     r."readerLastName"
@@ -217,7 +193,7 @@ WHERE
             "Authors"
     );
 
--- Query 10: Retrieve the books with the highest average loan duration
+-- Query 9: Retrieve the books with the highest average loan duration
 SELECT
     b."bookTitle",
     AVG(l."loanDueDate" - l."loanLoanDate") AS "averageLoanDuration"
