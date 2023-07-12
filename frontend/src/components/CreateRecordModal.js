@@ -32,11 +32,14 @@ function CreateRecordModal(props) {
 
   // event handler
   const handleInputChange = (event) => {
-    var selectElement = document.getElementById("Role");
-    var selectedOption = selectElement.options[selectElement.selectedIndex];
+    try {
+      var selectElement = document.getElementById("Role");
+      var selectedOption = selectElement.options[selectElement.selectedIndex];
 
-    var selectedValue = selectedOption.value;
-    formData["Role"].placeholder = selectedValue;
+      var selectedValue = selectedOption.value;
+      formData["Role"].placeholder = selectedValue;
+    } catch {}
+
     const { name, value } = event.target;
     setFormData({
       ...formData,
@@ -326,9 +329,7 @@ function CreateRecordModal(props) {
             </Form.Group>
           ))}
           <div className="button-container">
-            <Button type="submit" disabled={!formValid}>
-              Create
-            </Button>
+            <Button type="submit">Create</Button>
             <SearchAttributes
               showSearchAuthorButton={showSearchAuthorButton}
               showSearchBookButton={showSearchBookButton}
