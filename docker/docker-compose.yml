@@ -6,7 +6,9 @@ networks:
 
 services:
   reactapp:
-    image: nklsdhbw/database-project:latest
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
     restart: always
     container_name: reactApp
     ports:
@@ -40,7 +42,9 @@ services:
       - mynetwork
 
   flaskapp:
-    image: nklsdhbw/flask-server:latest
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
     container_name: flask-server
     restart: always
     ports:
