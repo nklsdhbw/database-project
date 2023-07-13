@@ -30,11 +30,9 @@ const Register = () => {
     navigate("/NavigationMenue");
   }
 
-  // fetch current Readers
-  getReaders();
-
   //* HANDLERS *//
   const onSubmit = async (registerData) => {
+    await getReaders();
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const email = registerData.eMail;
@@ -51,8 +49,6 @@ const Register = () => {
     if (!userExists) {
       // after registration, user is logged in so change loggedIn variable to true
       // and navigate then to the "overview" page
-      sessionStorage.setItem("loggedIn", JSON.stringify(true));
-      sessionStorage.setItem("loginMail", registerData.eMail);
 
       let registerParameters = [
         registerData.firstname,
@@ -67,12 +63,11 @@ const Register = () => {
 
   //* FUNCTIONS *//
   async function getReaders() {
-    let query = 'SELECT * FROM public."Readers"';
+    let query = 'SELECT * FROM public."allUsers"';
     try {
       const response = await axios.post(api, { query });
-      await new Promise((resolve) => {
-        setExistingUsers(response.data[1], () => resolve());
-      });
+      setExistingUsers(response.data[1]);
+      return response.data[1];
     } catch (error) {
       console.log(error);
     }
@@ -84,10 +79,10 @@ const Register = () => {
       parameters: registerParameters,
     });
 
-    await getReaders();
-    let results = existingUsers;
+    let results = await getReaders();
 
     //get readerID from User and save it in sessionStorage
+
     results.forEach((element) => {
       if (element[1] === registerData.username) {
         let userID = element[0];
@@ -103,6 +98,7 @@ const Register = () => {
         sessionStorage.setItem("userID", userID);
       }
     });
+    sessionStorage.setItem("loggedIn", JSON.stringify(true));
     navigate("/NavigationMenue");
   }
 
