@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import chapterOneLogo from "../img/logo.svg";
 import "../css/Header.css";
@@ -7,16 +7,21 @@ import { set } from "react-hook-form";
 
 const Header = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [loanFine, setLoanFine] = useState(10);
+  const [loanFine, setLoanFine] = useState(0);
+  const [isFetching, setIsFetching] = useState(false);
   const api = "http://localhost:5000/run-query";
   const readerID = sessionStorage.getItem("userID");
   const userRole = sessionStorage.getItem("role");
   const username = sessionStorage.getItem("loginMail");
   const role = sessionStorage.getItem("role");
 
-  fetchLoanFine();
+  useEffect(() => {
+    fetchLoanFine();
+  }, []);
 
   function fetchLoanFine() {
+    setIsFetching(true);
+    console.log("fetchLoanFine started");
     let query = `SELECT "Reader ID", SUM("Fine") AS total_fine
     FROM "allLoans"
     GROUP BY "Reader ID"
@@ -25,12 +30,22 @@ const Header = () => {
     axios
       .post(api, { query: query })
       .then((response) => {
-        const fine = response.data[1][0][1];
+        let fine;
+        try {
+          const fine = response.data[1][0][1];
+        } catch {
+          //no loans -> set loanfin to 0
+          fine = 0;
+        }
+        console.log("FINE", fine);
         if (fine !== loanFine) {
           setLoanFine(fine);
         }
+        setIsFetching(false);
       })
       .catch((error) => {});
+  }
+  if (isFetching) {
   }
 
   return (
