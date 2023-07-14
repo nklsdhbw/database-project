@@ -23,4 +23,4 @@ COPY . .
 EXPOSE 5010
 
 # Activate the virtual environment and start the application
-CMD ["pipenv", "run", "flask", "run", "--host=0.0.0.0"]
+CMD ["pipenv", "run", "python","app.py"]
