@@ -19,4 +19,4 @@ COPY . .
 EXPOSE 5010
 
 # Activate the virtual environment and start the application
-CMD ["/bin/bash", "-c", "source /opt/venv/bin/activate && python app.py"]
+CMD pipenv run python app.py
