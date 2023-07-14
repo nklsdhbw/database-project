@@ -14,7 +14,7 @@ import loginBackground from "../img/login_background.svg";
 import "../css/Login.css";
 
 const Register = () => {
-  const api = "http://flask-server:5010/run-query";
+  const api = "http://flaskapp:5010/run-query";
   const { register, handleSubmit, formState } = useForm();
   const navigate = useNavigate();
   const [existingUsers, setExistingUsers] = useState([]);

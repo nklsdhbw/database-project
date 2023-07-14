@@ -31,7 +31,7 @@ function Overview() {
     "currencyID",
   ];
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
-  const api = "http://flask-server:5010/run-query";
+  const api = "http://flaskapp:5010/run-query";
   if (!loginStatus) {
     navigate("/Login");
   }
