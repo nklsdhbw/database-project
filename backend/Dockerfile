@@ -20,7 +20,7 @@ RUN pipenv install --system --deploy
 COPY . .
 
 # Expose the port that the application will listen on
-EXPOSE 5000
+EXPOSE 5010
 
 # Activate the virtual environment and start the application
 CMD ["pipenv", "run", "flask", "run", "--host=0.0.0.0"]
