@@ -3,14 +3,11 @@ FROM python
 # Set the working directory to /app
 WORKDIR /app
 
-# Install pipenv
-RUN pip install pipenv
+# copy requirements.txt to the container
+COPY requirements.txt .
 
-# Copy the Pipfile and Pipfile.lock to the container
-COPY Pipfile Pipfile.lock ./
-
-# Install dependencies
-RUN pipenv install --system --deploy 
+# Install required packages
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application files to the container
 COPY . .
@@ -19,4 +16,4 @@ COPY . .
 EXPOSE 5010
 
 # Activate the virtual environment and start the application
-CMD pipenv run python app.py
+CMD ["python", "app.py"]
