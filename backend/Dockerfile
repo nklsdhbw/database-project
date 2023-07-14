@@ -6,10 +6,6 @@ WORKDIR /app
 # Install pipenv
 RUN pip install pipenv
 
-# Create and activate a virtual environment
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-
 # Copy the Pipfile and Pipfile.lock to the container
 COPY Pipfile Pipfile.lock ./
 
@@ -23,4 +19,4 @@ COPY . .
 EXPOSE 5010
 
 # Activate the virtual environment and start the application
-CMD ["pipenv", "run", "python","app.py"]
+CMD ["/bin/bash", "-c", "source /opt/venv/bin/activate && python app.py"]
