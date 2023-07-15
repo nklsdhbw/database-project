@@ -33,7 +33,7 @@ function EditRecordModal(props) {
     showSearch,
   } = props;
 
-  const isLoanReturnDateUndefinedNullEmptyAndNoOtherEmpty =
+  /*const isLoanReturnDateUndefinedNullEmptyAndNoOtherEmpty =
     Object.entries(editData).every(([key, value]) =>
       key === "loanReturnDate"
         ? value.placeholder === undefined ||
@@ -49,10 +49,9 @@ function EditRecordModal(props) {
         value.placeholder === null ||
         value.placeholder === ""
     );
+    */
 
-  const [formValid, setFormValid] = useState(
-    isLoanReturnDateUndefinedNullEmptyAndNoOtherEmpty
-  );
+  const [formValid, setFormValid] = useState(false);
   const formRef = useRef(null);
 
   let disabledColumns = ["loanStatus"];
@@ -69,11 +68,18 @@ function EditRecordModal(props) {
       ...editData,
       [name]: { ...editData[name], placeholder: value },
     });
-    if (formRef.current.checkValidity()) {
-      setFormValid(true);
-    } else {
-      setFormValid(false);
-    }
+    const excludedFields = ["loanReturnDate"];
+    const isFormValid = Object.entries(formData).every(([key, value]) => {
+      // Check if the field is excluded from validation
+      if (excludedFields.includes(key)) {
+        return true; // Skip validation for this field
+      }
+
+      // Check the validity of the field
+      const inputElement = formRef.current.elements[key];
+      return inputElement.checkValidity();
+    });
+    setFormValid(isFormValid);
   };
 
   async function editEntry(data) {

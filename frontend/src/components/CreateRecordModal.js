@@ -45,11 +45,18 @@ function CreateRecordModal(props) {
       ...formData,
       [name]: { ...formData[name], placeholder: value },
     });
-    if (formRef.current.checkValidity()) {
-      setFormValid(true);
-    } else {
-      setFormValid(false);
-    }
+    const excludedFields = ["loanReturnDate"];
+    const isFormValid = Object.entries(formData).every(([key, value]) => {
+      // Check if the field is excluded from validation
+      if (excludedFields.includes(key)) {
+        return true; // Skip validation for this field
+      }
+
+      // Check the validity of the field
+      const inputElement = formRef.current.elements[key];
+      return inputElement.checkValidity();
+    });
+    setFormValid(isFormValid);
   };
 
   const bcrypt = require("bcryptjs");
@@ -329,7 +336,9 @@ function CreateRecordModal(props) {
             </Form.Group>
           ))}
           <div className="button-container">
-            <Button type="submit">Create</Button>
+            <Button type="submit" disabled={!formValid}>
+              Create
+            </Button>
             <SearchAttributes
               showSearchAuthorButton={showSearchAuthorButton}
               showSearchBookButton={showSearchBookButton}
