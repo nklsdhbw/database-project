@@ -112,7 +112,7 @@ SELECT
   "libraryOrderID" as "Library Order ID",
   "libraryOrderBookTitle" AS "Book title",
   "libraryOrderISBN" AS "ISBN",
-  concat (a."authorFirstName", a."authorLastName") as "Author",
+  concat (a."authorFirstName", ' ', a."authorLastName") as "Author",
   "libraryOrderAmount" AS "Order amount",
   "libraryOrderCost" as "Cost",
   c."currencyName" AS "Currency",
