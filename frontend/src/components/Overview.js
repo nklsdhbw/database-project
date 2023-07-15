@@ -293,11 +293,6 @@ function Overview() {
         "Librarian ID",
       ];
       header.push("bookAvailability");
-      if (parseInt(libraryOrderAmount, 10) > 0) {
-        data.push(true);
-      } else {
-        data.push(false);
-      }
 
       header.forEach((column) => {
         if (notFilledColumns.includes(column) && column !== "Order status") {
@@ -336,6 +331,10 @@ function Overview() {
               insertColumns = insertColumns + `"bookAvailableAmount", `;
               insertData = insertData + `%s, `;
               parameters.push(data[header.indexOf(oldColumn)]);
+            } else if (column === "bookAvailability") {
+              insertColumns = insertColumns + `"${column}", `;
+              insertData = true + `%s, `;
+              parameters.push(true);
             } else {
               insertColumns = insertColumns + `"${column}", `;
               insertData = insertData + `%s, `;
