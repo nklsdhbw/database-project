@@ -31,7 +31,7 @@ function Overview() {
     "currencyID",
   ];
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
-  const api = "http://flaskapp:5010/run-query";
+  const api = "http://localhost:8000/run-query";
   if (!loginStatus) {
     navigate("/Login");
   }

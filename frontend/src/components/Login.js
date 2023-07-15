@@ -17,7 +17,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, formState } = useForm();
   const [results, setResults] = useState([]);
-  const api = "http://flaskapp:5010/run-query";
+  const api = "http://localhost:8000/run-query";
 
   let loginStatus = JSON.parse(sessionStorage.getItem("loggedIn"));
   console.log("LoginStatus", loginStatus);

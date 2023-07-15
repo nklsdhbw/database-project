@@ -1,19 +1,27 @@
-# Use an official Python runtime as a parent image
-FROM python
-# Set the working directory to /app
+# syntax=docker/dockerfile:1.4
+FROM --platform=$BUILDPLATFORM python:3.10-alpine AS builder
+
 WORKDIR /app
 
-# copy requirements.txt to the container
-COPY requirements.txt .
+COPY requirements.txt /app
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip3 install -r requirements.txt
 
-# Install required packages
-RUN pip install --no-cache-dir -r requirements.txt
+COPY . /app
 
-# Copy the rest of the application files to the container
-COPY . .
+ENTRYPOINT ["python3"]
+CMD ["app.py"]
 
-# Expose the port that the application will listen on
-EXPOSE 5010
+FROM builder as dev-envs
 
-# Activate the virtual environment and start the application
-CMD ["python", "app.py"]
+RUN <<EOF
+apk update
+apk add git
+EOF
+
+RUN <<EOF
+addgroup -S docker
+adduser -S --shell /bin/bash --ingroup docker vscode
+EOF
+# install Docker tools (cli, buildx, compose)
+COPY --from=gloursdocker/docker / /

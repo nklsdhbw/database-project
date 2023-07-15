@@ -39,7 +39,7 @@ docker compose up
 
 ```
 
-The `libary management React-app` will be running at [http://localhost:3000](http://localhost:3000), the `flask app` will be at [http://localhost:5010](http://localhost:5010) and the `postgres server` will be at [http://localhost:5433](http://localhost:5433)
+The `libary management React-app` will be running at [http://localhost:3000](http://localhost:3000), the `flask app` will be at [http://localhost:8000](http://localhost:8000) and the `postgres server` will be at [http://localhost:5433](http://localhost:5432)
 
 ## Architecture
 
