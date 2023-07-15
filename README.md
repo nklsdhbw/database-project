@@ -39,7 +39,7 @@ docker compose up --build
 
 ```
 
-The `libary management React-app` will be running at [http://localhost:3000](http://localhost:3000), the `flask app` will be at [http://localhost:8000](http://localhost:8000) and the `postgres server` will be at [http://localhost:5433](http://localhost:5432)
+The `libary management React-app` will be running at [http://localhost:3000](http://localhost:3000), the `flask app` will be at [http://localhost:8000](http://localhost:8000), the `postgres server` will be at [http://localhost:5433](http://localhost:5432) and the `adminer` instance will be at [http://localhost:8080](http:localhost:8080).
 
 ## Architecture
 
@@ -51,7 +51,7 @@ The systems consists of
 
 - A [Postgres](https://hub.docker.com/_/postgres/) database backed by a Docker volume
 
-- A [pgAdminer](https://hub.docker.com/r/dpage/pgadmin4/) instance to interact with the database
+- A [adminer](https://hub.docker.com/_/adminer/) instance to interact with the database
 
 ## Notes
 
