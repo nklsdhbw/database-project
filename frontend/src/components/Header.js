@@ -32,7 +32,8 @@ const Header = () => {
       .then((response) => {
         let fine;
         try {
-          const fine = response.data[1][0][1];
+          const tempfine = response.data[1][0][1];
+          fine = tempfine;
         } catch {
           //no loans -> set loanfin to 0
           fine = 0;
