@@ -69,7 +69,7 @@ function EditRecordModal(props) {
       [name]: { ...editData[name], placeholder: value },
     });
     const excludedFields = ["loanReturnDate"];
-    const isFormValid = Object.entries(formData).every(([key, value]) => {
+    const isFormValid = Object.entries(editData).every(([key, value]) => {
       // Check if the field is excluded from validation
       if (excludedFields.includes(key)) {
         return true; // Skip validation for this field
