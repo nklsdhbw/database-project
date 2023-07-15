@@ -233,7 +233,7 @@ function Overview() {
 
   function convertIntoBook(header, data) {
     header = header.flat();
-    header.append(["Author ID", "Currency ID", "Librarian ID", "Publisher ID"]);
+    header.push(["Author ID", "Currency ID", "Librarian ID", "Publisher ID"]);
     header = header.flat();
     let libraryOrderISBN = data[header.indexOf("ISBN")];
     let libraryOrderAmount = data[header.indexOf("Order amount")];
