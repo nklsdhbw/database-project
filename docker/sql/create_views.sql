@@ -230,7 +230,7 @@ SELECT
 FROM
   "Books" b
   JOIN "Authors" a ON a."authorID" = b."bookAuthorID"
-  JOIN "Categories" c ON c."categoryID" = b."bookCategoryID"
+  LEFT OUTER JOIN "Categories" c ON c."categoryID" = b."bookCategoryID"
   JOIN "Publishers" p ON p."publisherID" = b."bookPublisherID"
 ORDER BY
   "bookID";
