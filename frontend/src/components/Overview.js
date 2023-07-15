@@ -333,7 +333,7 @@ function Overview() {
               parameters.push(data[header.indexOf(oldColumn)]);
             } else if (column === "bookAvailability") {
               insertColumns = insertColumns + `"${column}", `;
-              insertData = true + `%s, `;
+              insertData = insertData + `%s, `;
               parameters.push(true);
             } else {
               insertColumns = insertColumns + `"${column}", `;
