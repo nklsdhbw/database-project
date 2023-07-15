@@ -232,6 +232,7 @@ function Overview() {
   }
 
   function convertIntoBook(header, data) {
+    data = data.flat();
     header = header.flat();
     header.push(["Author ID", "Currency ID", "Librarian ID", "Publisher ID"]);
     header = header.flat();
