@@ -26,7 +26,7 @@ const fetchUsers = async () => {
   }
 
   await axios
-    .post("http://localhost:5010/run-query", {
+    .post("http://localhost:8000/run-query", {
       query: dataQuery,
     })
     .then((response) => {

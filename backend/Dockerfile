@@ -1,26 +1,27 @@
-# Use an official Python runtime as a parent image
-FROM python
-# Set the working directory to /app
+# syntax=docker/dockerfile:1.4
+FROM --platform=$BUILDPLATFORM python:3.10-alpine AS builder
+
 WORKDIR /app
 
-# Install pipenv
-RUN pip install pipenv
+COPY requirements.txt /app
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip3 install -r requirements.txt
 
-# Create and activate a virtual environment
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+COPY . /app
 
-# Copy the Pipfile and Pipfile.lock to the container
-COPY Pipfile Pipfile.lock ./
+ENTRYPOINT ["python3"]
+CMD ["app.py"]
 
-# Install dependencies
-RUN pipenv install --system --deploy 
+FROM builder as dev-envs
 
-# Copy the rest of the application files to the container
-COPY . .
+RUN <<EOF
+apk update
+apk add git
+EOF
 
-# Expose the port that the application will listen on
-EXPOSE 5010
-
-# Activate the virtual environment and start the application
-CMD ["pipenv", "run", "flask", "run", "--host=0.0.0.0"]
+RUN <<EOF
+addgroup -S docker
+adduser -S --shell /bin/bash --ingroup docker vscode
+EOF
+# install Docker tools (cli, buildx, compose)
+COPY --from=gloursdocker/docker / /

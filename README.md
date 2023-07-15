@@ -35,11 +35,11 @@ Now start the containers using the following command
 
 ```shell
 
-docker compose up
+docker compose up --build
 
 ```
 
-The `libary management React-app` will be running at [http://localhost:3000](http://localhost:3000), the `flask app` will be at [http://localhost:5010](http://localhost:5010) and the `postgres server` will be at [http://localhost:5433](http://localhost:5433)
+The `libary management React-app` will be running at [http://localhost:3000](http://localhost:3000), the `flask app` will be at [http://localhost:8000](http://localhost:8000), the `postgres server` will be at [http://localhost:5433](http://localhost:5432) and the `adminer` instance will be at [http://localhost:8080](http:localhost:8080).
 
 ## Architecture
 
@@ -50,6 +50,8 @@ The systems consists of
 - A [Flask](https://flask.palletsprojects.com/en/2.3.x/) server that uses psychopg2 to run the SQL queries against the postgres database
 
 - A [Postgres](https://hub.docker.com/_/postgres/) database backed by a Docker volume
+
+- A [adminer](https://hub.docker.com/_/adminer/) instance to interact with the database
 
 ## Notes
 
