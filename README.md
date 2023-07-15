@@ -51,7 +51,7 @@ The systems consists of
 
 - A [Postgres](https://hub.docker.com/_/postgres/) database backed by a Docker volume
 
-- A [adminer](https://hub.docker.com/_/adminer/) instance to interact with the database
+- A [adminer](https://hub.docker.com/_/adminer/) instance to interact with the database. To connect with pgadminer use `PostgreSQL` as database system `postgres` as server, user and database and use `0609` as password. When you try to connect with `localhost` as server you won't be able to connect so please use `postgres`.
 
 ## Notes
 
