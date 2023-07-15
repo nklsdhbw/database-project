@@ -53,6 +53,10 @@ The systems consists of
 
 - A [adminer](https://hub.docker.com/_/adminer/) instance to interact with the database. To connect with pgadminer use `PostgreSQL` as database system `postgres` as server, user and database and use `0609` as password. When you try to connect with `localhost` as server you won't be able to connect so please use `postgres`.
 
+## Troubleshooting
+
+If you are having problems with the application, check that the containers are running on the correct ports. When the containers were started, they may have already been occupied by other services, so they may be running on different ports. So shut down all containers, kill all processes running on ports 8000, 8080, 3000 & 5432 and rebuild the containers using docker compose up --build.
+
 ## Notes
 
 This web application for a library management system was developed by [Aref Hasan](https://github.com/aref-hasan), [Luca Mohr](https://github.com/Luca2732) and [Niklas Scholz](https://github.com/nklsdhbw) as a database project in the 4th semester @DHBW Mannheim.
