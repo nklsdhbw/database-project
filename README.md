@@ -51,6 +51,8 @@ The systems consists of
 
 - A [Postgres](https://hub.docker.com/_/postgres/) database backed by a Docker volume
 
+- A [pgAdminer](https://hub.docker.com/r/dpage/pgadmin4/) instance to interact with the database
+
 ## Notes
 
 This web application for a library management system was developed by [Aref Hasan](https://github.com/aref-hasan), [Luca Mohr](https://github.com/Luca2732) and [Niklas Scholz](https://github.com/nklsdhbw) as a database project in the 4th semester @DHBW Mannheim.

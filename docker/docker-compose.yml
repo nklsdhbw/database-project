@@ -46,6 +46,20 @@ services:
       - ./sql/create_indexes.sql:/docker-entrypoint-initdb.d/5-create_indexes.sql
     networks:
       - my-network
+  pgadminer:
+    image: dpage/pgadmin4
+    restart: always
+    container_name: pgadminer
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@example.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_CONFIG_SERVER_MODE=False
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+      - PGADMIN_CONFIG_SKIP_SESSION_EXPIRATION=False
+    ports:
+      - "8080:80"
+    networks:
+      - my-network
 
 networks:
   my-network:
