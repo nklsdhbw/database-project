@@ -292,6 +292,13 @@ function Overview() {
         "Currency ID",
         "Librarian ID",
       ];
+      header.push("bookAvailability");
+      if (parseInt(libraryOrderAmount, 10) > 0) {
+        data.push(true);
+      } else {
+        data.push(false);
+      }
+
       header.forEach((column) => {
         if (notFilledColumns.includes(column) && column !== "Order status") {
           indexID = header.indexOf(column);
