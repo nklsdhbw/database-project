@@ -1,12 +1,12 @@
-version: '3'
+version: "3"
 services:
-  web: 
+  flaskapp:
     build:
       context: ../backend
       target: builder
     stop_signal: SIGINT
     ports:
-      - '8000:8000'
+      - "8000:8000"
     depends_on:
       - postgres
     networks:
@@ -19,6 +19,8 @@ services:
     ports:
       - "3000:3000"
     stdin_open: true
+    depends_on:
+      - postgres
     networks:
       - my-network
   postgres:

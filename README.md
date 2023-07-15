@@ -35,7 +35,7 @@ Now start the containers using the following command
 
 ```shell
 
-docker compose up
+docker compose up --build
 
 ```
 
