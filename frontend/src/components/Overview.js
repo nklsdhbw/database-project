@@ -88,7 +88,7 @@ function Overview() {
   const amountIDColumns = {
     Loans: 3,
     Publishers: 0,
-    LibraryOrders: 3,
+    LibraryOrders: 4,
     Readers: 0,
     Librarians: 0,
     Teams: 0,
@@ -233,6 +233,8 @@ function Overview() {
 
   function convertIntoBook(header, data) {
     header = header.flat();
+    header.append(["Author ID", "Currency ID", "Librarian ID", "Publisher ID"]);
+    header = header.flat();
     let libraryOrderISBN = data[header.indexOf("ISBN")];
     let libraryOrderAmount = data[header.indexOf("Order amount")];
     let libraryOrderID = data[0];
@@ -286,6 +288,8 @@ function Overview() {
         "Manager",
         "Currency",
         "Order status",
+        "Currency ID",
+        "Librarian ID",
       ];
       header.forEach((column) => {
         if (notFilledColumns.includes(column) && column !== "Order status") {
