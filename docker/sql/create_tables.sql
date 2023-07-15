@@ -3,10 +3,10 @@ DROP TABLE IF EXISTS "Authors" CASCADE;
 CREATE TABLE
     "Authors" (
         "authorID" SERIAL PRIMARY KEY,
-        "authorFirstName" varchar(255),
-        "authorLastName" varchar(255),
-        "authorEmail" varchar(255),
-        "authorPhone" varchar(255)
+        "authorFirstName" varchar(255) NOT NULL,
+        "authorLastName" varchar(255) NOT NULL,
+        "authorEmail" varchar(255) NOT NULL,
+        "authorPhone" varchar(255) NOT NULL
     );
 
 DROP TABLE IF EXISTS "Readers" CASCADE;
@@ -14,10 +14,10 @@ DROP TABLE IF EXISTS "Readers" CASCADE;
 CREATE TABLE
     "Readers" (
         "readerID" SERIAL PRIMARY KEY,
-        "readerFirstName" varchar(255),
-        "readerLastName" varchar(255),
-        "readerEmail" varchar(255),
-        "readerPassword" varchar(255)
+        "readerFirstName" varchar(255) NOT NULL,
+        "readerLastName" varchar(255) NOT NULL,
+        "readerEmail" varchar(255) NOT NULL,
+        "readerPassword" varchar(255) NOT NULL
     );
 
 DROP TABLE IF EXISTS "ZIPs" CASCADE;
@@ -25,8 +25,8 @@ DROP TABLE IF EXISTS "ZIPs" CASCADE;
 CREATE TABLE
     "ZIPs" (
         "zipID" SERIAL PRIMARY KEY,
-        "zipCode" INTEGER,
-        "zipCity" varchar(255)
+        "zipCode" INTEGER NOT NULL,
+        "zipCity" varchar(255) NOT NULL
     );
 
 DROP TABLE IF EXISTS "Categories" CASCADE;
@@ -34,8 +34,8 @@ DROP TABLE IF EXISTS "Categories" CASCADE;
 CREATE TABLE
     "Categories" (
         "categoryID" SERIAL PRIMARY KEY,
-        "categoryName" varchar(255),
-        "categoryDescription" varchar(255)
+        "categoryName" varchar(255) NOT NULL,
+        "categoryDescription" varchar(255) NOT NULL
     );
 
 DROP TABLE IF EXISTS "Currencies" CASCADE;
@@ -43,8 +43,8 @@ DROP TABLE IF EXISTS "Currencies" CASCADE;
 CREATE TABLE
     "Currencies" (
         "currencyID" SERIAL PRIMARY KEY,
-        "currencyName" varchar(255),
-        "currencyCode" varchar(255)
+        "currencyName" varchar(255) NOT NULL,
+        "currencyCode" varchar(255) NOT NULL
     );
 
 DROP TABLE IF EXISTS "Librarians" CASCADE;
@@ -158,7 +158,7 @@ DROP TABLE IF EXISTS "Employees" CASCADE;
 CREATE TABLE
     "Employees" (
         "employeeLibrarianID" INTEGER UNIQUE NOT NULL,
-        "employeeTeamID" INTEGER NOT NULL,
+        "employeeTeamID" INTEGER,
         CONSTRAINT fk_employeeLibrarianID FOREIGN KEY ("employeeLibrarianID") REFERENCES "Librarians" ("librarianID") ON DELETE CASCADE,
         CONSTRAINT fk_employeeTeamID FOREIGN KEY ("employeeTeamID") REFERENCES "Teams" ("teamID") ON DELETE CASCADE
     );
